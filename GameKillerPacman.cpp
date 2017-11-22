@@ -13,7 +13,7 @@ using namespace audiere;
 
 //  LIBRERIE OPENGL e multimendia
 //	OpenGL libraries
-// prova pippo 2
+// prova pippo 23
 #pragma comment( lib, "opengl32.lib" )				// Search For OpenGL32.lib While Linking
 #pragma comment( lib, "glu32.lib" )						// Search For GLu32.lib While Linking
 //#pragma comment( lib, "winmm.lib" )						// Search For WinMM Library While Linking
