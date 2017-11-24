@@ -77,15 +77,20 @@ bool MyModel::LoadGLTextures(void)
 {
 	//load an image file directly as a new OpenGL texture */
 	texture[0] = SOIL_load_OGL_texture
-		( "../Data/PumpkinQ.jpg",
+		( "../Data/media/bmps/baseWall.png",
 		SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y );
-		
 	if(texture[0] == 0) return false;
+
+	texture[1] = SOIL_load_OGL_texture
+		("../Data/media/bmps/mario.png",
+		SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	if (texture[1] == 0) return false;
+
 	
-  //  Load 27 fire textures
+  //  Load 11 pacman textures
   char ll[200];
-  for(int i=0; i < 27; i++) {
-    sprintf(ll,"../Data/FIRE%02d.TGA",i);
+  for(int i=1; i < 11; i++) {
+    sprintf(ll,"../Data/PacmanSprite/pacman%01d.png",i);
     this->texture[i+1] = SOIL_load_OGL_texture (
       ll,	SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,	SOIL_FLAG_INVERT_Y);
 	  if(texture[i+1] == 0) return false;
@@ -123,23 +128,19 @@ bool MyModel::DrawGLScene(void)
 	glDisable(GL_TEXTURE_2D);
 	glPushMatrix();
 	
+	//glBindTexture(GL_TEXTURE_2D, texture[0]);
 	
 
   //  Background cielo celeste
   glBegin(GL_QUADS);
-  //for(int i = 0; i < 4; i++) {
-	    glColor3f(0.482359, 0.472656, 1);
-	   
-		
-		//glColor3f(1.0, 1.0, 0.0);
-		//glVertex3f(Background[i].x, Background[i].y,  Background[i].z);
-  //}
-
+ 
+		glColor3f(0.35, 0.57, 0.984);
 		glVertex3f(Background[0].x, Background[0].y, Background[0].z);
 		glVertex3f(Background[1].x, Background[1].y, Background[1].z);
 		glVertex3f(Background[2].x, Background[2].y, Background[2].z);
 		glVertex3f(Background[3].x, Background[3].y, Background[3].z);
   glEnd();
+  
 
   //glMatrixMode(GL_MODELVIEW);
   //glLoadIdentity();
@@ -149,42 +150,108 @@ bool MyModel::DrawGLScene(void)
 
 
   glEnable(GL_TEXTURE_2D);
-
-
   //disegna la texture subito dopo
-  glBindTexture(GL_TEXTURE_2D, texture[0]);
+  
 
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
 
+  glBindTexture(GL_TEXTURE_2D, texture[0]);
+
+
+  //"pulisco" il colore base"
+  glColor3f(1.0, 1.0, 1.0);
 
 
   // Terreno
+  int nBlockFloor = 2 / 0.3;
+  float blockFloorLength = 0.3;
+
+
+  for (float i = -1; i < 2.5; i += blockFloorLength){
+	  glBegin(GL_QUADS);
+
+			//basso sinistra
+		  glTexCoord2f(Background[0].u, Background[0].v);
+		  glVertex3f(i, Background[0].y, Background[0].z);
+
+		  //basso destra
+		  glTexCoord2f(Background[1].u, Background[1].v);
+		  glVertex3f(i + blockFloorLength, Background[1].y, Background[1].z);
+
+		  //alto destra
+		  glTexCoord2f(Background[2].u, Background[2].v);
+		  glVertex3f(i + blockFloorLength, Background[1].y + 0.3, Background[0].z);
+
+		  //alto sinistra
+		  glTexCoord2f(Background[3].u, Background[3].v);
+		  glVertex3f(i, Background[0].y + 0.3, Background[0].z);
+
+	  glEnd();
+  }
+
+ //PG
+  glBindTexture(GL_TEXTURE_2D, texture[1]);
   glBegin(GL_QUADS);
 
-	  glTexCoord2f(Background[1].u, Background[1].v);
-	  glTexCoord2f(Background[1].u, Background[1].v+0.1);
-	  glTexCoord2f(Background[0].u, Background[0].v+0.1);
+	  //basso sinistra
 	  glTexCoord2f(Background[0].u, Background[0].v);
-
-	  glVertex3f(Background[1].x, Background[1].y, Background[1].z);
-	  glVertex3f(Background[1].x, Background[1].y + 0.2, Background[1].z);
-	  glVertex3f(Background[0].x, Background[0].y + 0.2, Background[0].z);
-	  glVertex3f(Background[0].x, Background[0].y, Background[0].z);
+	  glVertex3f(-0.7, -0.7, Background[0].z);
+	  //basso destra
+	  glTexCoord2f(Background[1].u, Background[1].v);
+	  glVertex3f(-0.6, -0.7, Background[1].z);
+	  //alto destra
+	  glTexCoord2f(Background[2].u, Background[2].v);
+	  glVertex3f(-0.6, -0.5, Background[0].z);
+	  //alto sinistra
+	  glTexCoord2f(Background[3].u, Background[3].v);
+	  glVertex3f(-0.7, -0.5, Background[0].z);
 
   glEnd();
 
 
+  //Pacman
+  //  Texture for the pacman, Full_elapsed * 19 -> change image every 1/19 sec.
+  //										% 18 -> pacman is contained between f[2] and f[11]
+									//				(9 image + returning back)
 
- 
+  // true cicle --> int texF = 2 + ((int((Full_elapsed * 19))) % 18);
+
+  int texF = 3 + ((int((Full_elapsed * 19))) % 16);
+  if (texF > 11)
+	  texF = 11-(texF-11);
+  glBindTexture(GL_TEXTURE_2D, texture[texF]);
   
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_ALPHA_TEST);
+  glAlphaFunc(GL_GREATER, 0);
+
+
+
+  glBegin(GL_QUADS);
+
+  //basso sinistra
+  glTexCoord2f(Background[0].u+0.39, Background[0].v+0.34);
+  glVertex3f(-1, -0.7, Background[0].z);
+  //basso destra
+  glTexCoord2f(Background[1].u-0.38, Background[1].v+0.34);
+  glVertex3f(-0.7, -0.7, Background[1].z);
+  //alto destra
+  glTexCoord2f(Background[2].u-0.38, Background[2].v-0.33);
+  glVertex3f(-0.7, -0.3, Background[0].z);
+  //alto sinistra
+  glTexCoord2f(Background[3].u+0.39, Background[3].v-0.33);
+  glVertex3f(-1, -0.3, Background[0].z);
+
+  glEnd();
  
 
 
 
-
+  /*
   //  Texture for the fire, change every 1/19 sec.
-  int texF = 1 + ((int( (Full_elapsed*19) )) %27 );
+  int texF = 2 + ((int( (Full_elapsed*19) )) %26 );
   glBindTexture(GL_TEXTURE_2D, texture[texF]);
 
   //  fire geometrical trasformations
@@ -217,15 +284,18 @@ bool MyModel::DrawGLScene(void)
   glDisable(GL_BLEND);
   glDisable(GL_ALPHA_TEST);
 
+  */
+
 
   //  Floating cursor - start
+  /*
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_ALPHA_TEST);
   glAlphaFunc(GL_GREATER, 0);
   glMatrixMode(GL_MODELVIEW);				// Select The Modelview Matrix
 	glLoadIdentity();									// Reset The View
-
+	*/
   //  Disable texture to see the rectangle size
   //  The cursor "hot spot" is the center of the rectangle
   // glDisable(GL_TEXTURE_2D);
