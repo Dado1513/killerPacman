@@ -77,12 +77,12 @@ bool MyModel::LoadGLTextures(void)
 {
 	//load an image file directly as a new OpenGL texture */
 	texture[0] = SOIL_load_OGL_texture
-		( "../Data/media/bmps/baseWall.png",
+		( "Data/media/bmps/baseWall.png",
 		SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y );
 	if(texture[0] == 0) return false;
 
 	texture[1] = SOIL_load_OGL_texture
-		("../Data/media/bmps/mario.png",
+		("Data/media/bmps/mario.png",
 		SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (texture[1] == 0) return false;
 
@@ -90,7 +90,7 @@ bool MyModel::LoadGLTextures(void)
   //  Load 11 pacman textures
   char ll[200];
   for(int i=1; i < 11; i++) {
-    sprintf(ll,"../Data/PacmanSprite/pacman%01d.png",i+1);
+    sprintf(ll,"Data/PacmanSprite/pacman%01d.png",i+1);
     this->texture[i+1] = SOIL_load_OGL_texture (
       ll,	SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,	SOIL_FLAG_INVERT_Y);
 	  if(texture[i+1] == 0) return false;
