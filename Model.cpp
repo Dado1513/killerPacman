@@ -211,7 +211,6 @@ bool MyModel::DrawGLScene(void)
 									//				(9 image + returning back)
 
   // true cicle --> int texF = 2 + ((int((Full_elapsed * 19))) % 18);
-
   // se sono 11 il modulo deve essere su 11
   int texF = (int(Full_elapsed * 19) % 11) + 3  ;
   if (texF > 11) {
