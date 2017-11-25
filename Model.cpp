@@ -153,8 +153,9 @@ bool MyModel::DrawGLScene(void)
   //"pulisco" il colore base"
   glColor3f(1.0, 1.0, 1.0);
   // Terreno
-  int nBlockFloor = 2 / 0.3;
-  float blockFloorLength = 0.3;
+
+  float blockFloorLength = 0.2;
+  int nBlockFloor = 2 / blockFloorLength;
 
   for (float i = -1; i < 2.5; i += blockFloorLength){
 	  glBegin(GL_QUADS);
