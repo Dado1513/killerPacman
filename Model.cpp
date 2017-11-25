@@ -31,6 +31,7 @@ bool MyModel::InitGL(void)
   // eye    (0,0,0)
   // center (0,0,-1)
   // up     (0,1,0)
+	
   gluLookAt(0.0,0.0,0.0, 0.0,0.0,-1.0, 0.0,1.0,0.0);
 
   return true;										// Initialization Went OK
