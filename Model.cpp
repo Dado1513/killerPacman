@@ -82,7 +82,7 @@ bool MyModel::LoadGLTextures(void)
 	if(texture[0] == 0) return false;
 
 	texture[1] = SOIL_load_OGL_texture
-		("Data/media/bmps/mario_test_2.png",
+		("Data/media/bmps/mario_test_4.png",
 		SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (texture[1] == 0) return false;
 
