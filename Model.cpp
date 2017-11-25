@@ -214,7 +214,7 @@ bool MyModel::DrawGLScene(void)
 
   // true cicle --> int texF = 2 + ((int((Full_elapsed * 19))) % 18);
   // se sono 11 il modulo deve essere su 11
-  int texF = (int(Full_elapsed * 19) % 11) + 3  ;
+  int texF = (int(Full_elapsed * 19) % 11) + 2  ;
   if (texF > 11) {
 	  texF = 11;
   }
