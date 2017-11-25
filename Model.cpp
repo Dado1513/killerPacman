@@ -90,7 +90,7 @@ bool MyModel::LoadGLTextures(void)
   //  Load 11 pacman textures
   char ll[200];
   for(int i=1; i < 11; i++) {
-    sprintf(ll,"../Data/PacmanSprite/pacman%01d.png",i);
+    sprintf(ll,"../Data/PacmanSprite/pacman%01d.png",i+1);
     this->texture[i+1] = SOIL_load_OGL_texture (
       ll,	SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,	SOIL_FLAG_INVERT_Y);
 	  if(texture[i+1] == 0) return false;
@@ -128,9 +128,7 @@ bool MyModel::DrawGLScene(void)
 	glDisable(GL_TEXTURE_2D);
 	glPushMatrix();
 	
-	//glBindTexture(GL_TEXTURE_2D, texture[0]);
-	
-
+  //glBindTexture(GL_TEXTURE_2D, texture[0]);
   //  Background cielo celeste
   glBegin(GL_QUADS);
  
@@ -145,28 +143,18 @@ bool MyModel::DrawGLScene(void)
   //glMatrixMode(GL_MODELVIEW);
   //glLoadIdentity();
 
-
-
-
-
   glEnable(GL_TEXTURE_2D);
   //disegna la texture subito dopo
   
-
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
-
   glBindTexture(GL_TEXTURE_2D, texture[0]);
-
 
   //"pulisco" il colore base"
   glColor3f(1.0, 1.0, 1.0);
-
-
   // Terreno
   int nBlockFloor = 2 / 0.3;
   float blockFloorLength = 0.3;
-
 
   for (float i = -1; i < 2.5; i += blockFloorLength){
 	  glBegin(GL_QUADS);
@@ -190,7 +178,11 @@ bool MyModel::DrawGLScene(void)
 	  glEnd();
   }
 
- //PG
+ //PG add alpha channel
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_ALPHA_TEST);
+  glAlphaFunc(GL_GREATER, 0);
   glBindTexture(GL_TEXTURE_2D, texture[1]);
   glBegin(GL_QUADS);
 
@@ -208,18 +200,25 @@ bool MyModel::DrawGLScene(void)
 	  glVertex3f(-0.7, -0.5, Background[0].z);
 
   glEnd();
+  glDisable(GL_BLEND);
+  glDisable(GL_ALPHA_TEST);
 
 
   //Pacman
+
   //  Texture for the pacman, Full_elapsed * 19 -> change image every 1/19 sec.
   //										% 18 -> pacman is contained between f[2] and f[11]
 									//				(9 image + returning back)
 
   // true cicle --> int texF = 2 + ((int((Full_elapsed * 19))) % 18);
 
-  int texF = 3 + ((int((Full_elapsed * 19))) % 16);
-  if (texF > 11)
-	  texF = 11-(texF-11);
+  // se sono 11 il modulo deve essere su 11
+  int texF = (int(Full_elapsed * 19) % 11) + 3  ;
+  if (texF > 11) {
+	  texF = 11;
+  }
+
+  
   glBindTexture(GL_TEXTURE_2D, texture[texF]);
   
   glEnable(GL_BLEND);
@@ -227,22 +226,20 @@ bool MyModel::DrawGLScene(void)
   glEnable(GL_ALPHA_TEST);
   glAlphaFunc(GL_GREATER, 0);
 
-
-
   glBegin(GL_QUADS);
 
-  //basso sinistra
-  glTexCoord2f(Background[0].u+0.39, Background[0].v+0.34);
-  glVertex3f(-1, -0.7, Background[0].z);
-  //basso destra
-  glTexCoord2f(Background[1].u-0.38, Background[1].v+0.34);
-  glVertex3f(-0.7, -0.7, Background[1].z);
-  //alto destra
-  glTexCoord2f(Background[2].u-0.38, Background[2].v-0.33);
-  glVertex3f(-0.7, -0.3, Background[0].z);
-  //alto sinistra
-  glTexCoord2f(Background[3].u+0.39, Background[3].v-0.33);
-  glVertex3f(-1, -0.3, Background[0].z);
+	  //basso sinistra
+	  glTexCoord2f(Background[0].u+0.39, Background[0].v+0.34);
+	  glVertex3f(-1, -0.7, Background[0].z);
+	  //basso destra
+	  glTexCoord2f(Background[1].u-0.38, Background[1].v+0.34);
+	  glVertex3f(-0.7, -0.7, Background[1].z);
+	  //alto destra
+	  glTexCoord2f(Background[2].u-0.38, Background[2].v-0.33);
+	  glVertex3f(-0.7, -0.3, Background[0].z);
+	  //alto sinistra
+	  glTexCoord2f(Background[3].u+0.39, Background[3].v-0.33);
+	  glVertex3f(-1, -0.3, Background[0].z);
 
   glEnd();
  
