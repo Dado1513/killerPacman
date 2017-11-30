@@ -415,24 +415,30 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 					return 0;						// Quit If Window Was Not Created
 				}
 			}*/
-    if (Data.keys[VK_F2])						// Is F2 Being Pressed?
+			if (Data.keys[VK_F2])						// Is F2 Being Pressed?
 			{
 				Data.keys[VK_F2]=FALSE;					// If So Make Key FALSE
-        if( explosion->isPlaying() ) explosion->reset();
-        else explosion->play();
+				if( explosion->isPlaying()) 
+					explosion->reset();
+				else 
+					explosion->play();
 			}
-    if (Data.keys[VK_F3])						// Is F3 Being Pressed?
+			if (Data.keys[VK_F3])						// Is F3 Being Pressed?
 			{
 				Data.keys[VK_F3]=FALSE;					// If So Make Key FALSE
-        if( bell->isPlaying() ) bell->reset();
-        else bell->play();
+				if( bell->isPlaying() ) 
+					bell->reset();
+				else 
+					bell->play();
 			}
 
-    if (Data.keys[VK_F4])						// Is F4 Being Pressed?
+			if (Data.keys[VK_F4])						// Is F4 Being Pressed?
 			{
 				Data.keys[VK_F4]=FALSE;					// If So Make Key FALSE
-        if( stupid->isPlaying() ) stupid->reset();
-        else stupid->play();
+				if( stupid->isPlaying() ) 
+					stupid->reset();
+				else 
+					stupid->play();
 			}
 
 

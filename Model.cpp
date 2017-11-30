@@ -231,11 +231,6 @@ bool MyModel::DrawGLScene(void)
   glAlphaFunc(GL_GREATER, 0);
 
   
-
-
-
-
-
   glBindTexture(GL_TEXTURE_2D, texture[1]);
   glBegin(GL_QUADS);
 
