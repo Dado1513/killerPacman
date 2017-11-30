@@ -280,6 +280,7 @@ LRESULT CALLBACK WndProc(	HWND	hWnd,			// Handle For This Window
 			return 0;								      // Return To The Message Loop
 		}
 
+	
     case WM_MOUSEMOVE:
       {
          POINTS p;

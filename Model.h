@@ -63,6 +63,7 @@ private:
   int frames;           // n. of frames
   double frameTime;     // for fps computation
   double fps;
+  double LastUpdateTime;
 
   //  model data
   std::vector<Vertex> Background;   // background
@@ -97,6 +98,7 @@ public:
     this->Tstart = this->Tstamp = clock();
     this->Full_elapsed = 0;
     this->frameTime = 0;
+	this->LastUpdateTime = 0;
 
   }
   ~MyModel() {
@@ -110,6 +112,8 @@ public:
   bool InitGL(void);
   void ReSizeGLScene(int width, int height);
   void glPrint(const char *fmt, ...);			// Custom GL "Print" Routine
+  void updateWorld();
+
 
 private:
   bool LoadGLTextures(void);
@@ -127,6 +131,8 @@ private:
   inline float ClientY2World(int y) {
     return ( float(ply) - (2.0f * float(ply) * float(y) / float(Wheight)));
   }
+
+  
 
 };
 

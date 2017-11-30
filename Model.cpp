@@ -12,6 +12,13 @@
 #include "Model.h"
 #include "SOIL.h"
 
+
+#include "PC.h"
+
+PC mario(-0.65, -0.6, 0.05, 0.1);
+
+
+
 // All Setup For OpenGL Goes Here
 bool MyModel::InitGL(void)
 {
@@ -109,6 +116,34 @@ bool MyModel::LoadGLTextures(void)
 }
 
 
+void MyModel::updateWorld(){
+	//se è premuto il pulsante ->
+	if (this->keys[39])
+		mario.addVelX(1);
+	else{
+		//se è premuto il pulsante <-
+		if (this->keys[37])
+			mario.addVelX(-1);
+		else
+			mario.stopX();
+	}
+
+	//BUG!! Il salto funziona solo se mi sto muovendo verso destra!!
+
+	if (this->keys[38]){
+		mario.jump();
+	}
+
+	//aggiorno la posizione del pc
+	mario.update();
+
+	//NOTA: DA CANCELLARE IN FUTURO
+	//NOTA: simili controlli vanno fatti dove si ha un FPS maggiore.
+	//qui dovrebbe esserci codice relativo alla velocità utente, non collisioni o altro.
+	if (mario.getDown() < -0.7)
+		mario.stopY();
+}
+
 
 bool MyModel::DrawGLScene(void)
 {
@@ -128,6 +163,16 @@ bool MyModel::DrawGLScene(void)
 
 	this->Tstamp = t;
 	//  TIMING - end
+	
+
+
+	//aggiorno la posizione del gioco ogni 10ms (aka lavoro a 120 frame/sec).
+	if (Full_elapsed - LastUpdateTime > 0.01){
+		this->LastUpdateTime = Full_elapsed;
+		updateWorld();
+	}
+		
+
 
 	glDisable(GL_TEXTURE_2D);
 	glPushMatrix();
@@ -141,7 +186,6 @@ bool MyModel::DrawGLScene(void)
 		glVertex3f(Background[2].x, Background[2].y, Background[2].z);
 		glVertex3f(Background[3].x, Background[3].y, Background[3].z);
   glEnd();
-  
 
   //glMatrixMode(GL_MODELVIEW);
   //glLoadIdentity();
@@ -178,26 +222,34 @@ bool MyModel::DrawGLScene(void)
 	  glEnd();
   }
 
- //PG add alpha channel
+
+ //PC add alpha channel
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_ALPHA_TEST);
   glAlphaFunc(GL_GREATER, 0);
+
+  
+
+
+
+
+
   glBindTexture(GL_TEXTURE_2D, texture[1]);
   glBegin(GL_QUADS);
 
 	  //basso sinistra
 	  glTexCoord2f(Background[0].u, Background[0].v);
-	  glVertex3f(-0.7, -0.7, Background[0].z);
+	  glVertex3f(mario.getLeft(), mario.getDown(), Background[0].z);
 	  //basso destra
 	  glTexCoord2f(Background[1].u, Background[1].v);
-	  glVertex3f(-0.6, -0.7, Background[1].z);
+	  glVertex3f(mario.getRight(), mario.getDown(), Background[1].z);
 	  //alto destra
 	  glTexCoord2f(Background[2].u, Background[2].v);
-	  glVertex3f(-0.6, -0.5, Background[0].z);
+	  glVertex3f(mario.getRight(), mario.getUp(), Background[0].z);
 	  //alto sinistra
 	  glTexCoord2f(Background[3].u, Background[3].v);
-	  glVertex3f(-0.7, -0.5, Background[0].z);
+	  glVertex3f(mario.getLeft(), mario.getUp(), Background[0].z);
 
   glEnd();
   glDisable(GL_BLEND);
@@ -241,7 +293,7 @@ bool MyModel::DrawGLScene(void)
  
   /*
   //  Texture for the fire, change every 1/19 sec.
-  int texF = 2 + ((int( (Full_elapsed*19) )) %26 );
+  int texF2 = 2 + ((int( (Full_elapsed*19) )) %26 );
   glBindTexture(GL_TEXTURE_2D, texture[texF]);
 
   //  fire geometrical trasformations
@@ -273,8 +325,8 @@ bool MyModel::DrawGLScene(void)
 
   glDisable(GL_BLEND);
   glDisable(GL_ALPHA_TEST);
-
   */
+  
 
   //  Floating cursor - start
   /*
@@ -336,7 +388,7 @@ bool MyModel::DrawGLScene(void)
 		this->frames = 0; this->frameTime = 0;
 	}
 	this->glPrint("Elapsed time: %6.2f sec.  -  Fps %6.2f", Full_elapsed, fps);
-
+	
 	if(this->Full_elapsed < 6) {
 		glRasterPos3f(- (float) plx + PixToCoord_X(10), (float) -ply+PixToCoord_Y(21),-4);
 		this->glPrint("...F2/F3/F4 for sounds");
