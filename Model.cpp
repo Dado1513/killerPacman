@@ -35,6 +35,7 @@ bool MyModel::InitGL(void)
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
   this->BuildFont();
 
+	
   // eye    (0,0,0)
   // center (0,0,-1)
   // up     (0,1,0)
@@ -117,11 +118,11 @@ bool MyModel::LoadGLTextures(void)
 
 
 void MyModel::updateWorld(){
-	//se Ë premuto il pulsante ->
+	//se √® premuto il pulsante ->
 	if (this->keys[39])
 		mario.addVelX(1);
 	else{
-		//se Ë premuto il pulsante <-
+		//se √® premuto il pulsante <-
 		if (this->keys[37])
 			mario.addVelX(-1);
 		else
@@ -139,7 +140,7 @@ void MyModel::updateWorld(){
 
 	//NOTA: DA CANCELLARE IN FUTURO
 	//NOTA: simili controlli vanno fatti dove si ha un FPS maggiore.
-	//qui dovrebbe esserci codice relativo alla velocit‡ utente, non collisioni o altro.
+	//qui dovrebbe esserci codice relativo alla velocit√† utente, non collisioni o altro.
 	if (mario.getDown() < -0.7)
 		mario.stopY();
 }
