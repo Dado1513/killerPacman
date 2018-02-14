@@ -353,7 +353,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
   Data.fullscreen=false;  // removed the boring request...
 
 	// Create Our OpenGL Window
-	if (!CreateGLWindow("Basic 2D game skeleton",640,480,16,Data.fullscreen))
+	if (!CreateGLWindow("Killer Pacman",640,480,16,Data.fullscreen))
 	{
 		return 0;									// Quit If Window Was Not Created
 	}
