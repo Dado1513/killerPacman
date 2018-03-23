@@ -22,8 +22,11 @@ PC mario(-0.65, -0.6, 0.05, 0.1);
 // All Setup For OpenGL Goes Here
 bool MyModel::InitGL(void)
 {
-	if (!this->LoadGLTextures())				// Jump To Texture Loading Routine
-  {	return false; }							// If Texture Didn't Load Return FALSE
+	if (!this->LoadGLTextures()){
+		// Jump To Texture Loading Routine
+  		
+		return false; 
+	}							// If Texture Didn't Load Return FALSE
 
 
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping ( NEW )
@@ -33,14 +36,14 @@ bool MyModel::InitGL(void)
 	glEnable(GL_DEPTH_TEST);							// Enables Depth Testing
 	glDepthFunc(GL_LEQUAL);								// The Type Of Depth Testing To Do
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
-  this->BuildFont();
+	this->BuildFont();
 
 	
   // eye    (0,0,0)
   // center (0,0,-1)
   // up     (0,1,0)
 	
-  gluLookAt(0.0,0.0,0.0, 0.0,0.0,-1.0, 0.0,1.0,0.0);
+  gluLookAt(-500.0,0.0,0.0, 0.0,0.0,-1.0,  0.0,1.0,0.0);
 
   return true;										// Initialization Went OK
 }
@@ -64,16 +67,16 @@ void MyModel::ReSizeGLScene(int width, int height)
 	// void WINAPI glOrtho( GLdouble left,   GLdouble right,
 	//                      GLdouble bottom, GLdouble top,
 	//                      GLdouble zNear,  GLdouble zFar );
-	if( width >= height ) 
-	{
+
+	if( width >= height ) {
 		this->plx = 1.0;
 		this->ply = 1.0;
 	} 
-	else 
-	{
+	else {
 		this->plx = (double) width /(double) height;
 		this->ply = 1.0;
 	}
+
 	glOrtho(-this->plx, this->plx, -this->ply, this->ply, 1, 5.1);
   
 	//  saving the window width and height in pixels
@@ -179,7 +182,7 @@ bool MyModel::DrawGLScene(void)
 	glPushMatrix();
 	
 	//glBindTexture(GL_TEXTURE_2D, texture[0]);
-	//  Background cielo celeste
+	//Background cielo celeste
   glBegin(GL_QUADS);
 		glColor3f(0.35, 0.57, 0.984);
 		glVertex3f(Background[0].x, Background[0].y, Background[0].z);
@@ -207,15 +210,19 @@ bool MyModel::DrawGLScene(void)
 
   for (float i = -1; i < 2.5; i += blockFloorLength){
 	  glBegin(GL_QUADS);
-			//basso sinistra
+		  
+		  //basso sinistra
 		  glTexCoord2f(Background[0].u, Background[0].v);
 		  glVertex3f(i, Background[0].y, Background[0].z);
+		  
 		  //basso destra
 		  glTexCoord2f(Background[1].u, Background[1].v);
 		  glVertex3f(i + blockFloorLength, Background[1].y, Background[1].z);
+		  
 		  //alto destra
 		  glTexCoord2f(Background[2].u, Background[2].v);
 		  glVertex3f(i + blockFloorLength, Background[1].y + 0.3, Background[0].z);
+		  
 		  //alto sinistra
 		  glTexCoord2f(Background[3].u, Background[3].v);
 		  glVertex3f(i, Background[0].y + 0.3, Background[0].z);
@@ -264,8 +271,8 @@ bool MyModel::DrawGLScene(void)
   }
 
   
+  // print pacman picture
   glBindTexture(GL_TEXTURE_2D, texture[texF]);
-  
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_ALPHA_TEST);
@@ -341,13 +348,11 @@ bool MyModel::DrawGLScene(void)
 	glTranslatef(ClientX2World(cx), ClientY2World(cy), 0);
 	// proportional scaling (fixed percentual of window dimension)
 	// if(1) proportional, if(0) fixed
-	if (1) 
-	{
+	if (1) {
 		glScalef(0.10f, 0.10f, 1);
 	}
 	//  Fixed scaling, alwais 100 pixels width/height
-	else 
-	{
+	else {
 		float dx = PixToCoord_X(100);
 		float dy = PixToCoord_Y(100);
 		glScalef(dx/2, dy/2,1);
@@ -380,10 +385,12 @@ bool MyModel::DrawGLScene(void)
 	// compute fps and write text
 	this->frames++;
 	if( this->frames > 18 ) {
+	
 		this->fps = frames / frameTime;
 		this->frames = 0; this->frameTime = 0;
 	}
-	this->glPrint("Elapsed time: %6.2f sec.  -  Fps %6.2f", Full_elapsed, fps);
+	
+	this->glPrint("Elapsed time: %6.2f sec.  -  Fps %6.2f - PositionMario x = %d, y = %d", Full_elapsed, fps, mario.getRight(),mario.getUp());
 	
 	if(this->Full_elapsed < 6) {
 		glRasterPos3f(- (float) plx + PixToCoord_X(10), (float) -ply+PixToCoord_Y(21),-4);

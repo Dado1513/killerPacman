@@ -1,52 +1,16 @@
-/*
- *    CREDITS: this program is based on the new nehe lesson 06.
- *    Modifiyed by Aldo Grattarola for the Computer Graphics course.
- *
- *		This Code Was Created By Jeff Molofee 2000
- *		A HUGE Thanks To Fredric Echols For Cleaning Up
- *		And Optimizing The Base Code, Making It More Flexible!
- *		If You've Found This Code Useful, Please Let Me Know.
- *		Visit My Site At nehe.gamedev.net
- */
-
-///////////////////////////////////////////////////////////////////
-//  A basic skeleton for 2D like game developpers.
-//  How to:
-//  - load textures
-//  - simulate a 2D rendering
-//  - using transparency
-//  - ....
-/////////////////////////////////----------------------------------
-//  VERSION 1: added
-//  - correct timing
-//  - animated textures
-//  - how to write on the window
-///////////////////////////////////////////////////////////////////
-//  VERSION 2: added
-//  - sounds via the audiere library (GNU LESSER GENERAL PUBLIC LICENSE)
-//    see audiere.sourceforge.net
-//  NOTE: if you use the debug configuration copy the audiere.dll file to
-//        the Debug directory!
-///////////////////////////////////////////////////////////////////
-//  VERSION 3: added
-//  - Animated texture as cursor
-///////////////////////////////////////////////////////////////////
-
 #include <windows.h>		// Header File For Windows
 #include <stdio.h>			// Header File For Standard Input/Output
 #include <gl\gl.h>			// Header File For The OpenGL32 Library
 #include <gl\glu.h>			// Header File For The GLu32 Library
 
-
 #include "Model.h"
 
 #include "audiere.h"
 using namespace audiere;
-
-//  LIBRERIE OPENGL e multimendia
-//	OpenGL libraries
-#pragma comment( lib, "opengl32.lib" )				// Search For OpenGL32.lib While Linking
-#pragma comment( lib, "glu32.lib" )						// Search For GLu32.lib While Linking
+#ifdef _MSC_VER                         // Check if MS Visual C compiler
+	#pragma comment( lib, "opengl32.lib" )				// Search For OpenGL32.lib While Linking 
+	#pragma comment( lib, "glu32.lib" )						// Search For GLu32.lib While Linking			
+#endif
 //#pragma comment( lib, "winmm.lib" )						// Search For WinMM Library While Linking
 
 class MyModel Data;
@@ -62,8 +26,8 @@ GLvoid KillGLWindow(GLvoid)								// Properly Kill The Window
 		ShowCursor(TRUE);								// Show Mouse Pointer
 	}
 
-	if (Data.hRC)											// Do We Have A Rendering Context?
-	{	if (!wglMakeCurrent(NULL,NULL))	{				// Are We Able To Release The DC And RC Contexts?
+	if (Data.hRC){											// Do We Have A Rendering Context?	
+		if (!wglMakeCurrent(NULL,NULL))	{				// Are We Able To Release The DC And RC Contexts?
 			MessageBox(NULL,"Release Of DC And RC Failed.","SHUTDOWN ERROR",MB_OK | MB_ICONINFORMATION);
 		}
   	if (!wglDeleteContext(Data.hRC)) {			// Are We Able To Delete The RC?
@@ -82,8 +46,8 @@ GLvoid KillGLWindow(GLvoid)								// Properly Kill The Window
 		Data.hWnd=NULL;										// Set hWnd To NULL
 	}
 
-	if (!UnregisterClass("Basic2D",Data.hInstance))		// Are We Able To Unregister Class
-	{
+	if (!UnregisterClass("Basic2D",Data.hInstance)) {		// Are We Able To Unregister Class
+	
 		MessageBox(NULL,"Could Not Unregister Class.","SHUTDOWN ERROR",MB_OK | MB_ICONINFORMATION);
 		Data.hInstance=NULL;									// Set hInstance To NULL
 	}
@@ -123,14 +87,14 @@ BOOL CreateGLWindow(char* title, int width, int height, int bits, bool fullscree
 	wc.lpszMenuName		= NULL;									// We Don't Want A Menu
 	wc.lpszClassName	= "Basic2D";								// Set The Class Name
 
-	if (!RegisterClass(&wc))									// Attempt To Register The Window Class
-	{
+	if (!RegisterClass(&wc)) {									// Attempt To Register The Window Class
+	
 		MessageBox(NULL,"Failed To Register The Window Class.","ERROR",MB_OK|MB_ICONEXCLAMATION);
 		return FALSE;											// Return FALSE
 	}
 	
-	if (Data.fullscreen)												// Attempt Fullscreen Mode?
-	{
+	if (Data.fullscreen){												// Attempt Fullscreen Mode?
+	
 		DEVMODE dmScreenSettings;								// Device Mode
 		memset(&dmScreenSettings,0,sizeof(dmScreenSettings));	// Makes Sure Memory's Cleared
 		dmScreenSettings.dmSize=sizeof(dmScreenSettings);		// Size Of The Devmode Structure
@@ -140,15 +104,12 @@ BOOL CreateGLWindow(char* title, int width, int height, int bits, bool fullscree
 		dmScreenSettings.dmFields=DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT;
 
 		// Try To Set Selected Mode And Get Results.  NOTE: CDS_FULLSCREEN Gets Rid Of Start Bar.
-		if (ChangeDisplaySettings(&dmScreenSettings,CDS_FULLSCREEN)!=DISP_CHANGE_SUCCESSFUL)
-		{
+		if (ChangeDisplaySettings(&dmScreenSettings,CDS_FULLSCREEN)!=DISP_CHANGE_SUCCESSFUL){
 			// If The Mode Fails, Offer Two Options.  Quit Or Use Windowed Mode.
-			if (MessageBox(NULL,"The Requested Fullscreen Mode Is Not Supported By\nYour Video Card. Use Windowed Mode Instead?","NeHe GL",MB_YESNO|MB_ICONEXCLAMATION)==IDYES)
-			{
+			if (MessageBox(NULL,"The Requested Fullscreen Mode Is Not Supported By\nYour Video Card. Use Windowed Mode Instead?","NeHe GL",MB_YESNO|MB_ICONEXCLAMATION)==IDYES){
 				Data.fullscreen=FALSE;		// Windowed Mode Selected.  Fullscreen = FALSE
 			}
-			else
-			{
+			else{
 				// Pop Up A Message Box Letting User Know The Program Is Closing.
 				MessageBox(NULL,"Program Will Now Close.","ERROR",MB_OK|MB_ICONSTOP);
 				return FALSE;									// Return FALSE
@@ -156,14 +117,12 @@ BOOL CreateGLWindow(char* title, int width, int height, int bits, bool fullscree
 		}
 	}
 
-	if (Data.fullscreen)												// Are We Still In Fullscreen Mode?
-	{
+	if (Data.fullscreen) {												// Are We Still In Fullscreen Mode?
 		dwExStyle=WS_EX_APPWINDOW;								// Window Extended Style
 		dwStyle=WS_POPUP;										// Windows Style
 		ShowCursor(FALSE);										// Hide Mouse Pointer
 	}
-	else
-	{
+	else{
 		dwExStyle=WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;			// Window Extended Style
 		dwStyle=WS_OVERLAPPEDWINDOW;							// Windows Style
 	}
@@ -212,36 +171,36 @@ BOOL CreateGLWindow(char* title, int width, int height, int bits, bool fullscree
 		0, 0, 0										// Layer Masks Ignored
 	};
 	
-	if (!(Data.hDC=GetDC(Data.hWnd)))				// Did We Get A Device Context?
-	{
+	if (!(Data.hDC=GetDC(Data.hWnd))) {				// Did We Get A Device Context?
+	
 		KillGLWindow();								// Reset The Display
 		MessageBox(NULL,"Can't Create A GL Device Context.","ERROR",MB_OK|MB_ICONEXCLAMATION);
 		return FALSE;								// Return FALSE
 	}
 
-	if (!(PixelFormat=ChoosePixelFormat(Data.hDC,&pfd)))	// Did Windows Find A Matching Pixel Format?
-	{
+	if (!(PixelFormat=ChoosePixelFormat(Data.hDC,&pfd))) {	// Did Windows Find A Matching Pixel Format?
+	
 		KillGLWindow();								// Reset The Display
 		MessageBox(NULL,"Can't Find A Suitable PixelFormat.","ERROR",MB_OK|MB_ICONEXCLAMATION);
 		return FALSE;								// Return FALSE
 	}
 
-	if(!SetPixelFormat(Data.hDC,PixelFormat,&pfd))		// Are We Able To Set The Pixel Format?
-	{
+	if(!SetPixelFormat(Data.hDC,PixelFormat,&pfd)) {		// Are We Able To Set The Pixel Format?
+	
 		KillGLWindow();								// Reset The Display
 		MessageBox(NULL,"Can't Set The PixelFormat.","ERROR",MB_OK|MB_ICONEXCLAMATION);
 		return FALSE;								// Return FALSE
 	}
 
-	if (!(Data.hRC=wglCreateContext(Data.hDC)))				// Are We Able To Get A Rendering Context?
-	{
+	if (!(Data.hRC=wglCreateContext(Data.hDC))) {				// Are We Able To Get A Rendering Context?
+	
 		KillGLWindow();								// Reset The Display
 		MessageBox(NULL,"Can't Create A GL Rendering Context.","ERROR",MB_OK|MB_ICONEXCLAMATION);
 		return FALSE;								// Return FALSE
 	}
 
-	if(!wglMakeCurrent(Data.hDC,Data.hRC))					// Try To Activate The Rendering Context
-	{
+	if(!wglMakeCurrent(Data.hDC,Data.hRC)) {					// Try To Activate The Rendering Context
+	
 		KillGLWindow();								// Reset The Display
 		MessageBox(NULL,"Can't Activate The GL Rendering Context.","ERROR",MB_OK|MB_ICONEXCLAMATION);
 		return FALSE;								// Return FALSE
@@ -252,10 +211,10 @@ BOOL CreateGLWindow(char* title, int width, int height, int bits, bool fullscree
 	SetFocus(Data.hWnd);									// Sets Keyboard Focus To The Window
 	Data.ReSizeGLScene(width, height);					// Set Up Our Perspective GL Screen
 
-	if (!Data.InitGL())									// Initialize Our Newly Created GL Window
-	{
+	if (!Data.InitGL()) {								// Initialize Our Newly Created GL Window
+	
 		KillGLWindow();								// Reset The Display
-		MessageBox(NULL,"Initialization Failed.","ERROR",MB_OK|MB_ICONEXCLAMATION);
+		MessageBox(NULL,"Initialization Failed OpenGL.","ERROR",MB_OK|MB_ICONEXCLAMATION);
 		return FALSE;								// Return FALSE
 	}
 
@@ -270,57 +229,58 @@ LRESULT CALLBACK WndProc(	HWND	hWnd,			// Handle For This Window
 							WPARAM	wParam,			// Additional Message Information
 							LPARAM	lParam)			// Additional Message Information
 {
-	switch (uMsg)									// Check For Windows Messages
-	{
-		case WM_ACTIVATE:							// Watch For Window Activate Message
-		{
-			if (!HIWORD(wParam))					// Check Minimization State
-      { Data.active=TRUE; }					// Program Is Active
-      else { Data.active=FALSE; }		// Program Is No Longer Active
+	switch (uMsg){									// Check For Windows Messages
+	
+		case WM_ACTIVATE: {							// Watch For Window Activate Message
+			if (!HIWORD(wParam)) { 					// Check Minimization State
+				Data.active=TRUE; 
+			}					// Program Is Active
+			else { 
+				Data.active=FALSE; 
+			}		// Program Is No Longer Active
 			return 0;								      // Return To The Message Loop
 		}
+		
+		// mouse move
+		case WM_MOUSEMOVE:{
+			POINTS p;
+			 p = MAKEPOINTS(lParam);
+			 Data.cx = p.x; Data.cy = p.y;
+			/* if( Data.IsInClient(p.x,p.y) ) {
+			   if( !Data.captured ) { Data.captured = true; SetCapture(hWnd); ShowCursor(FALSE); }
+			 } else {
+			   if( Data.captured ) { Data.captured = false; ReleaseCapture(); ShowCursor(TRUE); }
+			 }*/
+		}
+		break;
 
-	
-    case WM_MOUSEMOVE:
-      {
-         POINTS p;
-         p = MAKEPOINTS(lParam);
-         Data.cx = p.x; Data.cy = p.y;
-        /* if( Data.IsInClient(p.x,p.y) ) {
-           if( !Data.captured ) { Data.captured = true; SetCapture(hWnd); ShowCursor(FALSE); }
-         } else {
-           if( Data.captured ) { Data.captured = false; ReleaseCapture(); ShowCursor(TRUE); }
-         }*/
-      }
-      break;
-
-		case WM_SYSCOMMAND:							// Intercept System Commands
-		{
-			switch (wParam)							// Check System Calls
-			{	case SC_SCREENSAVE:					// Screensaver Trying To Start?
+		case WM_SYSCOMMAND: {							// Intercept System Commands
+		
+			switch (wParam) {							// Check System Calls
+				case SC_SCREENSAVE:					// Screensaver Trying To Start?
 				case SC_MONITORPOWER:				// Monitor Trying To Enter Powersave?
-				return 0;							// Prevent From Happening
+					return 0;							// Prevent From Happening
 			}
 			break;									// Exit
 		}
 
-		case WM_CLOSE:								// Did We Receive A Close Message?
-		{	PostQuitMessage(0);					// Send A Quit Message
+		case WM_CLOSE: {								// Did We Receive A Close Message?
+			PostQuitMessage(0);					// Send A Quit Message
 			return 0;								    // Jump Back
 		}
 
-		case WM_KEYDOWN:							// Is A Key Being Held Down?
-		{	Data.keys[wParam] = TRUE;		// If So, Mark It As TRUE
+		case WM_KEYDOWN: {							// Is A Key Being Held Down?
+			Data.keys[wParam] = TRUE;		// If So, Mark It As TRUE
 			return 0;								// Jump Back
 		}
 
-		case WM_KEYUP:								// Has A Key Been Released?
-		{	Data.keys[wParam] = FALSE;	// If So, Mark It As FALSE
+		case WM_KEYUP: {								// Has A Key Been Released?
+			Data.keys[wParam] = FALSE;	// If So, Mark It As FALSE
 			return 0;								// Jump Back
 		}
 
-		case WM_SIZE:								// Resize The OpenGL Window
-		{	Data.ReSizeGLScene(LOWORD(lParam),HIWORD(lParam));  // LoWord=Width, HiWord=Height
+		case WM_SIZE: {								// Resize The OpenGL Window
+			Data.ReSizeGLScene(LOWORD(lParam),HIWORD(lParam));  // LoWord=Width, HiWord=Height
 			return 0;								// Jump Back
 		}
 	}
@@ -340,70 +300,62 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 	BOOL	done=FALSE;								// Bool Variable To Exit Loop
 
 	// Ask The User Which Screen Mode They Prefer
-  // Init of the default button depending on Data.fullscreen
-  unsigned long Def = MB_DEFBUTTON1;
-  if( !Data.fullscreen ) Def = MB_DEFBUTTON2;
+	// Init of the default button depending on Data.fullscreen
+	unsigned long Def = MB_DEFBUTTON1;
+	if( !Data.fullscreen ) Def = MB_DEFBUTTON2;
 	/*
-  if (MessageBox(NULL,"Would You Like To Run In Fullscreen Mode?",
-    "Start FullScreen?",MB_YESNO|MB_ICONQUESTION | Def) == IDNO)
+	if (MessageBox(NULL,"Would You Like To Run In Fullscreen Mode?",
+	"Start FullScreen?",MB_YESNO|MB_ICONQUESTION | Def) == IDNO)
 	{
 		Data.fullscreen=FALSE;							// Windowed Mode
 	}
-  */
-  Data.fullscreen=false;  // removed the boring request...
+	*/
+	Data.fullscreen=false;  // removed the boring request...
 
 	// Create Our OpenGL Window
-	if (!CreateGLWindow("Killer Pacman",640,480,16,Data.fullscreen))
-	{
+	if (!CreateGLWindow("Killer Pacman",640,480,16,Data.fullscreen)){
 		return 0;									// Quit If Window Was Not Created
 	}
 
-  //  AUDIO - start
-  AudioDevicePtr device(OpenDevice());
-  if (!device) {
-    return 0;         // failure
-  }
-  OutputStreamPtr stream(OpenSound(device, "../Data/ophelia.mp3", true));
-  if (!stream) {
-    return 0;         // failure
-  }
-  stream->setRepeat(true);
-  stream->setVolume(0.5f); // 50% volume
-  stream->play();
+	//  AUDIO - start
+	AudioDevicePtr device(OpenDevice());
+	if (!device) {
+		return 0;         // failure
+	}
+	OutputStreamPtr stream(OpenSound(device, "../Data/ophelia.mp3", true));
+	if (!stream) {
+		return 0;         // failure
+	}
+	stream->setRepeat(true);
+	stream->setVolume(0.5f); // 50% volume
+	stream->play();
 
-  OutputStreamPtr explosion(OpenSound(device, "../Data/explosion.wav", false));
-  OutputStreamPtr bell(OpenSound(device, "../Data/bell.wav", false));
-  OutputStreamPtr stupid(OpenSound(device, "../Data/stupid.wav", false));
-  //  AUDIO - end
+	OutputStreamPtr explosion(OpenSound(device, "../Data/explosion.wav", false));
+	OutputStreamPtr bell(OpenSound(device, "../Data/bell.wav", false));
+	OutputStreamPtr stupid(OpenSound(device, "../Data/stupid.wav", false));
+	//  AUDIO - end
 
-	while(!done)									// Loop That Runs While done=FALSE
-	{
-		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Is There A Message Waiting?
-		{
-			if (msg.message==WM_QUIT)				// Have We Received A Quit Message?
-			{
+	while(!done) {									// Loop That Runs While done=FALSE
+	
+		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {	// Is There A Message Waiting?
+	
+			if (msg.message==WM_QUIT) {				// Have We Received A Quit Message?
 				done=TRUE;							// If So done=TRUE
-			}
-			else									// If Not, Deal With Window Messages
-			{
+			}else { // If Not, Deal With Window Messages
+				
 				TranslateMessage(&msg);				// Translate The Message
 				DispatchMessage(&msg);				// Dispatch The Message
 			}
-		}
-		else										// If There Are No Messages
-		{
+		}else{
 			// Draw The Scene.  Watch For ESC Key And Quit Messages From DrawGLScene()
-			if ((Data.active && !Data.DrawGLScene()) || Data.keys[VK_ESCAPE])	// Active?  Was There A Quit Received?
-			{
+			if ((Data.active && !Data.DrawGLScene()) || Data.keys[VK_ESCAPE]) {	// Active?  Was There A Quit Received?
 				done=TRUE;							// ESC or DrawGLScene Signalled A Quit
-			}
-			else									// Not Time To Quit, Update Screen
-			{
+			}else{ // Not Time To Quit, Update Screen
 				SwapBuffers(Data.hDC);					// Swap Buffers (Double Buffering)
 			}
 
-      //  Removed the F1 key: no fullscreen!
-      /*
+			//  Removed the F1 key: no fullscreen!
+			/*
 			if (Data.keys[VK_F1])						// Is F1 Being Pressed?
 			{
 				Data.keys[VK_F1]=FALSE;					// If So Make Key FALSE
@@ -415,34 +367,29 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 					return 0;						// Quit If Window Was Not Created
 				}
 			}*/
-			if (Data.keys[VK_F2])						// Is F2 Being Pressed?
-			{
+			if (Data.keys[VK_F2]) {						// Is F2 Being Pressed?
 				Data.keys[VK_F2]=FALSE;					// If So Make Key FALSE
-				if( explosion->isPlaying()) 
+				if(explosion->isPlaying()) 
 					explosion->reset();
 				else 
 					explosion->play();
 			}
-			if (Data.keys[VK_F3])						// Is F3 Being Pressed?
-			{
+
+			if (Data.keys[VK_F3]){					// Is F3 Being Pressed?
 				Data.keys[VK_F3]=FALSE;					// If So Make Key FALSE
-				if( bell->isPlaying() ) 
+				if(bell->isPlaying()) 
 					bell->reset();
 				else 
 					bell->play();
 			}
 
-			if (Data.keys[VK_F4])						// Is F4 Being Pressed?
-			{
+			if (Data.keys[VK_F4]){						// Is F4 Being Pressed?
 				Data.keys[VK_F4]=FALSE;					// If So Make Key FALSE
 				if( stupid->isPlaying() ) 
 					stupid->reset();
 				else 
 					stupid->play();
 			}
-
-
-
 		}
 	}
 
