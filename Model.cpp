@@ -51,10 +51,10 @@ bool MyModel::InitGL(void)
 
 void MyModel::ReSizeGLScene(int width, int height)
 {
-	if (height==0) 
-		height=1;					// Prevent A Divide By Zero By
-	if (width==0) 
-		width=1;					// Prevent A Divide By Zero By
+	if (height == 0) 
+		height = 1;					// Prevent A Divide By Zero By
+	if (width == 0) 
+		width = 1;					// Prevent A Divide By Zero By
 
 	glViewport(0,0,width,height);						// Reset The Current Viewport
 
@@ -97,16 +97,18 @@ bool MyModel::LoadGLTextures(void)
 	if(texture[0] == 0) 
 		return false;
 
+	// ToDo Naturalmente devono essere una serie di texture mario si deve muovere 
+	// texture for mario 
 	texture[1] = SOIL_load_OGL_texture("Data/media/mario_test_1.png",SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (texture[1] == 0) 
 		return false;
 
 	
 	//  Load 19 pacman textures (front and back)
-	char ll[200];
+	char pacman[200];
 	for(int i=1; i < 19; i++) {
-	sprintf(ll,"Data/PacmanSprite/pacman%01d.png",i+1);
-	this->texture[i+1] = SOIL_load_OGL_texture (ll,	SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,	SOIL_FLAG_INVERT_Y);
+	sprintf(pacman,"Data/PacmanSprite/pacman%01d.png",i+1);
+	this->texture[i+1] = SOIL_load_OGL_texture (pacman,	SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,	SOIL_FLAG_INVERT_Y);
 		if(texture[i+1] == 0)
 			return false;
 	}
@@ -121,19 +123,20 @@ bool MyModel::LoadGLTextures(void)
 
 
 void MyModel::updateWorld(){
-	//se è premuto il pulsante ->
+
 	if (this->keys[39])
+		// mario si deve spostare a destra
 		mario.addVelX(1);
 	else{
-		//se è premuto il pulsante <-
+
 		if (this->keys[37])
+			// mario si deve spostare a sinistra
 			mario.addVelX(-1);
 		else
 			mario.stopX();
 	}
 
 	//BUG!! Il salto funziona solo se mi sto muovendo verso destra!!
-
 	if (this->keys[38]){
 		mario.jump();
 	}
@@ -149,203 +152,131 @@ void MyModel::updateWorld(){
 }
 
 
-bool MyModel::DrawGLScene(void)
-{
+// call every time in MainProcm
+bool MyModel::DrawGLScene(void){
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
 	glMatrixMode(GL_MODELVIEW);				// Select The Modelview Matrix
 	glLoadIdentity();									// Reset The View
 
 	//  TIMING - start
 	clock_t t = clock();
+	
 	// elapsed time in seconds from the last draw
 	double elapsed = double (t - Tstamp) /  (double) CLOCKS_PER_SEC;
+	
 	// elapsed time in milliseconds from the last draw
 	int ms_elapsed = (int) (t - Tstamp);
+
 	// elapsed time in seconds from the beginning of the program
-	this->Full_elapsed = double (t - Tstart) /  (double) CLOCKS_PER_SEC;
+	this->fullElapsed = double (t - Tstart) /  (double) CLOCKS_PER_SEC;
 	this->frameTime += double (t - Tstamp) /  (double) CLOCKS_PER_SEC;
 
 	this->Tstamp = t;
 	//  TIMING - end
 	
-
-
-	//aggiorno la posizione del gioco ogni 10ms (aka lavoro a 120 frame/sec).
-	if (Full_elapsed - LastUpdateTime > 0.01){
-		this->LastUpdateTime = Full_elapsed;
+	//aggiorno la posizione del gioco ogni 10ms 
+	if (fullElapsed - LastUpdateTime > 0.01){
+		this->LastUpdateTime = fullElapsed;
 		updateWorld();
 	}
 		
-
-
 	glDisable(GL_TEXTURE_2D);
 	glPushMatrix();
 	
 	//glBindTexture(GL_TEXTURE_2D, texture[0]);
 	//Background cielo celeste
-  glBegin(GL_QUADS);
+	glBegin(GL_QUADS);
 		glColor3f(0.35, 0.57, 0.984);
 		glVertex3f(Background[0].x, Background[0].y, Background[0].z);
 		glVertex3f(Background[1].x, Background[1].y, Background[1].z);
 		glVertex3f(Background[2].x, Background[2].y, Background[2].z);
 		glVertex3f(Background[3].x, Background[3].y, Background[3].z);
-  glEnd();
+	glEnd();
 
-  //glMatrixMode(GL_MODELVIEW);
-  //glLoadIdentity();
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
 
-  glEnable(GL_TEXTURE_2D);
-  //disegna la texture subito dopo
+	glEnable(GL_TEXTURE_2D);
+	//disegna la texture subito dopo
   
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glBindTexture(GL_TEXTURE_2D, texture[0]);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
 
-  //"pulisco" il colore base"
-  glColor3f(1.0, 1.0, 1.0);
-  // Terreno
+	//"pulisco" il colore base"
+	glColor3f(1.0, 1.0, 1.0);
+  
+	// draw floor
+	this->buildFloor();
 
-  float blockFloorLength = 0.2;
-  int nBlockFloor = 2 / blockFloorLength;
-
-  for (float i = -1; i < 2.5; i += blockFloorLength){
-	  glBegin(GL_QUADS);
-		  
-		  //basso sinistra
-		  glTexCoord2f(Background[0].u, Background[0].v);
-		  glVertex3f(i, Background[0].y, Background[0].z);
-		  
-		  //basso destra
-		  glTexCoord2f(Background[1].u, Background[1].v);
-		  glVertex3f(i + blockFloorLength, Background[1].y, Background[1].z);
-		  
-		  //alto destra
-		  glTexCoord2f(Background[2].u, Background[2].v);
-		  glVertex3f(i + blockFloorLength, Background[1].y + 0.3, Background[0].z);
-		  
-		  //alto sinistra
-		  glTexCoord2f(Background[3].u, Background[3].v);
-		  glVertex3f(i, Background[0].y + 0.3, Background[0].z);
-
-	  glEnd();
-  }
-
-
- //PC add alpha channel
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_ALPHA_TEST);
-  glAlphaFunc(GL_GREATER, 0);
+	//PC add alpha channel
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0);
 
   
-  glBindTexture(GL_TEXTURE_2D, texture[1]);
-  glBegin(GL_QUADS);
+	glBindTexture(GL_TEXTURE_2D, texture[1]);
+	glBegin(GL_QUADS);
 
-	  //basso sinistra
-	  glTexCoord2f(Background[0].u, Background[0].v);
-	  glVertex3f(mario.getLeft(), mario.getDown(), Background[0].z);
-	  //basso destra
-	  glTexCoord2f(Background[1].u, Background[1].v);
-	  glVertex3f(mario.getRight(), mario.getDown(), Background[1].z);
-	  //alto destra
-	  glTexCoord2f(Background[2].u, Background[2].v);
-	  glVertex3f(mario.getRight(), mario.getUp(), Background[0].z);
-	  //alto sinistra
-	  glTexCoord2f(Background[3].u, Background[3].v);
-	  glVertex3f(mario.getLeft(), mario.getUp(), Background[0].z);
+		//basso sinistra
+		glTexCoord2f(Background[0].u, Background[0].v);
+		glVertex3f(mario.getLeft(), mario.getDown(), Background[0].z);
+		
+		//basso destra
+		glTexCoord2f(Background[1].u, Background[1].v);
+		glVertex3f(mario.getRight(), mario.getDown(), Background[1].z);
+		
+		//alto destra
+		glTexCoord2f(Background[2].u, Background[2].v);
+		glVertex3f(mario.getRight(), mario.getUp(), Background[0].z);
+		
+		//alto sinistra
+		glTexCoord2f(Background[3].u, Background[3].v);
+		glVertex3f(mario.getLeft(), mario.getUp(), Background[0].z);
 
-  glEnd();
-  glDisable(GL_BLEND);
-  glDisable(GL_ALPHA_TEST);
+	glEnd();
+	glDisable(GL_BLEND);
+	glDisable(GL_ALPHA_TEST);
 
 
-  //Pacman
-
-  //  Texture for the pacman, Full_elapsed * 19 -> change image every 1/19 sec.
-  //										% 11 -> pacman is contained between f[2] and f[11]
-									//				(9 image + returning back)
-
-  int texF = (int(Full_elapsed * 19) % 19) + 2  ;
-  if (texF > 19) {
-	  texF = 2;
-  }
+	//Pacman texture
+	int pacmanId = (int(fullElapsed * 19) % 19) + 2  ;
+	if (pacmanId > 19) {
+		pacmanId = 2;
+	}
 
   
-  // print pacman picture
-  glBindTexture(GL_TEXTURE_2D, texture[texF]);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_ALPHA_TEST);
-  glAlphaFunc(GL_GREATER, 0);
-  glBegin(GL_QUADS);
+	// PACMAN PRINT
+	glBindTexture(GL_TEXTURE_2D, texture[pacmanId]);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0);
 
-	  //basso sinistra
-	  glTexCoord2f(Background[0].u+0.39, Background[0].v+0.34);
-	  glVertex3f(-1, -0.7, Background[0].z);
-	  //basso destra
-	  glTexCoord2f(Background[1].u-0.38, Background[1].v+0.34);
-	  glVertex3f(-0.7, -0.7, Background[1].z);
-	  //alto destra
-	  glTexCoord2f(Background[2].u-0.38, Background[2].v-0.33);
-	  glVertex3f(-0.7, -0.3, Background[0].z);
-	  //alto sinistra
-	  glTexCoord2f(Background[3].u+0.39, Background[3].v-0.33);
-	  glVertex3f(-1, -0.3, Background[0].z);
+	glBegin(GL_QUADS);
+		
+		//basso sinistra
+		glTexCoord2f(Background[0].u+0.39, Background[0].v+0.34);
+		glVertex3f(-1, -0.7, Background[0].z);
+		
+		//basso destra
+		glTexCoord2f(Background[1].u-0.38, Background[1].v+0.34);
+		glVertex3f(-0.8, -0.7, Background[0].z);
+		
+		//alto destra
+		glTexCoord2f(Background[2].u-0.38, Background[2].v-0.33);
+		glVertex3f(-0.8, -0.45, Background[0].z);
 
-  glEnd();
+		//alto sinistra
+		glTexCoord2f(Background[3].u+0.39, Background[3].v-0.33);
+		glVertex3f(-1, -0.45, Background[0].z);
+
+	glEnd();
  
-  /*
-  //  Texture for the fire, change every 1/19 sec.
-  int texF2 = 2 + ((int( (Full_elapsed*19) )) %26 );
-  glBindTexture(GL_TEXTURE_2D, texture[texF]);
-
-  //  fire geometrical trasformations
-  glMatrixMode(GL_MODELVIEW);				// Select The Modelview Matrix
-	glLoadIdentity();									// Reset The View
-
-  //  circular path from window center. Radious and angular velocity
-  //  in radians as follows
-  double radious = 0.5;
-  double omega = PI / 27.0;  // PI/8 each second
-  double px, py;
-  px = radious * cos(omega * Full_elapsed);
-  py = radious * sin(omega * Full_elapsed);
-  glTranslatef((float) px, (float) py, 0);
-  glScalef(0.30f,0.5f,1);    // 1- scale the fire
-
-  //  fire
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_ALPHA_TEST);
-  glAlphaFunc(GL_GREATER, 0);
-
-  glBegin(GL_QUADS);
-  for(int i = 0; i < 4; i++) {
-		glTexCoord2f(fire[i].u, fire[i].v);
-    glVertex3f(fire[i].x, fire[i].y,  fire[i].z);
-  }
-  glEnd();
-
-  glDisable(GL_BLEND);
-  glDisable(GL_ALPHA_TEST);
-  */
-  
-
-  //  Floating cursor - start
-  /*
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_ALPHA_TEST);
-  glAlphaFunc(GL_GREATER, 0);
-  glMatrixMode(GL_MODELVIEW);				// Select The Modelview Matrix
-	glLoadIdentity();									// Reset The View
-	*/
-  //  Disable texture to see the rectangle size
-  //  The cursor "hot spot" is the center of the rectangle
-  // glDisable(GL_TEXTURE_2D);
- 
-
-	glTranslatef(ClientX2World(cx), ClientY2World(cy), 0);
+ 	glTranslatef(ClientX2World(cx), ClientY2World(cy), 0);
+	
 	// proportional scaling (fixed percentual of window dimension)
 	// if(1) proportional, if(0) fixed
 	if (1) {
@@ -357,15 +288,6 @@ bool MyModel::DrawGLScene(void)
 		float dy = PixToCoord_Y(100);
 		glScalef(dx/2, dy/2,1);
 	}
-
-	/*
-	glBegin(GL_QUADS);
-	for(int i = 0; i < 4; i++) {
-		glTexCoord2f(curs[i].u, curs[i].v);
-	glVertex3f(curs[i].x, fire[i].y,  curs[i].z);
-	}
-	glEnd();
-	*/
 
 	glDisable(GL_BLEND);
 	glDisable(GL_ALPHA_TEST);
@@ -380,35 +302,32 @@ bool MyModel::DrawGLScene(void)
 	glColor3f(1.0f,1.0f,1.0f);
 
 	// Position The Text On The Screen
-	glRasterPos3f(- (float) plx + PixToCoord_X(10), (float) ply-PixToCoord_Y(21),-4);
+	glRasterPos3f(- (float) plx + PixToCoord_X(10), (float) ply - PixToCoord_Y(21), -4);
 
 	// compute fps and write text
 	this->frames++;
 	if( this->frames > 18 ) {
-	
 		this->fps = frames / frameTime;
-		this->frames = 0; this->frameTime = 0;
+		this->frames = 0; 
+		this->frameTime = 0;
 	}
 	
-	this->glPrint("Elapsed time: %6.2f sec.  -  Fps %6.2f - PositionMario x = %d, y = %d", Full_elapsed, fps, mario.getRight(),mario.getUp());
+	// to fix --> see mario.getLeft() per riuscire a capire quando mario va via dalla schermata
+	this->glPrint("Elapsed time: %6.2f sec.  -  Fps %6.2f - PositionMario x = %3f, y = %3f", fullElapsed, fps, mario.getLeft(), mario.getDown());
 	
-	if(this->Full_elapsed < 6) {
+	if(this->fullElapsed < 6) {
 		glRasterPos3f(- (float) plx + PixToCoord_X(10), (float) -ply+PixToCoord_Y(21),-4);
 		this->glPrint("...F2/F3/F4 for sounds");
 	}
 
-	{
-		glRasterPos3f(- (float) plx + PixToCoord_X(10), (float) -ply+PixToCoord_Y(61),-4);
-		this->glPrint("%1d %1d  %s",cx,cy, captured ? "captured" : "Not captured" );
-	}
-
+	glRasterPos3f(- (float) plx + PixToCoord_X(10), (float) -ply+PixToCoord_Y(61),-4);
+	this->glPrint("%1d %1d  %s",cx,cy, captured ? "captured" : "Not captured" );
+	
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
 	return true;
+
 }
 
-
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 //  bitmap fonts
 void MyModel::BuildFont(void)								// Build Our Bitmap Font
 {
@@ -459,4 +378,32 @@ void MyModel::glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 	glListBase(base - 32);								// Sets The Base Character to 32
 	glCallLists(strlen(text), GL_UNSIGNED_BYTE, text);	// Draws The Display List Text
 	glPopAttrib();										// Pops The Display List Bits
+}
+
+void MyModel::buildFloor() {
+	// Terreno
+	float blockFloorLength = 0.2;
+	int nBlockFloor = 2 / blockFloorLength;
+
+	for (float i = -1; i < 2.5; i += blockFloorLength) {
+		glBegin(GL_QUADS);
+
+		//basso sinistra
+		glTexCoord2f(Background[0].u, Background[0].v);
+		glVertex3f(i, Background[0].y, Background[0].z);
+
+		//basso destra
+		glTexCoord2f(Background[1].u, Background[1].v);
+		glVertex3f(i + blockFloorLength, Background[1].y, Background[0].z);
+
+		//alto destra
+		glTexCoord2f(Background[2].u, Background[2].v);
+		glVertex3f(i + blockFloorLength, Background[1].y + 0.3, Background[0].z);
+
+		//alto sinistra
+		glTexCoord2f(Background[3].u, Background[3].v);
+		glVertex3f(i, Background[0].y + 0.3, Background[0].z);
+
+		glEnd();
+	}
 }

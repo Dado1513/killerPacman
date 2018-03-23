@@ -21,8 +21,8 @@ LRESULT	CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);	// Declaration For WndProc
 //  kill the window
 GLvoid KillGLWindow(GLvoid)								// Properly Kill The Window
 {
-	if (Data.fullscreen)									// Are We In Fullscreen Mode?
-	{	ChangeDisplaySettings(NULL,0);			// If So Switch Back To The Desktop
+	if (Data.fullscreen){									// Are We In Fullscreen Mode?
+		ChangeDisplaySettings(NULL,0);			// If So Switch Back To The Desktop
 		ShowCursor(TRUE);								// Show Mouse Pointer
 	}
 
@@ -30,7 +30,8 @@ GLvoid KillGLWindow(GLvoid)								// Properly Kill The Window
 		if (!wglMakeCurrent(NULL,NULL))	{				// Are We Able To Release The DC And RC Contexts?
 			MessageBox(NULL,"Release Of DC And RC Failed.","SHUTDOWN ERROR",MB_OK | MB_ICONINFORMATION);
 		}
-  	if (!wglDeleteContext(Data.hRC)) {			// Are We Able To Delete The RC?
+  	
+		if (!wglDeleteContext(Data.hRC)) {			// Are We Able To Delete The RC?
 			MessageBox(NULL,"Release Rendering Context Failed.","SHUTDOWN ERROR",MB_OK | MB_ICONINFORMATION);
 		}
 		Data.hRC=NULL;										// Set RC To NULL
@@ -47,7 +48,6 @@ GLvoid KillGLWindow(GLvoid)								// Properly Kill The Window
 	}
 
 	if (!UnregisterClass("Basic2D",Data.hInstance)) {		// Are We Able To Unregister Class
-	
 		MessageBox(NULL,"Could Not Unregister Class.","SHUTDOWN ERROR",MB_OK | MB_ICONINFORMATION);
 		Data.hInstance=NULL;									// Set hInstance To NULL
 	}
@@ -222,12 +222,8 @@ BOOL CreateGLWindow(char* title, int width, int height, int bits, bool fullscree
 }
 
 
-///////////////////////////////////////////////////////////
-// callback function
-LRESULT CALLBACK WndProc(	HWND	hWnd,			// Handle For This Window
-							UINT	uMsg,			// Message For This Window
-							WPARAM	wParam,			// Additional Message Information
-							LPARAM	lParam)			// Additional Message Information
+// CALLBACK FUNCTION
+LRESULT CALLBACK WndProc(HWND hWnd, UINT	uMsg, WPARAM	wParam,	LPARAM	lParam)			
 {
 	switch (uMsg){									// Check For Windows Messages
 	
@@ -246,14 +242,9 @@ LRESULT CALLBACK WndProc(	HWND	hWnd,			// Handle For This Window
 			POINTS p;
 			 p = MAKEPOINTS(lParam);
 			 Data.cx = p.x; Data.cy = p.y;
-			/* if( Data.IsInClient(p.x,p.y) ) {
-			   if( !Data.captured ) { Data.captured = true; SetCapture(hWnd); ShowCursor(FALSE); }
-			 } else {
-			   if( Data.captured ) { Data.captured = false; ReleaseCapture(); ShowCursor(TRUE); }
-			 }*/
+			 break;
 		}
-		break;
-
+			
 		case WM_SYSCOMMAND: {							// Intercept System Commands
 		
 			switch (wParam) {							// Check System Calls
@@ -269,40 +260,39 @@ LRESULT CALLBACK WndProc(	HWND	hWnd,			// Handle For This Window
 			return 0;								    // Jump Back
 		}
 
-		case WM_KEYDOWN: {							// Is A Key Being Held Down?
-			Data.keys[wParam] = TRUE;		// If So, Mark It As TRUE
-			return 0;								// Jump Back
+		case WM_KEYDOWN: {					
+			// set key button true
+			Data.keys[wParam] = TRUE;		
+			return 0;								
 		}
 
-		case WM_KEYUP: {								// Has A Key Been Released?
-			Data.keys[wParam] = FALSE;	// If So, Mark It As FALSE
-			return 0;								// Jump Back
+		case WM_KEYUP: {								
+			// relase button
+			Data.keys[wParam] = FALSE;	
+			return 0;								
 		}
 
-		case WM_SIZE: {								// Resize The OpenGL Window
-			Data.ReSizeGLScene(LOWORD(lParam),HIWORD(lParam));  // LoWord=Width, HiWord=Height
-			return 0;								// Jump Back
+		case WM_SIZE: {
+			// LoWord=Width, HiWord=Height
+			Data.ReSizeGLScene(LOWORD(lParam),HIWORD(lParam));  
+			return 0;
 		}
 	}
 
-	// Pass All Unhandled Messages To DefWindowProc
 	return DefWindowProc(hWnd,uMsg,wParam,lParam);
 }
 
-///////////////////////////////////////////////////////////
 //  Main program
-int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
-					HINSTANCE	hPrevInstance,		// Previous Instance
-					LPSTR		lpCmdLine,			// Command Line Parameters
-					int			nCmdShow)			// Window Show State
-{
+int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+
 	MSG		msg;									// Windows Message Structure
 	BOOL	done=FALSE;								// Bool Variable To Exit Loop
 
 	// Ask The User Which Screen Mode They Prefer
 	// Init of the default button depending on Data.fullscreen
 	unsigned long Def = MB_DEFBUTTON1;
-	if( !Data.fullscreen ) Def = MB_DEFBUTTON2;
+	if( !Data.fullscreen ) 
+		Def = MB_DEFBUTTON2;
 	/*
 	if (MessageBox(NULL,"Would You Like To Run In Fullscreen Mode?",
 	"Start FullScreen?",MB_YESNO|MB_ICONQUESTION | Def) == IDNO)
@@ -312,16 +302,17 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 	*/
 	Data.fullscreen=false;  // removed the boring request...
 
-	// Create Our OpenGL Window
+	// Create Our OpenGL Window --> dimensione 640 480
 	if (!CreateGLWindow("Killer Pacman",640,480,16,Data.fullscreen)){
 		return 0;									// Quit If Window Was Not Created
 	}
 
-	//  AUDIO - start
+	//  AUDIO device start
 	AudioDevicePtr device(OpenDevice());
 	if (!device) {
 		return 0;         // failure
 	}
+
 	OutputStreamPtr stream(OpenSound(device, "../Data/ophelia.mp3", true));
 	if (!stream) {
 		return 0;         // failure
@@ -334,23 +325,24 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 	OutputStreamPtr bell(OpenSound(device, "../Data/bell.wav", false));
 	OutputStreamPtr stupid(OpenSound(device, "../Data/stupid.wav", false));
 	//  AUDIO - end
+	
+	// loop main principale
+	while(!done) {
 
-	while(!done) {									// Loop That Runs While done=FALSE
+		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {	
 	
-		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {	// Is There A Message Waiting?
-	
-			if (msg.message==WM_QUIT) {				// Have We Received A Quit Message?
-				done=TRUE;							// If So done=TRUE
-			}else { // If Not, Deal With Window Messages
-				
-				TranslateMessage(&msg);				// Translate The Message
-				DispatchMessage(&msg);				// Dispatch The Message
+			if (msg.message==WM_QUIT) {				
+				done=TRUE;							
+			}else { 
+				TranslateMessage(&msg);	
+				DispatchMessage(&msg);			
 			}
 		}else{
-			// Draw The Scene.  Watch For ESC Key And Quit Messages From DrawGLScene()
-			if ((Data.active && !Data.DrawGLScene()) || Data.keys[VK_ESCAPE]) {	// Active?  Was There A Quit Received?
-				done=TRUE;							// ESC or DrawGLScene Signalled A Quit
-			}else{ // Not Time To Quit, Update Screen
+			
+			// press esc key and drawGLScene() --> code che aaggiorna la pagina
+			if ((Data.active && !Data.DrawGLScene()) || Data.keys[VK_ESCAPE]) {
+				done=TRUE;							
+			}else{ 
 				SwapBuffers(Data.hDC);					// Swap Buffers (Double Buffering)
 			}
 
@@ -367,24 +359,27 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 					return 0;						// Quit If Window Was Not Created
 				}
 			}*/
-			if (Data.keys[VK_F2]) {						// Is F2 Being Pressed?
-				Data.keys[VK_F2]=FALSE;					// If So Make Key FALSE
+
+			// Is F2 Being Pressed?
+			if (Data.keys[VK_F2]) {						
+				Data.keys[VK_F2]=FALSE;	
 				if(explosion->isPlaying()) 
 					explosion->reset();
 				else 
 					explosion->play();
 			}
-
-			if (Data.keys[VK_F3]){					// Is F3 Being Pressed?
-				Data.keys[VK_F3]=FALSE;					// If So Make Key FALSE
+			// Is F3 Being Pressed?
+			if (Data.keys[VK_F3]){					
+				Data.keys[VK_F3]=FALSE;
 				if(bell->isPlaying()) 
 					bell->reset();
 				else 
 					bell->play();
 			}
 
-			if (Data.keys[VK_F4]){						// Is F4 Being Pressed?
-				Data.keys[VK_F4]=FALSE;					// If So Make Key FALSE
+			// Is F4 Being Pressed?
+			if (Data.keys[VK_F4]){						
+				Data.keys[VK_F4]=FALSE;
 				if( stupid->isPlaying() ) 
 					stupid->reset();
 				else 
@@ -394,6 +389,6 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 	}
 
 	// Shutdown
-	KillGLWindow();									// Kill The Window
-	return (msg.wParam);							// Exit The Program
+	KillGLWindow();									
+	return (msg.wParam);							
 }

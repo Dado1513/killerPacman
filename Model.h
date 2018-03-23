@@ -70,7 +70,7 @@ private:
   std::vector<Vertex> fire;         // floating fire
   std::vector<Vertex> curs;         // floating cursor
   clock_t Tstamp, Tstart;
-  double Full_elapsed;  // elapsed time in seconds from the beginning of the program
+  double fullElapsed;  // elapsed time in seconds from the beginning of the program
 
   GLuint	texture[28];			// Storage For 28 Textures!
   GLuint	base;				// Base Display List For The Font Set
@@ -96,7 +96,7 @@ public:
     curs.push_back(Vertex(-1, 1,-4,0,1));
 
     this->Tstart = this->Tstamp = clock();
-    this->Full_elapsed = 0;
+    this->fullElapsed = 0;
     this->frameTime = 0;
 	this->LastUpdateTime = 0;
 
@@ -113,6 +113,7 @@ public:
   void ReSizeGLScene(int width, int height);
   void glPrint(const char *fmt, ...);			// Custom GL "Print" Routine
   void updateWorld();
+  void buildFloor();
 
 
 private:
@@ -120,10 +121,12 @@ private:
   void BuildFont(void);
   void KillFont(void);
   //  Conversion from pixel distance to float X and Y distance
-  inline float PixToCoord_X(int pix)
-    { return ( 2.0f * (float) pix * (float) plx ) / (float) Wwidth; }
-  inline float PixToCoord_Y(int pix)
-    { return ( 2.0f * (float) pix * (float) ply ) / (float) Wheight; }
+  inline float PixToCoord_X(int pix){ 
+	  return ( 2.0f * (float) pix * (float) plx ) / (float) Wwidth; 
+  }
+  inline float PixToCoord_Y(int pix){ 
+	  return ( 2.0f * (float) pix * (float) ply ) / (float) Wheight; 
+  }
   //  conversion from client coordinates to 3d world coordinates
   inline float ClientX2World(int x) {
     return ( (2.0f * float(plx) * float(x) / float(Wwidth)) - float(plx));

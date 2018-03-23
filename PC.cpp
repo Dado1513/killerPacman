@@ -1,8 +1,8 @@
 #include "PC.h"
 
 
-PC::PC(double posX, double posY, double width, double height)
-{
+PC::PC(double posX, double posY, double width, double height){
+	
 	this->posX = posX;
 	this->posY = posY;
 
@@ -17,18 +17,16 @@ PC::PC(double posX, double posY, double width, double height)
 }
 
 
-PC::~PC()
-{
+PC::~PC(){
+
 }
 
 
-double PC::getLeft()
-{
+double PC::getLeft(){
 	return posX - width;
 }
 
-double PC::getRight()
-{
+double PC::getRight(){
 	return posX + width;
 }
 
@@ -51,6 +49,17 @@ void PC::setY(double posY)
 {
 	this->posY = posY;
 }
+
+double PC::getX() 
+{
+	return this->posX;
+}
+
+double PC::getY()
+{
+	return this->posY;
+}
+
 
 void PC::addVelX(int dir)
 {

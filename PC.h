@@ -43,6 +43,8 @@ class PC
 		double getRight();
 		double getUp();
 		double getDown();
+		double getX();
+		double getY();
 
 		void setX(double posX);
 		void setY(double posY);
