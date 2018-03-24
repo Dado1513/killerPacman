@@ -215,6 +215,7 @@ bool MyModel::DrawGLScene(void){
 
 	// only first now 
 	marioId = 0;
+	
 	glBindTexture(GL_TEXTURE_2D, marioTexture[marioId]);
 	glBegin(GL_QUADS);
 
