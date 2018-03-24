@@ -1,4 +1,0 @@
-1) Personaggio che quando è in aria non si possa più muovere o verso destro o verso sinistra ma che la traiettoria 
-sia data dalla velocità alla quale mi stavo muovendo prima del salto
-
-2) Personaggio non oltre gli angoli della finestra
