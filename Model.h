@@ -64,6 +64,10 @@ private:
   double frameTime;     // for fps computation
   double fps;
   double LastUpdateTime;
+  
+  double xStartGame; // coordinate x per l'inizio e la fine del gioco 
+  double xEndGame;
+  bool init;
 
   //  model data
   std::vector<Vertex> Background;   // background
@@ -73,17 +77,23 @@ private:
   double fullElapsed;  // elapsed time in seconds from the beginning of the program
 
   GLuint	texture[28];			// Storage For 28 Textures!
+  GLuint	pacmanTexture[19];
+  GLuint	marioTexture[8];
+
   GLuint	base;				// Base Display List For The Font Set
 public:
   //  methods
   MyModel(): hDC(NULL), hRC (NULL), hWnd (NULL), active (true),
     fullscreen(true), frames(0), fps(0), cursor(true), captured(false) {
-    Background.clear();
+    
+	Background.clear();
+
     Background.push_back(Vertex(-1,-1,-5,0,0));
     Background.push_back(Vertex( 1,-1,-5,1,0));
     Background.push_back(Vertex( 1, 1,-5,1,1));
     Background.push_back(Vertex(-1, 1,-5,0,1));
-    fire.clear();
+    
+	fire.clear();
     fire.push_back(Vertex(-1,-1,-5,0,0));
     fire.push_back(Vertex( 1,-1,-5,1,0));
     fire.push_back(Vertex( 1, 1,-5,1,1));
@@ -99,6 +109,13 @@ public:
     this->fullElapsed = 0;
     this->frameTime = 0;
 	this->LastUpdateTime = 0;
+	
+	// set x start and x end
+	this->xStartGame = -100;
+	this->xEndGame = 100;
+
+	// to build same thing once
+	this->init = true;
 
   }
   ~MyModel() {
@@ -108,14 +125,15 @@ public:
     if( x >= 0 && x < Wwidth && y >= 0 && y < Wheight ) return true;
     return false;
   }
+
   bool DrawGLScene(void);
   bool InitGL(void);
   void ReSizeGLScene(int width, int height);
   void glPrint(const char *fmt, ...);			// Custom GL "Print" Routine
   void updateWorld();
   void buildFloor();
-
-
+  void buildSky();
+  
 private:
   bool LoadGLTextures(void);
   void BuildFont(void);

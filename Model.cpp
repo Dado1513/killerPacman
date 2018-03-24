@@ -39,16 +39,18 @@ bool MyModel::InitGL(void)
 	this->BuildFont();
 
 	
-  // eye    (0,0,0)
-  // center (0,0,-1)
-  // up     (0,1,0)
+	// eye    (0,0,0)
+	// center (0,0,-1)
+	// up     (0,1,0)
 	
-  gluLookAt(-500.0,0.0,0.0, 0.0,0.0,-1.0,  0.0,1.0,0.0);
+	gluLookAt(0.0,0.0,0.0, 0.0,0.0,1.0,  0.0,1.0,0.0);
+
+
 
   return true;										// Initialization Went OK
 }
 
-
+// resize window
 void MyModel::ReSizeGLScene(int width, int height)
 {
 	if (height == 0) 
@@ -60,13 +62,6 @@ void MyModel::ReSizeGLScene(int width, int height)
 
 	glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
 	glLoadIdentity();									// Reset The Projection Matrix
-
-	// orthographic projection
-	// background in [-1, 1] on both x and y
-	// fill th background according to the window aspect ratio
-	// void WINAPI glOrtho( GLdouble left,   GLdouble right,
-	//                      GLdouble bottom, GLdouble top,
-	//                      GLdouble zNear,  GLdouble zFar );
 
 	if( width >= height ) {
 		this->plx = 1.0;
@@ -97,21 +92,30 @@ bool MyModel::LoadGLTextures(void)
 	if(texture[0] == 0) 
 		return false;
 
+	
 	// ToDo Naturalmente devono essere una serie di texture mario si deve muovere 
 	// texture for mario 
-	texture[1] = SOIL_load_OGL_texture("Data/media/mario_test_1.png",SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
-	if (texture[1] == 0) 
-		return false;
-
+	char marioName[200];
+	for (int i = 0; i < 8; i++) {
+		sprintf(marioName, "../Data/media/mario_test_%d.png", i + 1);
+		this->marioTexture[i] = SOIL_load_OGL_texture(marioName, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+		if (marioTexture[i] == 0) {
+			return false;
+		}
+	}
+	
 	
 	//  Load 19 pacman textures (front and back)
 	char pacman[200];
-	for(int i=1; i < 19; i++) {
-	sprintf(pacman,"Data/PacmanSprite/pacman%01d.png",i+1);
-	this->texture[i+1] = SOIL_load_OGL_texture (pacman,	SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,	SOIL_FLAG_INVERT_Y);
-		if(texture[i+1] == 0)
-			return false;
+	for(int i=0; i < 18; i++) {
+		sprintf(pacman,"../Data/PacmanSprite/pacman%01d.png",i+1);
+		this->pacmanTexture[i] = SOIL_load_OGL_texture (pacman,	SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,	SOIL_FLAG_INVERT_Y);
+			if(pacmanTexture[i] == 0)
+				return false;
 	}
+	this->pacmanTexture[18] = SOIL_load_OGL_texture("../Data/PacmanSprite/pacman_evil_new.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	if (pacmanTexture[18] == 0)
+		return false;
 
 	// Typical Texture Generation Using Data From The Bitmap
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
@@ -143,7 +147,7 @@ void MyModel::updateWorld(){
 
 	//aggiorno la posizione del pc
 	mario.update();
-
+	
 	//NOTA: DA CANCELLARE IN FUTURO
 	//NOTA: simili controlli vanno fatti dove si ha un FPS maggiore.
 	//qui dovrebbe esserci codice relativo alla velocità utente, non collisioni o altro.
@@ -155,23 +159,26 @@ void MyModel::updateWorld(){
 // call every time in MainProcm
 bool MyModel::DrawGLScene(void){
 
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
-	glMatrixMode(GL_MODELVIEW);				// Select The Modelview Matrix
-	glLoadIdentity();									// Reset The View
+	/*
+	glMatrixMode(GL_MODELVIEW);				
+	glLoadIdentity();*/
+	
+	// muove il mondo insieme a mario
+	glMatrixMode(GL_MODELVIEW);				
+	glLoadIdentity(); // per muovere il mondo insieme a mario						
+	glTranslatef(-(float)mario.getLeft(), 0, 0);
 
 	//  TIMING - start
 	clock_t t = clock();
-	
 	// elapsed time in seconds from the last draw
 	double elapsed = double (t - Tstamp) /  (double) CLOCKS_PER_SEC;
-	
 	// elapsed time in milliseconds from the last draw
 	int ms_elapsed = (int) (t - Tstamp);
-
 	// elapsed time in seconds from the beginning of the program
 	this->fullElapsed = double (t - Tstart) /  (double) CLOCKS_PER_SEC;
 	this->frameTime += double (t - Tstamp) /  (double) CLOCKS_PER_SEC;
-
 	this->Tstamp = t;
 	//  TIMING - end
 	
@@ -180,44 +187,35 @@ bool MyModel::DrawGLScene(void){
 		this->LastUpdateTime = fullElapsed;
 		updateWorld();
 	}
-		
-	glDisable(GL_TEXTURE_2D);
-	glPushMatrix();
 	
-	//glBindTexture(GL_TEXTURE_2D, texture[0]);
+	
+	// può essere disegnato una sola volta non tutte le volte
 	//Background cielo celeste
-	glBegin(GL_QUADS);
-		glColor3f(0.35, 0.57, 0.984);
-		glVertex3f(Background[0].x, Background[0].y, Background[0].z);
-		glVertex3f(Background[1].x, Background[1].y, Background[1].z);
-		glVertex3f(Background[2].x, Background[2].y, Background[2].z);
-		glVertex3f(Background[3].x, Background[3].y, Background[3].z);
-	glEnd();
-
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
-
+	buildSky();
+	
 	glEnable(GL_TEXTURE_2D);
 	//disegna la texture subito dopo
-  
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
-
 	//"pulisco" il colore base"
 	glColor3f(1.0, 1.0, 1.0);
-  
 	// draw floor
 	this->buildFloor();
-
+	
 	//PC add alpha channel
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0);
+	int marioId = (int(fullElapsed * 19) % 8);
+	if (marioId > 7) {
+		marioId = 0;
+	}
 
-  
-	glBindTexture(GL_TEXTURE_2D, texture[1]);
+	// only first now 
+	marioId = 0;
+	glBindTexture(GL_TEXTURE_2D, marioTexture[marioId]);
 	glBegin(GL_QUADS);
 
 		//basso sinistra
@@ -242,21 +240,19 @@ bool MyModel::DrawGLScene(void){
 
 
 	//Pacman texture
-	int pacmanId = (int(fullElapsed * 19) % 19) + 2  ;
-	if (pacmanId > 19) {
-		pacmanId = 2;
+	int pacmanId = (int(fullElapsed * 19) % 18)  ;
+	if (pacmanId > 18) {
+		pacmanId = 0;
 	}
 
   
 	// PACMAN PRINT
-	glBindTexture(GL_TEXTURE_2D, texture[pacmanId]);
+	glBindTexture(GL_TEXTURE_2D, pacmanTexture[pacmanId]);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0);
-
 	glBegin(GL_QUADS);
-		
 		//basso sinistra
 		glTexCoord2f(Background[0].u+0.39, Background[0].v+0.34);
 		glVertex3f(-1, -0.7, Background[0].z);
@@ -272,9 +268,7 @@ bool MyModel::DrawGLScene(void){
 		//alto sinistra
 		glTexCoord2f(Background[3].u+0.39, Background[3].v-0.33);
 		glVertex3f(-1, -0.45, Background[0].z);
-
 	glEnd();
- 
  	glTranslatef(ClientX2World(cx), ClientY2World(cy), 0);
 	
 	// proportional scaling (fixed percentual of window dimension)
@@ -313,7 +307,7 @@ bool MyModel::DrawGLScene(void){
 	}
 	
 	// to fix --> see mario.getLeft() per riuscire a capire quando mario va via dalla schermata
-	this->glPrint("Elapsed time: %6.2f sec.  -  Fps %6.2f - PositionMario x = %3f, y = %3f", fullElapsed, fps, mario.getLeft(), mario.getDown());
+	this->glPrint("Elapsed time: %6.2f sec.  -  Fps %6.2f - PositionMario x = %6.2f, y = %6.2f", fullElapsed, fps, mario.getLeft(), mario.getDown());
 	
 	if(this->fullElapsed < 6) {
 		glRasterPos3f(- (float) plx + PixToCoord_X(10), (float) -ply+PixToCoord_Y(21),-4);
@@ -381,11 +375,13 @@ void MyModel::glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 }
 
 void MyModel::buildFloor() {
+
 	// Terreno
 	float blockFloorLength = 0.2;
 	int nBlockFloor = 2 / blockFloorLength;
-
-	for (float i = -1; i < 2.5; i += blockFloorLength) {
+	//float lengthGame = 8.5; // lunghezza che vogliamo dare al mondo
+	// 2.5 vertice x fino al quale disegnare il background
+	for (float i = this->xStartGame; i < this->xEndGame; i += blockFloorLength) {
 		glBegin(GL_QUADS);
 
 		//basso sinistra
@@ -407,3 +403,24 @@ void MyModel::buildFloor() {
 		glEnd();
 	}
 }
+
+void MyModel::buildSky() {
+		glDisable(GL_TEXTURE_2D);
+		glPushMatrix();
+		// può essere disegnato una sola volta non tutte le volte
+		//Background cielo celeste
+		glBegin(GL_QUADS);
+			// colore da disegnare
+			glColor3f(0.35, 0.57, 0.984);
+			// vertice in basso a sinistra
+			glVertex3f(Background[0].x +this->xStartGame, Background[0].y, Background[0].z);
+			// in basso  a destra
+			glVertex3f(Background[1].x + this->xEndGame, Background[1].y, Background[1].z);
+			// in alto a destra
+			glVertex3f(Background[2].x + this->xEndGame, Background[2].y, Background[2].z);
+			// in basso  a sinistra
+			glVertex3f(Background[3].x + this->xStartGame, Background[3].y, Background[3].z);
+		glEnd();
+
+}
+

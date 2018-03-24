@@ -303,7 +303,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	Data.fullscreen=false;  // removed the boring request...
 
 	// Create Our OpenGL Window --> dimensione 640 480
-	if (!CreateGLWindow("Killer Pacman",640,480,16,Data.fullscreen)){
+	if (!CreateGLWindow("Killer Pacman", 1280, 720, 16,Data.fullscreen)){
 		return 0;									// Quit If Window Was Not Created
 	}
 
@@ -346,19 +346,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 				SwapBuffers(Data.hDC);					// Swap Buffers (Double Buffering)
 			}
 
-			//  Removed the F1 key: no fullscreen!
-			/*
-			if (Data.keys[VK_F1])						// Is F1 Being Pressed?
-			{
-				Data.keys[VK_F1]=FALSE;					// If So Make Key FALSE
-				KillGLWindow();						// Kill Our Current Window
-				Data.fullscreen=!Data.fullscreen;				// Toggle Fullscreen / Windowed Mode
-				// Recreate Our OpenGL Window
-				if (!CreateGLWindow("Basic 2D game skeleton",640,480,16,Data.fullscreen))
-				{
-					return 0;						// Quit If Window Was Not Created
-				}
-			}*/
+			
 
 			// Is F2 Being Pressed?
 			if (Data.keys[VK_F2]) {						

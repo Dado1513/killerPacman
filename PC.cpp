@@ -70,8 +70,7 @@ void PC::addVelX(int dir)
 			velX = 0;
 		if (velX < 0.008)
 			velX = velX + 0.00015;
-	}
-	else{
+	} else{
 		//direzione sinistra
 		state = 2;
 		if (velX > 0)
