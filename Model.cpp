@@ -167,7 +167,8 @@ bool MyModel::DrawGLScene(void){
 	
 	// muove il mondo insieme a mario
 	glMatrixMode(GL_MODELVIEW);				
-	glLoadIdentity(); // per muovere il mondo insieme a mario						
+	glLoadIdentity(); 
+	//per muovere il mondo insieme a mario						
 	glTranslatef(-(float)mario.getLeft(), 0, 0);
 
 	//  TIMING - start
@@ -221,7 +222,7 @@ bool MyModel::DrawGLScene(void){
 
 		//basso sinistra
 		glTexCoord2f(Background[0].u, Background[0].v);
-		glVertex3f(mario.getLeft(), mario.getDown(), Background[0].z);
+		glVertex3f(mario.getLeft(), mario.getDown(), Background[1].z);
 		
 		//basso destra
 		glTexCoord2f(Background[1].u, Background[1].v);
@@ -229,11 +230,11 @@ bool MyModel::DrawGLScene(void){
 		
 		//alto destra
 		glTexCoord2f(Background[2].u, Background[2].v);
-		glVertex3f(mario.getRight(), mario.getUp(), Background[0].z);
+		glVertex3f(mario.getRight(), mario.getUp(), Background[1].z);
 		
 		//alto sinistra
 		glTexCoord2f(Background[3].u, Background[3].v);
-		glVertex3f(mario.getLeft(), mario.getUp(), Background[0].z);
+		glVertex3f(mario.getLeft(), mario.getUp(), Background[1].z);
 
 	glEnd();
 	glDisable(GL_BLEND);
@@ -241,12 +242,12 @@ bool MyModel::DrawGLScene(void){
 
 
 	//Pacman texture
-	int pacmanId = (int(fullElapsed * 19) % 18)  ;
+	int pacmanId = (int(fullElapsed * 19) % 18);
 	if (pacmanId > 18) {
 		pacmanId = 0;
 	}
 
-  
+	//pacmanId = 18;
 	// PACMAN PRINT
 	glBindTexture(GL_TEXTURE_2D, pacmanTexture[pacmanId]);
 	glEnable(GL_BLEND);
@@ -254,21 +255,27 @@ bool MyModel::DrawGLScene(void){
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0);
 	glBegin(GL_QUADS);
+		
 		//basso sinistra
 		glTexCoord2f(Background[0].u+0.39, Background[0].v+0.34);
+		//glTexCoord2f(Background[0].u, Background[0].v);
 		glVertex3f(-1, -0.7, Background[0].z);
 		
 		//basso destra
 		glTexCoord2f(Background[1].u-0.38, Background[1].v+0.34);
+		//glTexCoord2f(Background[1].u, Background[1].v);
 		glVertex3f(-0.8, -0.7, Background[0].z);
 		
 		//alto destra
 		glTexCoord2f(Background[2].u-0.38, Background[2].v-0.33);
+		//glTexCoord2f(Background[2].u, Background[2].v);
 		glVertex3f(-0.8, -0.45, Background[0].z);
 
 		//alto sinistra
 		glTexCoord2f(Background[3].u+0.39, Background[3].v-0.33);
+		//glTexCoord2f(Background[3].u, Background[3].v);
 		glVertex3f(-1, -0.45, Background[0].z);
+		
 	glEnd();
  	glTranslatef(ClientX2World(cx), ClientY2World(cy), 0);
 	
