@@ -26,6 +26,10 @@ double PC::getLeft(){
 	return posX - width;
 }
 
+double PC::getVelX() {
+	return velX;
+}
+
 double PC::getRight(){
 	return posX + width;
 }
@@ -66,17 +70,23 @@ void PC::addVelX(int dir)
 	if (dir == 1){
 		//direzione destra
 		state = 1;
-		if (velX < 0)
+		if (velX < 0) {
 			velX = 0;
-		if (velX < 0.008)
+		}
+		// ridotto la velocità per provenire tremolio del personaggio
+		if (velX < 0.003) {
 			velX = velX + 0.00015;
+			
+		}
 	} else{
 		//direzione sinistra
 		state = 2;
-		if (velX > 0)
+		if (velX > 0) {
 			velX = 0;
-		if (velX > -0.008)
+		}
+		if (velX > -0.003) {
 			velX = velX - 0.00015;
+		}
 	}
 }
 void PC::stopX()

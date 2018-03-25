@@ -15,6 +15,7 @@
 
 #include "PC.h"
 
+// x iniziale, y iniziale, spessore e altezza personaggio
 PC mario(-0.65, -0.6, 0.05, 0.1);
 
 
@@ -38,7 +39,6 @@ bool MyModel::InitGL(void)
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
 	this->BuildFont();
 
-	
 	// eye    (0,0,0)
 	// center (0,0,-1)
 	// up     (0,1,0)
@@ -103,7 +103,17 @@ bool MyModel::LoadGLTextures(void)
 			return false;
 		}
 	}
-	
+	/*
+	char badGuy[200];
+	for (int i = 0; i < 43; i++) {
+		sprintf(badGuy, "../Data/badGuyRun/1_%03d.png", i );
+		//OutputDebugString(badGuy);
+		this->marioTexture[i] = SOIL_load_OGL_texture(badGuy, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+		if (marioTexture[i] == 0) {
+			return false;
+		}
+	}
+	*/
 	
 	//  Load 19 pacman textures (front and back)
 	char pacman[200];
@@ -127,11 +137,11 @@ bool MyModel::LoadGLTextures(void)
 
 
 void MyModel::updateWorld(){
-
-	if (this->keys[39])
+	if (this->keys[39]) {
 		// mario si deve spostare a destra
 		mario.addVelX(1);
-	else{
+		
+	}else{
 
 		if (this->keys[37])
 			// mario si deve spostare a sinistra
@@ -140,19 +150,24 @@ void MyModel::updateWorld(){
 			mario.stopX();
 	}
 
+	
 	//BUG!! Il salto funziona solo se mi sto muovendo verso destra!!
 	if (this->keys[38]){
 		mario.jump();
+
 	}
 
-	//aggiorno la posizione del pc
+	// update mario position
 	mario.update();
-	
+
 	//NOTA: DA CANCELLARE IN FUTURO
 	//NOTA: simili controlli vanno fatti dove si ha un FPS maggiore.
 	//qui dovrebbe esserci codice relativo alla velocità utente, non collisioni o altro.
-	if (mario.getDown() < -0.7)
+	if (mario.getDown() < -0.7) {
 		mario.stopY();
+
+	}
+
 }
 
 
@@ -183,12 +198,12 @@ bool MyModel::DrawGLScene(void){
 	this->Tstamp = t;
 	//  TIMING - end
 	
-	//aggiorno la posizione del gioco ogni 10ms 
-	if (fullElapsed - LastUpdateTime > 0.01){
+	//aggiorno la posizione del gioco ogni 1ms per prevenire il tremolio --> riduco la valocità massima  
+	if (fullElapsed - LastUpdateTime > 0.001){
 		this->LastUpdateTime = fullElapsed;
+
 		updateWorld();
 	}
-	
 	
 	// può essere disegnato una sola volta non tutte le volte
 	//Background cielo celeste
@@ -209,8 +224,10 @@ bool MyModel::DrawGLScene(void){
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0);
-	int marioId = (int(fullElapsed * 19) % 8);
-	if (marioId > 7) {
+
+	int lengthMarioTexture = (sizeof(marioTexture) / sizeof(*marioTexture) - 1);
+	int marioId = (int(fullElapsed * 10) % lengthMarioTexture);
+	if (marioId > lengthMarioTexture) {
 		marioId = 0;
 	}
 
@@ -240,10 +257,10 @@ bool MyModel::DrawGLScene(void){
 	glDisable(GL_BLEND);
 	glDisable(GL_ALPHA_TEST);
 
-
+	int lengthPacman = (sizeof(pacmanTexture) / sizeof(*pacmanTexture)) - 1;
 	//Pacman texture
-	int pacmanId = (int(fullElapsed * 19) % 18);
-	if (pacmanId > 18) {
+	int pacmanId = (int(fullElapsed * 19) % lengthPacman);
+	if (pacmanId > lengthPacman) {
 		pacmanId = 0;
 	}
 
@@ -254,30 +271,34 @@ bool MyModel::DrawGLScene(void){
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0);
-	glBegin(GL_QUADS);
-		
+	
+	glBegin(GL_QUADS);	
 		//basso sinistra
 		glTexCoord2f(Background[0].u+0.39, Background[0].v+0.34);
 		//glTexCoord2f(Background[0].u, Background[0].v);
 		glVertex3f(-1, -0.7, Background[0].z);
+		//glVertex3f(mario.getLeft() -0.5, -0.7, Background[0].z);
 		
 		//basso destra
 		glTexCoord2f(Background[1].u-0.38, Background[1].v+0.34);
 		//glTexCoord2f(Background[1].u, Background[1].v);
 		glVertex3f(-0.8, -0.7, Background[0].z);
+		//glVertex3f(mario.getLeft() -0.3, -0.7, Background[0].z);
 		
 		//alto destra
 		glTexCoord2f(Background[2].u-0.38, Background[2].v-0.33);
 		//glTexCoord2f(Background[2].u, Background[2].v);
 		glVertex3f(-0.8, -0.45, Background[0].z);
+		//glVertex3f(mario.getLeft() - 0.3, -0.45, Background[0].z);
 
 		//alto sinistra
 		glTexCoord2f(Background[3].u+0.39, Background[3].v-0.33);
 		//glTexCoord2f(Background[3].u, Background[3].v);
 		glVertex3f(-1, -0.45, Background[0].z);
-		
+		//glVertex3f(mario.getLeft()-0.5, -0.45, Background[0].z);
+
 	glEnd();
- 	glTranslatef(ClientX2World(cx), ClientY2World(cy), 0);
+ 	//glTranslatef(ClientX2World(cx), ClientY2World(cy), 0);
 	
 	// proportional scaling (fixed percentual of window dimension)
 	// if(1) proportional, if(0) fixed
@@ -315,7 +336,7 @@ bool MyModel::DrawGLScene(void){
 	}
 	
 	// to fix --> see mario.getLeft() per riuscire a capire quando mario va via dalla schermata
-	this->glPrint("Elapsed time: %6.2f sec.  -  Fps %6.2f - PositionMario x = %6.2f, y = %6.2f", fullElapsed, fps, mario.getLeft(), mario.getDown());
+	this->glPrint("Elapsed time: %6.2f sec.  -  Fps %6.2f - PositionMario x = %6.2f, y = %6.2f, velocity %6.5f", fullElapsed, fps, mario.getLeft(), mario.getDown(), mario.getVelX());
 	
 	if(this->fullElapsed < 6) {
 		glRasterPos3f(- (float) plx + PixToCoord_X(10), (float) -ply+PixToCoord_Y(21),-4);

@@ -54,7 +54,7 @@ class PC
 		void stopX();
 		void jump();
 		void stopY();
-
+		double getVelX();
 		//aggiorno la posizione di mario
 		void update();
 };
