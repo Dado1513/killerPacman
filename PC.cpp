@@ -21,6 +21,9 @@ PC::~PC(){
 
 }
 
+int PC::getState() {
+	return this->state;
+}
 
 double PC::getLeft(){
 	return posX - width;

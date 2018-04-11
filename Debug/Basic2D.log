@@ -1,2 +1,24 @@
-﻿  PC.cpp
-  Basic2D.vcxproj -> C:\Users\caput\Dropbox\ProjectUniversity\Killer Pacman\GameKillerPacman\Debug\killerPacman.exe
+﻿  Model.cpp
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(253): warning C4244: 'argomento': conversione da 'double' a 'GLfloat'. Possibile perdita di dati.
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(257): warning C4244: 'argomento': conversione da 'double' a 'GLfloat'. Possibile perdita di dati.
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(261): warning C4244: 'argomento': conversione da 'double' a 'GLfloat'. Possibile perdita di dati.
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(265): warning C4244: 'argomento': conversione da 'double' a 'GLfloat'. Possibile perdita di dati.
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(288): warning C4244: 'argomento': conversione da 'double' a 'GLfloat'. Possibile perdita di dati.
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(290): warning C4305: 'argomento': troncamento da 'double' a 'GLfloat'
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(294): warning C4244: 'argomento': conversione da 'double' a 'GLfloat'. Possibile perdita di dati.
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(296): warning C4305: 'argomento': troncamento da 'double' a 'GLfloat'
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(300): warning C4244: 'argomento': conversione da 'double' a 'GLfloat'. Possibile perdita di dati.
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(302): warning C4305: 'argomento': troncamento da 'double' a 'GLfloat'
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(306): warning C4244: 'argomento': conversione da 'double' a 'GLfloat'. Possibile perdita di dati.
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(308): warning C4305: 'argomento': troncamento da 'double' a 'GLfloat'
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(420): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(421): warning C4244: 'inizializzazione': conversione da 'float' a 'int'. Possibile perdita di dati.
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(424): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(437): warning C4244: 'argomento': conversione da 'double' a 'GLfloat'. Possibile perdita di dati.
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(441): warning C4244: 'argomento': conversione da 'double' a 'GLfloat'. Possibile perdita di dati.
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(454): warning C4305: 'argomento': troncamento da 'double' a 'GLfloat'
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(456): warning C4244: 'argomento': conversione da 'double' a 'GLfloat'. Possibile perdita di dati.
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(458): warning C4244: 'argomento': conversione da 'double' a 'GLfloat'. Possibile perdita di dati.
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(460): warning C4244: 'argomento': conversione da 'double' a 'GLfloat'. Possibile perdita di dati.
+c:\users\caput\dropbox\killer pacman\gamekillerpacman\basic2d\model.cpp(462): warning C4244: 'argomento': conversione da 'double' a 'GLfloat'. Possibile perdita di dati.
+  Basic2D.vcxproj -> C:\Users\caput\Dropbox\Killer Pacman\GameKillerPacman\Debug\killerPacman.exe

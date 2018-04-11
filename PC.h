@@ -45,7 +45,7 @@ class PC
 		double getDown();
 		double getX();
 		double getY();
-
+		int getState();
 		void setX(double posX);
 		void setY(double posY);
 

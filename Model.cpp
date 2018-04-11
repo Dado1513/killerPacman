@@ -198,10 +198,15 @@ bool MyModel::DrawGLScene(void){
 	this->Tstamp = t;
 	//  TIMING - end
 	
+
+	
+
+
 	//aggiorno la posizione del gioco ogni 1ms per prevenire il tremolio --> riduco la valocità massima  
+	
+	// se minore di 0.001 --> potremmmo non disegno niente
 	if (fullElapsed - LastUpdateTime > 0.001){
 		this->LastUpdateTime = fullElapsed;
-
 		updateWorld();
 	}
 	
@@ -233,8 +238,14 @@ bool MyModel::DrawGLScene(void){
 
 	// only first now 
 	marioId = 0;
-	
+
 	glBindTexture(GL_TEXTURE_2D, marioTexture[marioId]);
+	if (mario.getState() == -1) {
+		// mettere codice per ruotare la texture a sinistra
+	}
+	else {
+		// qua destra
+	}
 	glBegin(GL_QUADS);
 
 		//basso sinistra
@@ -327,7 +338,7 @@ bool MyModel::DrawGLScene(void){
 	// Position The Text On The Screen
 	glRasterPos3f(- (float) plx + PixToCoord_X(10), (float) ply - PixToCoord_Y(21), -4);
 
-	// compute fps and write text
+	// compute fps and write fr
 	this->frames++;
 	if( this->frames > 18 ) {
 		this->fps = frames / frameTime;
@@ -407,7 +418,6 @@ void MyModel::buildFloor() {
 
 	// Terreno
 	float blockFloorLength = 0.2;
-	int nBlockFloor = 2 / blockFloorLength;
 	//float lengthGame = 8.5; // lunghezza che vogliamo dare al mondo
 	// 2.5 vertice x fino al quale disegnare il background
 	for (float i = this->xStartGame; i < this->xEndGame; i += blockFloorLength) {
