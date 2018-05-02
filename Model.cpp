@@ -139,13 +139,13 @@ bool MyModel::LoadGLTextures(void)
 void MyModel::updateWorld(){
 	if (this->keys[39]) {
 		// mario si deve spostare a destra
-		mario.addVelX(1);
+		mario.addVelX("right");
 		
 	}else{
 
 		if (this->keys[37])
 			// mario si deve spostare a sinistra
-			mario.addVelX(-1);
+			mario.addVelX("left");
 		else
 			mario.stopX();
 	}
@@ -198,10 +198,6 @@ bool MyModel::DrawGLScene(void){
 	this->Tstamp = t;
 	//  TIMING - end
 	
-
-	
-
-
 	//aggiorno la posizione del gioco ogni 1ms per prevenire il tremolio --> riduco la valocità massima  
 	
 	// se minore di 0.001 --> potremmmo non disegno niente
@@ -224,107 +220,12 @@ bool MyModel::DrawGLScene(void){
 	// draw floor
 	this->buildFloor();
 	
-	//PC add alpha channel
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0);
-
-	int lengthMarioTexture = (sizeof(marioTexture) / sizeof(*marioTexture) - 1);
-	int marioId = (int(fullElapsed * 10) % lengthMarioTexture);
-	if (marioId > lengthMarioTexture) {
-		marioId = 0;
-	}
-
-	// only first now 
-	marioId = 0;
-
-	glBindTexture(GL_TEXTURE_2D, marioTexture[marioId]);
-	if (mario.getState() == -1) {
-		// mettere codice per ruotare la texture a sinistra
-	}
-	else {
-		// qua destra
-	}
-	glBegin(GL_QUADS);
-
-		//basso sinistra
-		glTexCoord2f(Background[0].u, Background[0].v);
-		glVertex3f(mario.getLeft(), mario.getDown(), Background[1].z);
-		
-		//basso destra
-		glTexCoord2f(Background[1].u, Background[1].v);
-		glVertex3f(mario.getRight(), mario.getDown(), Background[1].z);
-		
-		//alto destra
-		glTexCoord2f(Background[2].u, Background[2].v);
-		glVertex3f(mario.getRight(), mario.getUp(), Background[1].z);
-		
-		//alto sinistra
-		glTexCoord2f(Background[3].u, Background[3].v);
-		glVertex3f(mario.getLeft(), mario.getUp(), Background[1].z);
-
-	glEnd();
-	glDisable(GL_BLEND);
-	glDisable(GL_ALPHA_TEST);
-
-	int lengthPacman = (sizeof(pacmanTexture) / sizeof(*pacmanTexture)) - 1;
-	//Pacman texture
-	int pacmanId = (int(fullElapsed * 19) % lengthPacman);
-	if (pacmanId > lengthPacman) {
-		pacmanId = 0;
-	}
-
-	//pacmanId = 18;
-	// PACMAN PRINT
-	glBindTexture(GL_TEXTURE_2D, pacmanTexture[pacmanId]);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0);
+	// draw mario
+	this->buildMario();
 	
-	glBegin(GL_QUADS);	
-		//basso sinistra
-		glTexCoord2f(Background[0].u+0.39, Background[0].v+0.34);
-		//glTexCoord2f(Background[0].u, Background[0].v);
-		glVertex3f(-1, -0.7, Background[0].z);
-		//glVertex3f(mario.getLeft() -0.5, -0.7, Background[0].z);
-		
-		//basso destra
-		glTexCoord2f(Background[1].u-0.38, Background[1].v+0.34);
-		//glTexCoord2f(Background[1].u, Background[1].v);
-		glVertex3f(-0.8, -0.7, Background[0].z);
-		//glVertex3f(mario.getLeft() -0.3, -0.7, Background[0].z);
-		
-		//alto destra
-		glTexCoord2f(Background[2].u-0.38, Background[2].v-0.33);
-		//glTexCoord2f(Background[2].u, Background[2].v);
-		glVertex3f(-0.8, -0.45, Background[0].z);
-		//glVertex3f(mario.getLeft() - 0.3, -0.45, Background[0].z);
-
-		//alto sinistra
-		glTexCoord2f(Background[3].u+0.39, Background[3].v-0.33);
-		//glTexCoord2f(Background[3].u, Background[3].v);
-		glVertex3f(-1, -0.45, Background[0].z);
-		//glVertex3f(mario.getLeft()-0.5, -0.45, Background[0].z);
-
-	glEnd();
- 	//glTranslatef(ClientX2World(cx), ClientY2World(cy), 0);
+	// draw pacman
+	this->buildPacman();
 	
-	// proportional scaling (fixed percentual of window dimension)
-	// if(1) proportional, if(0) fixed
-	if (1) {
-		glScalef(0.10f, 0.10f, 1);
-	}
-	//  Fixed scaling, alwais 100 pixels width/height
-	else {
-		float dx = PixToCoord_X(100);
-		float dy = PixToCoord_Y(100);
-		glScalef(dx/2, dy/2,1);
-	}
-
-	glDisable(GL_BLEND);
-	glDisable(GL_ALPHA_TEST);
 	//  Floating cursor - end
 
 	//  Some text
@@ -412,6 +313,134 @@ void MyModel::glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 	glListBase(base - 32);								// Sets The Base Character to 32
 	glCallLists(strlen(text), GL_UNSIGNED_BYTE, text);	// Draws The Display List Text
 	glPopAttrib();										// Pops The Display List Bits
+}
+
+
+void MyModel::buildPacman() {
+	int lengthPacman = (sizeof(pacmanTexture) / sizeof(*pacmanTexture)) - 1;
+	//Pacman texture
+	int pacmanId = (int(fullElapsed * 19) % lengthPacman);
+	if (pacmanId > lengthPacman) {
+		pacmanId = 0;
+	}
+
+	//pacmanId = 18;
+	// PACMAN PRINT
+	glBindTexture(GL_TEXTURE_2D, pacmanTexture[pacmanId]);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0);
+
+	glBegin(GL_QUADS);
+	//basso sinistra
+	glTexCoord2f(Background[0].u + 0.39, Background[0].v + 0.34);
+	//glTexCoord2f(Background[0].u, Background[0].v);
+	glVertex3f(-1, -0.7, Background[0].z);
+	//glVertex3f(mario.getLeft() -0.5, -0.7, Background[0].z);
+
+	//basso destra
+	glTexCoord2f(Background[1].u - 0.38, Background[1].v + 0.34);
+	//glTexCoord2f(Background[1].u, Background[1].v);
+	glVertex3f(-0.8, -0.7, Background[0].z);
+	//glVertex3f(mario.getLeft() -0.3, -0.7, Background[0].z);
+
+	//alto destra
+	glTexCoord2f(Background[2].u - 0.38, Background[2].v - 0.33);
+	//glTexCoord2f(Background[2].u, Background[2].v);
+	glVertex3f(-0.8, -0.45, Background[0].z);
+	//glVertex3f(mario.getLeft() - 0.3, -0.45, Background[0].z);
+
+	//alto sinistra
+	glTexCoord2f(Background[3].u + 0.39, Background[3].v - 0.33);
+	//glTexCoord2f(Background[3].u, Background[3].v);
+	glVertex3f(-1, -0.45, Background[0].z);
+	//glVertex3f(mario.getLeft()-0.5, -0.45, Background[0].z);
+
+	glEnd();
+
+	//glTranslatef(ClientX2World(cx), ClientY2World(cy), 0);
+
+	// proportional scaling (fixed percentual of window dimension)
+	// if(1) proportional, if(0) fixed
+	if (1) {
+		glScalef(0.10f, 0.10f, 1);
+	}
+	//  Fixed scaling, alwais 100 pixels width/height
+	else {
+		float dx = PixToCoord_X(100);
+		float dy = PixToCoord_Y(100);
+		glScalef(dx / 2, dy / 2, 1);
+	}
+
+	glDisable(GL_BLEND);
+	glDisable(GL_ALPHA_TEST);
+
+
+}
+void MyModel::buildMario() {
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0);
+
+	int lengthMarioTexture = (sizeof(marioTexture) / sizeof(*marioTexture) - 1);
+	int marioId = (int(fullElapsed * 10) % lengthMarioTexture);
+	if (marioId > lengthMarioTexture) {
+		marioId = 0;
+	}
+
+	// only first now 
+	marioId = 0;
+
+	glBindTexture(GL_TEXTURE_2D, marioTexture[marioId]);
+
+	glBegin(GL_QUADS);
+	if (std::strcmp(mario.getState().c_str(), "left") == 0
+		|| std::strcmp(mario.getState().c_str(), "stopLeft") == 0
+		|| std::strcmp(mario.getState().c_str(), "upLeft") == 0) {
+		// cambio i punti di ancoraggio della texture cosi facendo la ruoto
+
+		//basso destra
+		glTexCoord2f(Background[1].u, Background[1].v);
+		glVertex3f(mario.getLeft(), mario.getDown(), Background[1].z);
+
+		//basso sinistra
+		glTexCoord2f(Background[0].u, Background[0].v);
+		glVertex3f(mario.getRight(), mario.getDown(), Background[1].z);
+
+		//alto sinistra
+		glTexCoord2f(Background[3].u, Background[3].v);
+		glVertex3f(mario.getRight(), mario.getUp(), Background[1].z);
+
+		//alto destra
+		glTexCoord2f(Background[2].u, Background[2].v);
+		glVertex3f(mario.getLeft(), mario.getUp(), Background[1].z);
+	}
+	else {
+
+		//basso sinistra
+		glTexCoord2f(Background[0].u, Background[0].v);
+		glVertex3f(mario.getLeft(), mario.getDown(), Background[1].z);
+
+		//basso destra
+		glTexCoord2f(Background[1].u, Background[1].v);
+		glVertex3f(mario.getRight(), mario.getDown(), Background[1].z);
+
+		//alto destra
+		glTexCoord2f(Background[2].u, Background[2].v);
+		glVertex3f(mario.getRight(), mario.getUp(), Background[1].z);
+
+		//alto sinistra
+		glTexCoord2f(Background[3].u, Background[3].v);
+		glVertex3f(mario.getLeft(), mario.getUp(), Background[1].z);
+	}
+
+
+	glEnd();
+	glDisable(GL_BLEND);
+	glDisable(GL_ALPHA_TEST);
 }
 
 void MyModel::buildFloor() {

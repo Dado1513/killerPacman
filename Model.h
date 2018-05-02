@@ -126,6 +126,8 @@ class MyModel {
 		void updateWorld();
 		void buildFloor();
 		void buildSky();
+		void buildMario();
+		void buildPacman();
   
 	private:
 		bool LoadGLTextures(void);

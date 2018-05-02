@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 class PC
 {
 	//VARIABILI:
@@ -15,8 +16,13 @@ class PC
 		//velocità corrente del PC
 		double velX;		//corsa
 		double velY;		//salto
-		int state;			//stato del pg.
+		std::string state;			//stato del pg.
 		bool isFalling;		//se il pg sta cadendo, non posso saltare.
+		std::string direction;
+		/*
+			direction = stopLeft == -1, stopRight==0, right==1, left==2, upRight==3, upLeft==4;
+		*/
+
 							//(evito che, se la velocitàY sia 0, si possa fare un doppio salto)
 		/*
 		nota: meglio cambiare gli stati in stringa, in modo che sia più immediato riconoscerli
@@ -45,12 +51,12 @@ class PC
 		double getDown();
 		double getX();
 		double getY();
-		int getState();
+		std::string getState();
 		void setX(double posX);
 		void setY(double posY);
 
 		//gestisco le velocità
-		void addVelX(int dir);
+		void addVelX(std::string dir);
 		void stopX();
 		void jump();
 		void stopY();

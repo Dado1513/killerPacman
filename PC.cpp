@@ -1,5 +1,5 @@
 #include "PC.h"
-
+#include <iostream>
 
 PC::PC(double posX, double posY, double width, double height){
 	
@@ -11,7 +11,7 @@ PC::PC(double posX, double posY, double width, double height){
 
 	this->velX = 0;
 	this->velY = 0;
-	this->state = 0;
+	this->state = "stopRight";
 	this->isFalling = false;
 
 }
@@ -21,7 +21,7 @@ PC::~PC(){
 
 }
 
-int PC::getState() {
+std::string PC::getState() {
 	return this->state;
 }
 
@@ -68,11 +68,11 @@ double PC::getY()
 }
 
 
-void PC::addVelX(int dir)
+void PC::addVelX(std::string dir)
 {
-	if (dir == 1){
+	if (std::strcmp(dir.c_str(),"right")==0){
 		//direzione destra
-		state = 1;
+		state = "right";
 		if (velX < 0) {
 			velX = 0;
 		}
@@ -83,7 +83,7 @@ void PC::addVelX(int dir)
 		}
 	} else{
 		//direzione sinistra
-		state = 2;
+		state = "left";
 		if (velX > 0) {
 			velX = 0;
 		}
@@ -95,12 +95,12 @@ void PC::addVelX(int dir)
 void PC::stopX()
 {
 	//se non sta saltando
-	if (state != 3 || state != 4){
+	if (std::strcmp(state.c_str(), "upLeft") != 0 || std::strcmp(state.c_str(), "upRight") != 0){
 		//posizione vista
-		if (state == 2)
-			state = -1;
-		if (state == 1)
-			state = 0;
+		if (std::strcmp(state.c_str(),"left") == 0)
+			state = "stopLeft";
+		if (std::strcmp(state.c_str(), "right") == 0)
+			state = "stopRight";
 	}
 	
 	velX = 0;
@@ -108,17 +108,20 @@ void PC::stopX()
 
 void PC::jump(){
 	//se non sta saltando, compio il salto
-	if (state != 3 && state != 2 && !isFalling){
+	// no dovrebbe essere 3 e 4 invece che 3 e 2?
+	if(std::strcmp(state.c_str(),"upLeft") !=0  && std::strcmp(state.c_str(), "upRight") != 0 && !isFalling){
+	//if (state != 3 && state != 2 && !isFalling){
 		velY = 0.018;
 		isFalling = true;
 	}
 		
 }
 void PC::stopY(){
-	if (state == 3)
-		state = 0;
-	if (state == 4)
-		state = -1;
+
+	if (std::strcmp(state.c_str(), "upRight") == 0)
+		state = "stopRight";
+	if (std::strcmp(state.c_str(), "upLeft") == 0)
+		state = "stopLeft";
 	velY = 0;
 	isFalling = false;
 }
