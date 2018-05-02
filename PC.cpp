@@ -79,7 +79,6 @@ void PC::addVelX(std::string dir)
 		// ridotto la velocità per provenire tremolio del personaggio
 		if (velX < 0.003) {
 			velX = velX + 0.00015;
-			
 		}
 	} else{
 		//direzione sinistra
