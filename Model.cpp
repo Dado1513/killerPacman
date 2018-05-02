@@ -209,7 +209,6 @@ bool MyModel::DrawGLScene(void){
 	// può essere disegnato una sola volta non tutte le volte
 	//Background cielo celeste
 	buildSky();
-	
 	glEnable(GL_TEXTURE_2D);
 	//disegna la texture subito dopo
 	glMatrixMode(GL_MODELVIEW);
@@ -217,6 +216,7 @@ bool MyModel::DrawGLScene(void){
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	//"pulisco" il colore base"
 	glColor3f(1.0, 1.0, 1.0);
+
 	// draw floor
 	this->buildFloor();
 	
@@ -378,6 +378,7 @@ void MyModel::buildPacman() {
 
 
 }
+
 void MyModel::buildMario() {
 
 	glEnable(GL_BLEND);
@@ -385,14 +386,31 @@ void MyModel::buildMario() {
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0);
 
-	int lengthMarioTexture = (sizeof(marioTexture) / sizeof(*marioTexture) - 1);
-	int marioId = (int(fullElapsed * 10) % lengthMarioTexture);
-	if (marioId > lengthMarioTexture) {
-		marioId = 0;
-	}
+	int marioId = 0 ;
 
-	// only first now 
-	marioId = 0;
+	// mario stop image blocked
+	if (std::strcmp(mario.getState().c_str(), "stopLeft") == 0
+		|| std::strcmp(mario.getState().c_str(), "stopRight") == 0) {
+		marioId = 0;
+	// mario move
+	}
+	else if (std::strcmp(mario.getState().c_str(), "left") == 0
+		|| std::strcmp(mario.getState().c_str(), "right") == 0) {
+		int lengthMarioTexture = 2;
+		marioId = (int(fullElapsed * 10) % lengthMarioTexture);
+		if (marioId > lengthMarioTexture) {
+			marioId = 0;
+		}
+	}
+	// mario jump
+	 else {
+		int lengthMarioTexture = 8;
+		marioId = (int(fullElapsed * 10) % lengthMarioTexture);
+		if (marioId > lengthMarioTexture) {
+			marioId = 0;
+		}
+		marioId = 3;
+	}
 
 	glBindTexture(GL_TEXTURE_2D, marioTexture[marioId]);
 

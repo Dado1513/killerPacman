@@ -113,6 +113,13 @@ void PC::jump(){
 	//if (state != 3 && state != 2 && !isFalling){
 		velY = 0.018;
 		isFalling = true;
+
+		if (std::strcmp(state.c_str(), "left") == 0 || std::strcmp(state.c_str(), "stopLeft") == 0) {
+			state = "upLeft";
+		}
+		else {
+			state = "upRight";
+		}
 	}
 		
 }
