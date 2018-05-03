@@ -443,7 +443,7 @@ void MyModel::buildMario() {
 	// mario move
 	}
 	else if (std::strcmp(mario.getState().c_str(), "left") == 0
-		|| std::strcmp(mario.getState().c_str(), "right") == 0) {
+		|| std::strcmp(mario.getState().c_str(), "right") == 0 && !mario.getFalling()) {
 		int lengthMarioTexture = 2;
 		marioId = (int(fullElapsed * 7) % lengthMarioTexture);
 		if (marioId > lengthMarioTexture) {

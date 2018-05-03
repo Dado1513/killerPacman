@@ -105,6 +105,9 @@ void PC::stopX()
 	velX = 0;
 }
 
+bool PC::getFalling() {
+	return this->isFalling;
+}
 void PC::jump(){
 	//se non sta saltando, compio il salto
 	// no dovrebbe essere 3 e 4 invece che 3 e 2?

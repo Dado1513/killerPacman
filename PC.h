@@ -63,5 +63,6 @@ class PC
 		double getVelX();
 		//aggiorno la posizione di mario
 		void update();
+		bool getFalling();
 };
 
