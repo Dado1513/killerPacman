@@ -100,7 +100,8 @@ void MyModel::ReSizeGLScene(int width, int height)
 bool MyModel::LoadGLTextures(void)
 {
 	//load an image file directly as a new OpenGL texture */
-	texture[0] = SOIL_load_OGL_texture( "Data/media/baseWall.png",SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y );
+	//texture[0] = SOIL_load_OGL_texture( "Data/media/baseWall.png",SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y );
+	texture[0] = SOIL_load_OGL_texture("Data/media/Terrain.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if(texture[0] == 0) 
 		return false;
 
