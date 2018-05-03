@@ -167,8 +167,11 @@ void MyModel::updateWorld(){
 
 		if (this->keys[37]) {
 			// mario si deve spostare a sinistra
-			mario.addVelX("left");
-
+			if (mario.getLeft() > posSchermoX - 1) 
+				mario.addVelX("left");
+			else
+				mario.stopX();
+			
 		}
 		else
 			mario.stopX();
@@ -219,6 +222,7 @@ bool MyModel::DrawGLScene(void){
 		Mountain2.move(-mario.getVelX()*0.35, posSchermoX - 1, posSchermoX + 1);
 		
 	}
+
 
 
 	//  TIMING - start
