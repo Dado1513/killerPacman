@@ -25,9 +25,9 @@ PC mario(-0.65, -0.6, 0.05, 0.1);
 //Sky Mountain(0.55, -0.58, 0.2, 0.12);
 
 Sky Cloud1(-1, 0.51, 1.02, 0.5);
-Sky Cloud2(1, 0.51, 1.02, 0.5);
-Sky Mountain1(-1.9, -0.35, 1.03, 0.4);
-Sky Mountain2(0.1, -0.35, 1.03, 0.4);
+Sky Cloud2(1.01, 0.51, 1.02, 0.5);
+Sky Mountain1(-1.9, -0.35, 1.01, 0.4);
+Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 
 double posSchermoX = 0;
 
@@ -518,20 +518,22 @@ void MyModel::buildFloor() {
 	for (float i = this->xStartGame; i < this->xEndGame; i += blockFloorLength) {
 		glBegin(GL_QUADS);
 
+		//fattore di correzione x (per evitare bordi tra texture sovrapposizionate
+		float x = 0.02;
 		//basso sinistra
-		glTexCoord2f(Background[0].u, Background[0].v);
+		glTexCoord2f(Background[0].u + x, Background[0].v + x);
 		glVertex3f(i, Background[0].y, Background[0].z+1);
 
 		//basso destra
-		glTexCoord2f(Background[1].u, Background[1].v);
+		glTexCoord2f(Background[1].u - x, Background[1].v + x);
 		glVertex3f(i + blockFloorLength, Background[1].y, Background[0].z+1);
 
 		//alto destra
-		glTexCoord2f(Background[2].u, Background[2].v);
+		glTexCoord2f(Background[2].u - x, Background[2].v );
 		glVertex3f(i + blockFloorLength, Background[1].y + 0.3, Background[0].z+1);
 
 		//alto sinistra
-		glTexCoord2f(Background[3].u, Background[3].v);
+		glTexCoord2f(Background[3].u + x, Background[3].v );
 		glVertex3f(i, Background[0].y + 0.3, Background[0].z+1);
 
 		glEnd();
@@ -564,27 +566,27 @@ void MyModel::buildLandscape(){
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0);
 
-
-
+	//fattore di correzione x
+	float x = 0.002;
 	
 	glBindTexture(GL_TEXTURE_2D, texture[1]);
 	glBegin(GL_QUADS);
 	
 
 		//basso sinistra
-		glTexCoord2f(Background[0].u, Background[0].v);
+		glTexCoord2f(Background[0].u + x, Background[0].v - x);
 		glVertex3f(Cloud1.getLeft(), Cloud1.getDown(), Background[1].z);
 
 		//basso destra
-		glTexCoord2f(Background[1].u, Background[1].v);
+		glTexCoord2f(Background[1].u - x, Background[1].v - x);
 		glVertex3f(Cloud1.getRight(), Cloud1.getDown(), Background[1].z);
 
 		//alto destra
-		glTexCoord2f(Background[2].u, Background[2].v);
+		glTexCoord2f(Background[2].u - x, Background[2].v);
 		glVertex3f(Cloud1.getRight(), Cloud1.getUp(), Background[1].z);
 
 		//alto sinistra
-		glTexCoord2f(Background[3].u, Background[3].v);
+		glTexCoord2f(Background[3].u + x, Background[3].v);
 		glVertex3f(Cloud1.getLeft(), Cloud1.getUp(), Background[1].z);
 	
 
@@ -594,19 +596,19 @@ void MyModel::buildLandscape(){
 
 
 	//basso sinistra
-	glTexCoord2f(Background[0].u, Background[0].v);
+	glTexCoord2f(Background[0].u + x, Background[0].v - x);
 	glVertex3f(Cloud2.getLeft(), Cloud2.getDown(), Background[1].z);
 
 	//basso destra
-	glTexCoord2f(Background[1].u, Background[1].v);
+	glTexCoord2f(Background[1].u - x, Background[1].v - x);
 	glVertex3f(Cloud2.getRight(), Cloud2.getDown(), Background[1].z);
 
 	//alto destra
-	glTexCoord2f(Background[2].u, Background[2].v);
+	glTexCoord2f(Background[2].u - x, Background[2].v);
 	glVertex3f(Cloud2.getRight(), Cloud2.getUp(), Background[1].z);
 
 	//alto sinistra
-	glTexCoord2f(Background[3].u, Background[3].v);
+	glTexCoord2f(Background[3].u + x, Background[3].v);
 	glVertex3f(Cloud2.getLeft(), Cloud2.getUp(), Background[1].z);
 
 
@@ -618,37 +620,37 @@ void MyModel::buildLandscape(){
 
 	glBegin(GL_QUADS);
 	//basso sinistra
-		glTexCoord2f(Background[0].u, Background[0].v);
+		glTexCoord2f(Background[0].u + x, Background[0].v);
 		glVertex3f(Mountain1.getLeft(), Mountain1.getDown(), Background[1].z);
 
 		//basso destra
-		glTexCoord2f(Background[1].u, Background[1].v);
+		glTexCoord2f(Background[1].u - x, Background[1].v);
 		glVertex3f(Mountain1.getRight(), Mountain1.getDown(), Background[1].z);
 
 		//alto destra
-		glTexCoord2f(Background[2].u, Background[2].v);
+		glTexCoord2f(Background[2].u - x, Background[2].v - x);
 		glVertex3f(Mountain1.getRight(), Mountain1.getUp(), Background[1].z);
 
 		//alto sinistra
-		glTexCoord2f(Background[3].u, Background[3].v);
+		glTexCoord2f(Background[3].u + x, Background[3].v - x);
 		glVertex3f(Mountain1.getLeft(), Mountain1.getUp(), Background[1].z);
 	glEnd();
 
 	glBegin(GL_QUADS);
 		//basso sinistra
-		glTexCoord2f(Background[0].u, Background[0].v);
+		glTexCoord2f(Background[0].u + x, Background[0].v);
 		glVertex3f(Mountain2.getLeft(), Mountain2.getDown(), Background[1].z);
 
 		//basso destra
-		glTexCoord2f(Background[1].u, Background[1].v);
+		glTexCoord2f(Background[1].u - x, Background[1].v);
 		glVertex3f(Mountain2.getRight(), Mountain2.getDown(), Background[1].z);
 
 		//alto destra
-		glTexCoord2f(Background[2].u, Background[2].v);
+		glTexCoord2f(Background[2].u - x, Background[2].v - x);
 		glVertex3f(Mountain2.getRight(), Mountain2.getUp(), Background[1].z);
 
 		//alto sinistra
-		glTexCoord2f(Background[3].u, Background[3].v);
+		glTexCoord2f(Background[3].u + x, Background[3].v - x);
 		glVertex3f(Mountain2.getLeft(), Mountain2.getUp(), Background[1].z);
 	glEnd();
 
