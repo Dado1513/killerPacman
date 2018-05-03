@@ -105,11 +105,16 @@ bool MyModel::LoadGLTextures(void)
 	if(texture[0] == 0) 
 		return false;
 
-	texture[1] = SOIL_load_OGL_texture("Data/media/nuvole.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	// sfondo blu togliere il commento
+	texture[1] = SOIL_load_OGL_texture("Data/media/nuvole_trasparenti.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	//texture[1] = SOIL_load_OGL_texture("Data/media/nuvole.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+
 	if (texture[1] == 0)
 		return false;
 
-	texture[2] = SOIL_load_OGL_texture("Data/media/mountain2.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	// sfondo blu togliere il commento
+	texture[2] = SOIL_load_OGL_texture("Data/media/mountain2_trasparenti.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	//texture[2] = SOIL_load_OGL_texture("Data/media/mountain2.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (texture[1] == 0)
 		return false;
 
@@ -548,6 +553,7 @@ void MyModel::buildSky() {
 		glBegin(GL_QUADS);
 			// colore da disegnare
 			glColor3f(0.35, 0.57, 0.984);
+			
 			// vertice in basso a sinistra
 			glVertex3f(Background[0].x +this->xStartGame, Background[0].y, Background[0].z);
 			// in basso  a destra
