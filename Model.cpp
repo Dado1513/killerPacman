@@ -567,18 +567,18 @@ void MyModel::buildLandscape(){
 	glAlphaFunc(GL_GREATER, 0);
 
 	//fattore di correzione x
-	float x = 0.002;
+	float x = 0.003;
 	
 	glBindTexture(GL_TEXTURE_2D, texture[1]);
 	glBegin(GL_QUADS);
 	
 
 		//basso sinistra
-		glTexCoord2f(Background[0].u + x, Background[0].v - x);
+		glTexCoord2f(Background[0].u + x, Background[0].v + x);
 		glVertex3f(Cloud1.getLeft(), Cloud1.getDown(), Background[1].z);
 
 		//basso destra
-		glTexCoord2f(Background[1].u - x, Background[1].v - x);
+		glTexCoord2f(Background[1].u - x, Background[1].v + x);
 		glVertex3f(Cloud1.getRight(), Cloud1.getDown(), Background[1].z);
 
 		//alto destra
@@ -596,11 +596,11 @@ void MyModel::buildLandscape(){
 
 
 	//basso sinistra
-	glTexCoord2f(Background[0].u + x, Background[0].v - x);
+	glTexCoord2f(Background[0].u + x, Background[0].v + x);
 	glVertex3f(Cloud2.getLeft(), Cloud2.getDown(), Background[1].z);
 
 	//basso destra
-	glTexCoord2f(Background[1].u - x, Background[1].v - x);
+	glTexCoord2f(Background[1].u - x, Background[1].v + x);
 	glVertex3f(Cloud2.getRight(), Cloud2.getDown(), Background[1].z);
 
 	//alto destra
