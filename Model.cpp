@@ -171,8 +171,8 @@ bool MyModel::LoadGLTextures(void)
 
 void MyModel::updateWorld(){
 	// update mario and pacman
-	//pacman.addVelX("right");
-	//pacman.update();
+	pacman.addVelX("right");
+	pacman.update();
 	if (this->keys[39]) {
 		// mario si deve spostare a destra
 		mario.addVelX("right");
