@@ -14,11 +14,12 @@
 
 
 #include "PC.h"
+#include "EnemyPacman.h"
 #include "Sky.h"
 
 // x iniziale, y iniziale, spessore e altezza personaggio
 PC mario(-0.65, -0.6, 0.05, 0.1);
-
+EnemyPacman pacman(-0.9,-0.6,0.055,0.1);
 
 //Sky Cloud1(-0.4, 0.7, 0.18, 0.15);
 //Sky Cloud2(0.7, 0.6, 0.15, 0.12);
@@ -143,15 +144,20 @@ bool MyModel::LoadGLTextures(void)
 	
 	//  Load 19 pacman textures (front and back)
 	char pacman[200];
-	for(int i=0; i < 18; i++) {
-		sprintf(pacman,"../Data/PacmanSprite/pacman%01d.png",i+1);
+	int numeroTexture = 2;
+	// int numeroTexture = 18;
+
+	for(int i=0; i < numeroTexture; i++) {
+		sprintf(pacman,"../Data/PacmanSprite/pacman_new_%01d.png",i+1);
 		this->pacmanTexture[i] = SOIL_load_OGL_texture (pacman,	SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,	SOIL_FLAG_INVERT_Y);
 			if(pacmanTexture[i] == 0)
 				return false;
 	}
+	/*
 	this->pacmanTexture[18] = SOIL_load_OGL_texture("../Data/PacmanSprite/pacman_evil_new.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (pacmanTexture[18] == 0)
 		return false;
+	*/
 
 	// Typical Texture Generation Using Data From The Bitmap
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
@@ -163,6 +169,9 @@ bool MyModel::LoadGLTextures(void)
 
 
 void MyModel::updateWorld(){
+	// update mario and pacman
+	pacman.addVelX("right");
+	pacman.update();
 	if (this->keys[39]) {
 		// mario si deve spostare a destra
 		mario.addVelX("right");
@@ -370,9 +379,12 @@ void MyModel::glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 
 
 void MyModel::buildPacman() {
-	int lengthPacman = (sizeof(pacmanTexture) / sizeof(*pacmanTexture)) - 1;
+	// se carico l'immagine evil pacman
+	//int lengthPacman = (sizeof(pacmanTexture) / sizeof(*pacmanTexture))-1;
+
+	int lengthPacman = (sizeof(pacmanTexture) / sizeof(*pacmanTexture)) ;
 	//Pacman texture
-	int pacmanId = (int(fullElapsed * 19) % lengthPacman);
+	int pacmanId = (int(fullElapsed * 7) % lengthPacman);
 	if (pacmanId > lengthPacman) {
 		pacmanId = 0;
 	}
@@ -384,31 +396,35 @@ void MyModel::buildPacman() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0);
-
+	// original 0.38 e 0.34
+	double resize_width = 0.28;
+	double resize_height = 0.30;
 	glBegin(GL_QUADS);
-	//basso sinistra
-	glTexCoord2f(Background[0].u + 0.39, Background[0].v + 0.34);
-	//glTexCoord2f(Background[0].u, Background[0].v);
-	glVertex3f(-1, -0.7, Background[0].z);
-	//glVertex3f(mario.getLeft() -0.5, -0.7, Background[0].z);
+		//basso sinistra
+		glTexCoord2f(Background[0].u + resize_width, Background[0].v + resize_height);
+	
+		//glTexCoord2f(Background[0].u, Background[0].v);
+		//glVertex3f(-1, -0.7, Background[0].z);
+		glVertex3f(pacman.getLeft(), pacman.getDown() , Background[0].z);
 
-	//basso destra
-	glTexCoord2f(Background[1].u - 0.38, Background[1].v + 0.34);
-	//glTexCoord2f(Background[1].u, Background[1].v);
-	glVertex3f(-0.8, -0.7, Background[0].z);
-	//glVertex3f(mario.getLeft() -0.3, -0.7, Background[0].z);
+		//basso destra
+		glTexCoord2f(Background[1].u - resize_width, Background[1].v + resize_height);
+		//glTexCoord2f(Background[1].u, Background[1].v);
+		//glVertex3f(-0.8, -0.7, Background[0].z);
+		glVertex3f(pacman.getRight(), pacman.getDown(), Background[0].z);
 
-	//alto destra
-	glTexCoord2f(Background[2].u - 0.38, Background[2].v - 0.33);
-	//glTexCoord2f(Background[2].u, Background[2].v);
-	glVertex3f(-0.8, -0.45, Background[0].z);
-	//glVertex3f(mario.getLeft() - 0.3, -0.45, Background[0].z);
 
-	//alto sinistra
-	glTexCoord2f(Background[3].u + 0.39, Background[3].v - 0.33);
-	//glTexCoord2f(Background[3].u, Background[3].v);
-	glVertex3f(-1, -0.45, Background[0].z);
-	//glVertex3f(mario.getLeft()-0.5, -0.45, Background[0].z);
+		//alto destra
+		glTexCoord2f(Background[2].u - resize_width, Background[2].v - resize_height);
+		//glTexCoord2f(Background[2].u, Background[2].v);
+		//glVertex3f(-0.8, -0.45, Background[0].z);
+		glVertex3f(pacman.getRight(), pacman.getUp(), Background[0].z);
+
+		//alto sinistra
+		glTexCoord2f(Background[3].u + resize_width, Background[3].v - resize_height);
+		//glTexCoord2f(Background[3].u, Background[3].v);
+		//glVertex3f(-1, -0.45, Background[0].z);
+		glVertex3f(pacman.getLeft(), pacman.getUp(), Background[0].z);
 
 	glEnd();
 

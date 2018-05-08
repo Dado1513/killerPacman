@@ -69,8 +69,11 @@ class MyModel {
 		clock_t Tstamp, Tstart;
 		double fullElapsed;  // elapsed time in seconds from the beginning of the program
 
-		GLuint	texture[28];			// Storage For 28 Textures!
-		GLuint	pacmanTexture[19];
+		GLuint	texture[28];	
+		// Storage For 28 Textures!
+//		GLuint	pacmanTexture[19];
+		GLuint	pacmanTexture[2];
+
 		GLuint	marioTexture[8];
 
 		GLuint	base;				// Base Display List For The Font Set
