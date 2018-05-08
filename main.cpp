@@ -313,7 +313,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		return 0;         // failure
 	}
 
-	OutputStreamPtr stream(OpenSound(device, "../Data/ophelia.mp3", true));
+	OutputStreamPtr stream(OpenSound(device, "Data/ophelia.mp3", true));
 	if (!stream) {
 		return 0;         // failure
 	}
@@ -321,9 +321,9 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	stream->setVolume(0.5f); // 50% volume
 	stream->play();
 
-	OutputStreamPtr explosion(OpenSound(device, "../Data/explosion.wav", false));
-	OutputStreamPtr bell(OpenSound(device, "../Data/bell.wav", false));
-	OutputStreamPtr stupid(OpenSound(device, "../Data/stupid.wav", false));
+	OutputStreamPtr explosion(OpenSound(device, "Data/explosion.wav", false));
+	OutputStreamPtr bell(OpenSound(device, "Data/bell.wav", false));
+	OutputStreamPtr stupid(OpenSound(device, "Data/stupid.wav", false));
 	//  AUDIO - end
 	
 	// loop main principale
