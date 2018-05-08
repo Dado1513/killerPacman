@@ -124,7 +124,7 @@ bool MyModel::LoadGLTextures(void)
 	// texture for mario 
 	char marioName[200];
 	for (int i = 0; i < 8; i++) {
-		sprintf(marioName, "../Data/media/mario_test_%d.png", i + 1);
+		sprintf(marioName, "Data/media/mario_test_%d.png", i + 1);
 		this->marioTexture[i] = SOIL_load_OGL_texture(marioName, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 		if (marioTexture[i] == 0) {
 			return false;
@@ -148,7 +148,7 @@ bool MyModel::LoadGLTextures(void)
 	// int numeroTexture = 18;
 
 	for(int i=0; i < numeroTexture; i++) {
-		sprintf(pacman,"../Data/PacmanSprite/pacman_new_%01d.png",i+1);
+		sprintf(pacman,"Data/PacmanSprite/pacman_new_%01d.png",i+1);
 		this->pacmanTexture[i] = SOIL_load_OGL_texture (pacman,	SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,	SOIL_FLAG_INVERT_Y);
 			if(pacmanTexture[i] == 0)
 				return false;
@@ -170,8 +170,8 @@ bool MyModel::LoadGLTextures(void)
 
 void MyModel::updateWorld(){
 	// update mario and pacman
-	pacman.addVelX("right");
-	pacman.update();
+	//pacman.addVelX("right");
+	//pacman.update();
 	if (this->keys[39]) {
 		// mario si deve spostare a destra
 		mario.addVelX("right");
@@ -397,7 +397,7 @@ void MyModel::buildPacman() {
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0);
 	// original 0.38 e 0.34
-	double resize_width = 0.28;
+	double resize_width = 0.33;
 	double resize_height = 0.30;
 	glBegin(GL_QUADS);
 		//basso sinistra
