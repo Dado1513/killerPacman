@@ -387,9 +387,9 @@ void MyModel::drawInitGame() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glColor3f(0.0f, 100.0f, 0.0f);
-	glRasterPos3f(0,0.5,-1);
+	glRasterPos3f(-0.2,0.5,-1);
 
-	this->glPrint("Killer Pacman: Only One Rule : RUN");
+	this->glPrint("Killer Pacman: Only One Rule : RUN Press Enter to Start!");
 	if (this->keys[VK_RETURN]) {
 		this->screenPlay = 1;
 	};
