@@ -16,6 +16,7 @@
 #include "PC.h"
 #include "EnemyPacman.h"
 #include "Sky.h"
+#include "audiere.h"
 
 // x iniziale, y iniziale, spessore e altezza personaggio
 PC mario(-0.65, -0.6, 0.05, 0.1);
@@ -212,11 +213,27 @@ void MyModel::updateWorld(){
 
 }
 
+bool MyModel::checkDied(PC mario, EnemyPacman pacman) {
+	bool x = false;
+	bool y = false;
+	// se la cordinata x del centro di mario è compresa fra gli estremi di pacman
+	if ((mario.getX() <= pacman.getRight()) && mario.getX() >= pacman.getLeft()) {
+		x = true;
+	}
+	// stessa cosa per la y
+	if ((mario.getY() <= pacman.getUp()) && mario.getY() >= pacman.getDown()) {
+		y = true;
+	}
 
+	return x && y;
+
+}
 // call every time in MainProcm
-bool MyModel::DrawGLScene(void){
+bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead){
 
-
+	if (this->checkDied(mario, pacman)) {
+		dead->play();
+	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
 	/*
 	glMatrixMode(GL_MODELVIEW);				

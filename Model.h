@@ -11,7 +11,9 @@
 #include <vector>
 #include <time.h>
 #include <math.h>
-
+#include "audiere.h"
+#include "PC.h"
+#include "EnemyPacman.h"
 #define PI 3.141592654
 
 // A class for storing vetices
@@ -122,7 +124,7 @@ class MyModel {
 			return false;
 		}
 
-		bool DrawGLScene(void);
+		bool DrawGLScene(audiere::OutputStreamPtr dead);
 		bool InitGL(void);
 		void ReSizeGLScene(int width, int height);
 		void glPrint(const char *fmt, ...);			// Custom GL "Print" Routine
@@ -132,7 +134,8 @@ class MyModel {
 		void buildMario();
 		void buildPacman();
 		void buildLandscape();
-  
+		bool checkDied(PC mario, EnemyPacman pacman);
+
 	private:
 		bool LoadGLTextures(void);
 		void BuildFont(void);

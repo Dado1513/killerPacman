@@ -324,6 +324,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	OutputStreamPtr explosion(OpenSound(device, "Data/explosion.wav", false));
 	OutputStreamPtr bell(OpenSound(device, "Data/bell.wav", false));
 	OutputStreamPtr stupid(OpenSound(device, "Data/stupid.wav", false));
+	OutputStreamPtr dead(OpenSound(device, "Data/PacManGameOver.mp3", false));
 	//  AUDIO - end
 	
 	// loop main principale
@@ -340,21 +341,21 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		}else{
 			
 			// press esc key and drawGLScene() --> code che aaggiorna la pagina
-			if ((Data.active && !Data.DrawGLScene()) || Data.keys[VK_ESCAPE]) {
+			if ((Data.active && !Data.DrawGLScene(dead)) || Data.keys[VK_ESCAPE]) {
 				done=TRUE;							
 			}else{ 
 				SwapBuffers(Data.hDC);					// Swap Buffers (Double Buffering)
 			}
 
 			
-
+			/*
 			// Is F2 Being Pressed?
 			if (Data.keys[VK_F2]) {						
 				Data.keys[VK_F2]=FALSE;	
-				if(explosion->isPlaying()) 
-					explosion->reset();
+				if(dead->isPlaying())
+					dead->reset();
 				else 
-					explosion->play();
+					dead->play();
 			}
 			// Is F3 Being Pressed?
 			if (Data.keys[VK_F3]){					
@@ -372,7 +373,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 					stupid->reset();
 				else 
 					stupid->play();
-			}
+			}*/
 		}
 	}
 
