@@ -19,7 +19,7 @@
 #include "audiere.h"
 
 // x iniziale, y iniziale, spessore e altezza personaggio e nemico
-PC mario(-0.65, -0.6, 0.05, 0.1);
+PC mario(-0.4, -0.6, 0.05, 0.1);
 EnemyPacman pacman(-0.9,-0.6,0.055,0.1);
 
 //Sky Cloud1(-0.4, 0.7, 0.18, 0.15);
@@ -232,34 +232,33 @@ bool MyModel::checkDead(PC mario, EnemyPacman pacman) {
 
 }
 
-// call every time in MainProc
-bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead){
-
+// schermata di gioco
+void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead) {
 	if (this->checkDead(mario, pacman)) {
 		dead->play();
-		
+
 		//load screen death
 	}
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
-	/*
-	glMatrixMode(GL_MODELVIEW);				
-	glLoadIdentity();*/
-	
-	// muove il mondo insieme a mario
-	glMatrixMode(GL_MODELVIEW);				
-	glLoadIdentity(); 
+														/*
+														glMatrixMode(GL_MODELVIEW);
+														glLoadIdentity();*/
+
+														// muove il mondo insieme a mario
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
 	//per muovere il mondo insieme a mario		
 	glTranslatef(-(float)posSchermoX, 0, 0);
-	if (mario.getLeft() > posSchermoX+0.0001) {
+	if (mario.getLeft() > posSchermoX + 0.0001) {
 		posSchermoX = mario.getLeft();
 
 		Cloud1.move(-mario.getVelX()*0.6, posSchermoX - 1, posSchermoX + 1);
 		Cloud2.move(-mario.getVelX()*0.6, posSchermoX - 1, posSchermoX + 1);
 		Mountain1.move(-mario.getVelX()*0.35, posSchermoX - 1, posSchermoX + 1);
 		Mountain2.move(-mario.getVelX()*0.35, posSchermoX - 1, posSchermoX + 1);
-		
+
 	}
 
 
@@ -267,23 +266,23 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead){
 	//  TIMING - start
 	clock_t t = clock();
 	// elapsed time in seconds from the last draw
-	double elapsed = double (t - Tstamp) /  (double) CLOCKS_PER_SEC;
+	double elapsed = double(t - Tstamp) / (double)CLOCKS_PER_SEC;
 	// elapsed time in milliseconds from the last draw
-	int ms_elapsed = (int) (t - Tstamp);
+	int ms_elapsed = (int)(t - Tstamp);
 	// elapsed time in seconds from the beginning of the program
-	this->fullElapsed = double (t - Tstart) /  (double) CLOCKS_PER_SEC;
-	this->frameTime += double (t - Tstamp) /  (double) CLOCKS_PER_SEC;
+	this->fullElapsed = double(t - Tstart) / (double)CLOCKS_PER_SEC;
+	this->frameTime += double(t - Tstamp) / (double)CLOCKS_PER_SEC;
 	this->Tstamp = t;
 	//  TIMING - end
-	
+
 	//aggiorno la posizione del gioco ogni 1ms per prevenire il tremolio --> riduco la valocità massima  
-	
+
 	// se minore di 0.001 --> potremmmo non disegno niente
-	if (fullElapsed - LastUpdateTime > 0.001){
+	if (fullElapsed - LastUpdateTime > 0.001) {
 		this->LastUpdateTime = fullElapsed;
 		updateWorld();
 	}
-	
+
 	// può essere disegnato una sola volta non tutte le volte
 	//Background cielo celeste
 	buildSky();
@@ -302,15 +301,15 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead){
 
 	// Draw the landscape
 	this->buildLandscape();
-	
+
 	// draw mario
 	this->buildMario();
-	
+
 	// draw pacman
 	this->buildPacman();
 
-	
-	
+
+
 	//  Floating cursor - end
 
 	//  Some text
@@ -319,31 +318,63 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead){
 	glDisable(GL_TEXTURE_2D);
 
 	// Color
-	glColor3f(1.0f,1.0f,1.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 
 	// Position The Text On The Screen
-	glRasterPos3f(- (float) plx + PixToCoord_X(10), (float) ply - PixToCoord_Y(21), -4);
+	glRasterPos3f(-(float)plx + PixToCoord_X(10), (float)ply - PixToCoord_Y(21), -4);
 
 	// compute fps and write fr
 	this->frames++;
-	if( this->frames > 18 ) {
+	if (this->frames > 18) {
 		this->fps = frames / frameTime;
-		this->frames = 0; 
+		this->frames = 0;
 		this->frameTime = 0;
 	}
-	
+
 	this->glPrint("Elapsed time: %6.2f sec.  -  Fps %6.2f - PositionMario x = %6.2f, y = %6.2f, velocity %6.5f", fullElapsed, fps, mario.getLeft(), mario.getDown(), mario.getVelX());
-	
-	if(this->fullElapsed < 6) {
-		glRasterPos3f(- (float) plx + PixToCoord_X(10), (float) -ply+PixToCoord_Y(21),-4);
+
+	if (this->fullElapsed < 6) {
+		glRasterPos3f(-(float)plx + PixToCoord_X(10), (float)-ply + PixToCoord_Y(21), -4);
 		this->glPrint("...F2/F3/F4 for sounds");
 	}
 
-	glRasterPos3f(- (float) plx + PixToCoord_X(10), (float) -ply+PixToCoord_Y(61),-4);
-	this->glPrint("%1d %1d  %s",cx,cy, captured ? "captured" : "Not captured" );
-	
+	glRasterPos3f(-(float)plx + PixToCoord_X(10), (float)-ply + PixToCoord_Y(61), -4);
+	this->glPrint("%1d %1d  %s", cx, cy, captured ? "captured" : "Not captured");
+
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
-	return true;
+
+}
+
+void MyModel::drawInitGame() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glRasterPos3f(-(float)plx + PixToCoord_X(30), (float)ply - PixToCoord_Y(21), -4);
+
+	this->glPrint("Killer Pacman:\n Only One Rule : RUN");
+	if (this->keys[VK_RETURN]) {
+		this->screenPlay = 1;
+	}
+
+
+}
+// call every time in MainProc
+bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead){
+	
+	// usato per caricare schermate diverse
+	// 0 schermata iniziale
+	// 1 schermata di gioco principale
+
+	switch (this->screenPlay) {
+	case 0:
+		this->drawInitGame();
+		break;
+	case 1:
+		drawGamePrincipale(dead);
+		break;
+	}
+		return true;
 
 }
 

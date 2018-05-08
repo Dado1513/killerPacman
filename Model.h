@@ -63,6 +63,8 @@ class MyModel {
 		double xStartGame; // coordinate x per l'inizio e la fine del gioco 
 		double xEndGame;
 		bool init;
+		// per selezionare la schermata da caricare
+		int screenPlay=0;
 
 		//  model data
 		std::vector<Vertex> Background;   // background
@@ -134,7 +136,9 @@ class MyModel {
 		void buildMario();
 		void buildPacman();
 		void buildLandscape();
+		void drawInitGame();
 		bool checkDead(PC mario, EnemyPacman pacman);
+		void drawGamePrincipale(audiere::OutputStreamPtr dead);
 
 	private:
 		bool LoadGLTextures(void);

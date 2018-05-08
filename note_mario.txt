@@ -1,11 +1,7 @@
-1) Sfondi che si muovono, montagne nuvole (ecc) --> indipendente dalle posizioni (Fabio)
-
-2) Movimento mario in base alle texture che si aggiornano dipendentemente se salto, se sono a destra o sinistra
-    (mario highlander) (Mario aggiornamento)
 
 
 3) Menu di gioco (Pensarci. together)
-
+3.1) dopo aver premuto invio far apparire un counter all'indietro che lampeggia
 
 4) OggettiGioco classe e relative derivate classi all'interno di una lista per il collision detection
     4.1) Buchi nei blocchi (non a mezzo di essi) e dove iniziano i livelli 
