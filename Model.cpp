@@ -130,7 +130,12 @@ bool MyModel::LoadGLTextures(void)
 			return false;
 		}
 	}
+	char backgroundFile[100];
+	sprintf(backgroundFile,"Data/backgroundImageStart.png" );
 
+	this->backgroundtexture = SOIL_load_OGL_texture(backgroundFile, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	if (this->backgroundtexture == 0)
+		return false;
 	/*
 	char badGuy[200];
 	for (int i = 0; i < 43; i++) {
@@ -162,7 +167,7 @@ bool MyModel::LoadGLTextures(void)
 	*/
 
 	// Typical Texture Generation Using Data From The Bitmap
-	glBindTexture(GL_TEXTURE_2D, texture[0]);
+	//glBindTexture(GL_TEXTURE_2D, texture[0]);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
@@ -332,11 +337,13 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead) {
 	}
 
 	this->glPrint("Elapsed time: %6.2f sec.  -  Fps %6.2f - PositionMario x = %6.2f, y = %6.2f, velocity %6.5f", fullElapsed, fps, mario.getLeft(), mario.getDown(), mario.getVelX());
-
+	
+	/*
 	if (this->fullElapsed < 6) {
 		glRasterPos3f(-(float)plx + PixToCoord_X(10), (float)-ply + PixToCoord_Y(21), -4);
 		this->glPrint("...F2/F3/F4 for sounds");
 	}
+	*/
 
 	glRasterPos3f(-(float)plx + PixToCoord_X(10), (float)-ply + PixToCoord_Y(61), -4);
 	this->glPrint("%1d %1d  %s", cx, cy, captured ? "captured" : "Not captured");
@@ -347,15 +354,47 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead) {
 
 void MyModel::drawInitGame() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
+	
+	glMatrixMode(GL_MODELVIEW);	
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glLoadIdentity();
+
+	glBindTexture(GL_TEXTURE_2D, this->backgroundtexture);
+	glBegin(GL_QUADS);
+	double resize = 0.2;
+		// b-s
+		glTexCoord2f(Background[0].u, Background[0].v);
+		glVertex3f(Background[0].x+resize, Background[0].y, Background[0].z);
+		//b-d
+		glTexCoord2f(Background[1].u-resize, Background[1].v);
+		glVertex3f(Background[1].x, Background[1].y, Background[1].z);
+
+		//a-d
+		glTexCoord2f(Background[2].u-resize, Background[2].v);
+		glVertex3f(Background[2].x, Background[2].y, Background[2].z);
+
+		//a-s
+		glTexCoord2f(Background[3].u+resize, Background[3].v);
+		glVertex3f(Background[3].x, Background[3].y, Background[3].z);
+
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glRasterPos3f(-(float)plx + PixToCoord_X(30), (float)ply - PixToCoord_Y(21), -4);
+	glColor3f(0.0f, 100.0f, 0.0f);
+	glRasterPos3f(0,0.5,-1);
 
-	this->glPrint("Killer Pacman:\n Only One Rule : RUN");
+	this->glPrint("Killer Pacman: Only One Rule : RUN");
 	if (this->keys[VK_RETURN]) {
 		this->screenPlay = 1;
-	}
+	};
+	// reset color
+	glColor3f(1.0, 1.0, 1.0);
 
 
 }

@@ -77,7 +77,7 @@ class MyModel {
 		// Storage For 28 Textures!
 //		GLuint	pacmanTexture[19];
 		GLuint	pacmanTexture[2];
-
+		GLuint backgroundtexture;
 		GLuint	marioTexture[8];
 
 		GLuint	base;				// Base Display List For The Font Set
