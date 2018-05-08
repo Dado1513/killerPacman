@@ -317,13 +317,15 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	if (!stream) {
 		return 0;         // failure
 	}
+	// music in sottofondo
 	stream->setRepeat(true);
 	stream->setVolume(0.5f); // 50% volume
 	stream->play();
-
+	/*
 	OutputStreamPtr explosion(OpenSound(device, "Data/explosion.wav", false));
 	OutputStreamPtr bell(OpenSound(device, "Data/bell.wav", false));
 	OutputStreamPtr stupid(OpenSound(device, "Data/stupid.wav", false));
+	*/
 	OutputStreamPtr dead(OpenSound(device, "Data/PacManGameOver.mp3", false));
 	//  AUDIO - end
 	
@@ -347,33 +349,6 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 				SwapBuffers(Data.hDC);					// Swap Buffers (Double Buffering)
 			}
 
-			
-			/*
-			// Is F2 Being Pressed?
-			if (Data.keys[VK_F2]) {						
-				Data.keys[VK_F2]=FALSE;	
-				if(dead->isPlaying())
-					dead->reset();
-				else 
-					dead->play();
-			}
-			// Is F3 Being Pressed?
-			if (Data.keys[VK_F3]){					
-				Data.keys[VK_F3]=FALSE;
-				if(bell->isPlaying()) 
-					bell->reset();
-				else 
-					bell->play();
-			}
-
-			// Is F4 Being Pressed?
-			if (Data.keys[VK_F4]){						
-				Data.keys[VK_F4]=FALSE;
-				if( stupid->isPlaying() ) 
-					stupid->reset();
-				else 
-					stupid->play();
-			}*/
 		}
 	}
 

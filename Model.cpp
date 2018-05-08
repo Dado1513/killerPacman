@@ -18,7 +18,7 @@
 #include "Sky.h"
 #include "audiere.h"
 
-// x iniziale, y iniziale, spessore e altezza personaggio
+// x iniziale, y iniziale, spessore e altezza personaggio e nemico
 PC mario(-0.65, -0.6, 0.05, 0.1);
 EnemyPacman pacman(-0.9,-0.6,0.055,0.1);
 
@@ -97,7 +97,6 @@ void MyModel::ReSizeGLScene(int width, int height)
 }
 
 
-
 // Load Bitmaps And Convert To Textures
 bool MyModel::LoadGLTextures(void)
 {
@@ -131,6 +130,7 @@ bool MyModel::LoadGLTextures(void)
 			return false;
 		}
 	}
+
 	/*
 	char badGuy[200];
 	for (int i = 0; i < 43; i++) {
@@ -154,6 +154,7 @@ bool MyModel::LoadGLTextures(void)
 			if(pacmanTexture[i] == 0)
 				return false;
 	}
+
 	/*
 	this->pacmanTexture[18] = SOIL_load_OGL_texture("../Data/PacmanSprite/pacman_evil_new.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (pacmanTexture[18] == 0)
@@ -170,10 +171,13 @@ bool MyModel::LoadGLTextures(void)
 
 
 void MyModel::updateWorld(){
-	// update mario and pacman
+
+	// update pacman
 	pacman.addVelX("right");
 	pacman.update();
-	if (this->keys[39]) {
+	
+	// update mario
+	if (this->keys[VK_RIGHT]) {
 		// mario si deve spostare a destra
 		mario.addVelX("right");
 		
@@ -181,7 +185,7 @@ void MyModel::updateWorld(){
 
 	}else{
 
-		if (this->keys[37]) {
+		if (this->keys[VK_LEFT]) {
 			// mario si deve spostare a sinistra
 			if (mario.getLeft() > posSchermoX - 1) 
 				mario.addVelX("left");
@@ -194,8 +198,7 @@ void MyModel::updateWorld(){
 	}
 
 	
-	//BUG!! Il salto funziona solo se mi sto muovendo verso destra!!
-	if (this->keys[38]){
+	if (this->keys[VK_UP]){
 		mario.jump();
 
 	}
@@ -203,9 +206,7 @@ void MyModel::updateWorld(){
 	// update mario position
 	mario.update();
 
-	//NOTA: DA CANCELLARE IN FUTURO
-	//NOTA: simili controlli vanno fatti dove si ha un FPS maggiore.
-	//qui dovrebbe esserci codice relativo alla velocità utente, non collisioni o altro.
+	
 	if (mario.getDown() < -0.7) {
 		mario.stopY();
 
@@ -213,7 +214,9 @@ void MyModel::updateWorld(){
 
 }
 
+// controlla se mario è stato mangiato da pacman
 bool MyModel::checkDead(PC mario, EnemyPacman pacman) {
+	
 	bool x = false;
 	bool y = false;
 	// se la cordinata x del centro di mario è compresa fra gli estremi di pacman
@@ -228,12 +231,16 @@ bool MyModel::checkDead(PC mario, EnemyPacman pacman) {
 	return x && y;
 
 }
-// call every time in MainProcm
+
+// call every time in MainProc
 bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead){
 
 	if (this->checkDead(mario, pacman)) {
 		dead->play();
+		
+		//load screen death
 	}
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
 	/*
 	glMatrixMode(GL_MODELVIEW);				
@@ -288,8 +295,6 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead){
 	//"pulisco" il colore base"
 	glColor3f(1.0, 1.0, 1.0);
 
-
-	
 
 
 	// draw floor
