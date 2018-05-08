@@ -213,7 +213,7 @@ void MyModel::updateWorld(){
 
 }
 
-bool MyModel::checkDied(PC mario, EnemyPacman pacman) {
+bool MyModel::checkDead(PC mario, EnemyPacman pacman) {
 	bool x = false;
 	bool y = false;
 	// se la cordinata x del centro di mario è compresa fra gli estremi di pacman
@@ -231,7 +231,7 @@ bool MyModel::checkDied(PC mario, EnemyPacman pacman) {
 // call every time in MainProcm
 bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead){
 
-	if (this->checkDied(mario, pacman)) {
+	if (this->checkDead(mario, pacman)) {
 		dead->play();
 	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer

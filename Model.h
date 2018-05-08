@@ -134,7 +134,7 @@ class MyModel {
 		void buildMario();
 		void buildPacman();
 		void buildLandscape();
-		bool checkDied(PC mario, EnemyPacman pacman);
+		bool checkDead(PC mario, EnemyPacman pacman);
 
 	private:
 		bool LoadGLTextures(void);
