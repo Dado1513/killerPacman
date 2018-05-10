@@ -184,6 +184,9 @@ void MyModel::updateWorld(){
 	if (mario.getVelX() == 0.0 && this->checkX(mario,pacman)) {
 		// ci sono sopra se anche la y è ok allora è morto 
 		pacman.stopX();
+		if (!this->checkY(mario, pacman)) {
+			pacman.jump();
+		}
 	}
 	else {
 		if (pacman.getX() > mario.getX()) {
@@ -194,6 +197,10 @@ void MyModel::updateWorld(){
 		}
 	}
 	pacman.update();
+	if (pacman.getDown() < -0.7) {
+		pacman.stopY();
+
+	}
 	
 	// update mario
 	if (this->keys[VK_RIGHT]) {
@@ -380,26 +387,27 @@ void MyModel::drawInitGame() {
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glAlphaFunc(GL_GREATER, 0);
 
 	glLoadIdentity();
 
 	glBindTexture(GL_TEXTURE_2D, this->backgroundtexture);
 	glBegin(GL_QUADS);
-	double resize = 0.2;
+	double resize = 0.5;
 		// b-s
 		glTexCoord2f(Background[0].u, Background[0].v);
-		glVertex3f(Background[0].x+resize, Background[0].y, Background[0].z);
+		glVertex3f(Background[0].x-resize, Background[0].y, Background[0].z);
 		//b-d
-		glTexCoord2f(Background[1].u-resize, Background[1].v);
-		glVertex3f(Background[1].x, Background[1].y, Background[1].z);
+		glTexCoord2f(Background[1].u, Background[1].v);
+		glVertex3f(Background[1].x+resize, Background[1].y, Background[1].z);
 
 		//a-d
-		glTexCoord2f(Background[2].u-resize, Background[2].v);
-		glVertex3f(Background[2].x, Background[2].y, Background[2].z);
+		glTexCoord2f(Background[2].u, Background[2].v);
+		glVertex3f(Background[2].x +resize, Background[2].y, Background[2].z);
 
 		//a-s
-		glTexCoord2f(Background[3].u+resize, Background[3].v);
-		glVertex3f(Background[3].x, Background[3].y, Background[3].z);
+		glTexCoord2f(Background[3].u, Background[3].v);
+		glVertex3f(Background[3].x-resize, Background[3].y, Background[3].z);
 
 	glEnd();
 	glDisable(GL_TEXTURE_2D);

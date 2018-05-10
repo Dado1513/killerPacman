@@ -6,6 +6,7 @@
 #include "Model.h"
 
 #include "audiere.h"
+#include "resource.h"
 using namespace audiere;
 #ifdef _MSC_VER                         // Check if MS Visual C compiler
 	#pragma comment( lib, "opengl32.lib" )				// Search For OpenGL32.lib While Linking 
