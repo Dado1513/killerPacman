@@ -11,6 +11,7 @@ class EnemyPacman{
 		//larghezza ed altezza del PC
 		double width;
 		double height;
+		double velMaxX;
 
 		//velocità corrente del PC
 		double velX;		//corsa

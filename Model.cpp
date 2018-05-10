@@ -175,10 +175,24 @@ bool MyModel::LoadGLTextures(void)
 }
 
 
+
 void MyModel::updateWorld(){
 
 	// update pacman
-	pacman.addVelX("right");
+
+	//ToDo aggiungere nel caso mario sia fermo nella stessa x o mario stia saltando
+	if (mario.getVelX() == 0.0 && this->checkX(mario,pacman)) {
+		// ci sono sopra se anche la y è ok allora è morto 
+		pacman.stopX();
+	}
+	else {
+		if (pacman.getX() > mario.getX()) {
+			pacman.addVelX("left");
+		}
+		else {
+			pacman.addVelX("right");
+		}
+	}
 	pacman.update();
 	
 	// update mario
@@ -218,22 +232,29 @@ void MyModel::updateWorld(){
 	}
 
 }
-
-// controlla se mario è stato mangiato da pacman
-bool MyModel::checkDead(PC mario, EnemyPacman pacman) {
-	
+bool MyModel::checkX(PC mario, EnemyPacman pacman) {
 	bool x = false;
-	bool y = false;
-	// se la cordinata x del centro di mario è compresa fra gli estremi di pacman
 	if ((mario.getX() <= pacman.getRight()) && mario.getX() >= pacman.getLeft()) {
 		x = true;
 	}
+	return x;
+}
+
+bool MyModel::checkY(PC mario, EnemyPacman pacman) {
+	bool y = false;
+	// se la cordinata x del centro di mario è compresa fra gli estremi di pacman
+
 	// stessa cosa per la y
 	if ((mario.getY() <= pacman.getUp()) && mario.getY() >= pacman.getDown()) {
 		y = true;
 	}
+	return y;
+}
 
-	return x && y;
+// controlla se mario è stato mangiato da pacman
+bool MyModel::checkDead(PC mario, EnemyPacman pacman) {
+	
+	return this->checkX(mario,pacman) && this->checkY(mario,pacman);
 
 }
 
@@ -492,12 +513,34 @@ void MyModel::buildPacman() {
 	double resize_width = 0.33;
 	double resize_height = 0.30;
 	glBegin(GL_QUADS);
+	if (std::strcmp(pacman.getState().c_str(), "left") == 0
+		|| std::strcmp(pacman.getState().c_str(), "stopLeft") == 0
+		|| std::strcmp(pacman.getState().c_str(), "upLeft") == 0) {
+		//basso destra
+		glTexCoord2f(Background[1].u - resize_width, Background[1].v + resize_height);
+		glVertex3f(pacman.getLeft(), pacman.getDown(), Background[0].z);
+
 		//basso sinistra
 		glTexCoord2f(Background[0].u + resize_width, Background[0].v + resize_height);
-	
+		glVertex3f(pacman.getRight(), pacman.getDown(), Background[0].z);
+		
+		//alto sinistra
+		glTexCoord2f(Background[3].u + resize_width, Background[3].v - resize_height);
+		glVertex3f(pacman.getRight(), pacman.getUp(), Background[0].z);
+
+
+		//alto destra
+		glTexCoord2f(Background[2].u - resize_width, Background[2].v - resize_height);
+		glVertex3f(pacman.getLeft(), pacman.getUp(), Background[0].z);
+
+	}
+	else {
+		//basso sinistra
+		glTexCoord2f(Background[0].u + resize_width, Background[0].v + resize_height);
+
 		//glTexCoord2f(Background[0].u, Background[0].v);
 		//glVertex3f(-1, -0.7, Background[0].z);
-		glVertex3f(pacman.getLeft(), pacman.getDown() , Background[0].z);
+		glVertex3f(pacman.getLeft(), pacman.getDown(), Background[0].z);
 
 		//basso destra
 		glTexCoord2f(Background[1].u - resize_width, Background[1].v + resize_height);
@@ -517,7 +560,7 @@ void MyModel::buildPacman() {
 		//glTexCoord2f(Background[3].u, Background[3].v);
 		//glVertex3f(-1, -0.45, Background[0].z);
 		glVertex3f(pacman.getLeft(), pacman.getUp(), Background[0].z);
-
+	}
 	glEnd();
 
 	//glTranslatef(ClientX2World(cx), ClientY2World(cy), 0);

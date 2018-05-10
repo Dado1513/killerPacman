@@ -137,7 +137,10 @@ class MyModel {
 		void buildPacman();
 		void buildLandscape();
 		void drawInitGame();
+		bool checkX(PC mario, EnemyPacman pacman);
+		bool checkY(PC mario, EnemyPacman pacman);
 		bool checkDead(PC mario, EnemyPacman pacman);
+
 		void drawGamePrincipale(audiere::OutputStreamPtr dead);
 
 	private:

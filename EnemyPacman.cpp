@@ -13,6 +13,7 @@ EnemyPacman::EnemyPacman(double posX, double posY, double width, double height) 
 	this->velY = 0;
 	this->state = "stopRight";
 	this->isFalling = false;
+	this->velMaxX = 0.005;
 
 }
 
@@ -77,7 +78,7 @@ void EnemyPacman::addVelX(std::string dir)
 			velX = 0;
 		}
 		// ridotto la velocità per provenire tremolio del personaggio
-		if (velX < 0.005) {
+		if (velX < this->velMaxX) {
 			velX = velX + 0.00015;
 		}
 	}
@@ -87,7 +88,7 @@ void EnemyPacman::addVelX(std::string dir)
 		if (velX > 0) {
 			velX = 0;
 		}
-		if (velX > -0.006) {
+		if (velX > -this->velMaxX) {
 			velX = velX - 0.00015;
 		}
 	}

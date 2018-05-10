@@ -313,7 +313,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		return 0;         // failure
 	}
 
-	OutputStreamPtr stream(OpenSound(device, "Data/ophelia.mp3", true));
+	OutputStreamPtr stream(OpenSound(device, "Data/superMario_sound.mp3", true));
 	if (!stream) {
 		return 0;         // failure
 	}
