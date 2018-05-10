@@ -126,11 +126,11 @@ class MyModel {
 			return false;
 		}
 
-		bool DrawGLScene(audiere::OutputStreamPtr dead);
+		bool DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump);
 		bool InitGL(void);
 		void ReSizeGLScene(int width, int height);
 		void glPrint(const char *fmt, ...);			// Custom GL "Print" Routine
-		void updateWorld();
+		void updateWorld(audiere::OutputStreamPtr jump);
 		void buildFloor();
 		void buildSky();
 		void buildMario();
@@ -141,7 +141,7 @@ class MyModel {
 		bool checkY(PC mario, EnemyPacman pacman);
 		bool checkDead(PC mario, EnemyPacman pacman);
 
-		void drawGamePrincipale(audiere::OutputStreamPtr dead);
+		void drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump);
 
 	private:
 		bool LoadGLTextures(void);

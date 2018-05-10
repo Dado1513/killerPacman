@@ -318,6 +318,9 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	if (!stream) {
 		return 0;         // failure
 	}
+	// jump mario
+	
+
 	// music in sottofondo
 	stream->setRepeat(true);
 	stream->setVolume(0.5f); // 50% volume
@@ -328,6 +331,13 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	OutputStreamPtr stupid(OpenSound(device, "Data/stupid.wav", false));
 	*/
 	OutputStreamPtr dead(OpenSound(device, "Data/PacManGameOver.mp3", false));
+	if (!dead) {
+		return 0;         // failure
+	}
+	OutputStreamPtr jumpSound(OpenSound(device, "Data/Mario_jump_sound.mp3", true));
+	if (!jumpSound) {
+		return 0;         // failure
+	}
 	//  AUDIO - end
 	
 	// loop main principale
@@ -344,7 +354,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		}else{
 			
 			// press esc key and drawGLScene() --> code che aaggiorna la pagina
-			if ((Data.active && !Data.DrawGLScene(dead)) || Data.keys[VK_ESCAPE]) {
+			if ((Data.active && !Data.DrawGLScene(dead,jumpSound)) || Data.keys[VK_ESCAPE]) {
 				done=TRUE;							
 			}else{ 
 				SwapBuffers(Data.hDC);					// Swap Buffers (Double Buffering)
