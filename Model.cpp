@@ -19,7 +19,7 @@
 #include "audiere.h"
 
 // x iniziale, y iniziale, spessore e altezza personaggio e nemico
-PC mario(-0.4, -0.6, 0.05, 0.1);
+PC mario(-0.2, -0.6, 0.05, 0.1);
 EnemyPacman pacman(-0.9,-0.6,0.055,0.1);
 
 //Sky Cloud1(-0.4, 0.7, 0.18, 0.15);
@@ -174,8 +174,6 @@ bool MyModel::LoadGLTextures(void)
 	return true;										// Return Success
 }
 
-
-
 void MyModel::updateWorld(audiere::OutputStreamPtr jump){
 
 	// update pacman
@@ -240,6 +238,7 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump){
 	}
 
 }
+
 bool MyModel::checkX(PC mario, EnemyPacman pacman) {
 	bool x = false;
 	if ((mario.getX() <= pacman.getRight()) && mario.getX() >= pacman.getLeft()) {
@@ -263,15 +262,17 @@ bool MyModel::checkY(PC mario, EnemyPacman pacman) {
 bool MyModel::checkDead(PC mario, EnemyPacman pacman) {
 	
 	return this->checkX(mario,pacman) && this->checkY(mario,pacman);
-
 }
 
 // schermata di gioco
 void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump) {
+	
 	if (this->checkDead(mario, pacman)) {
 		dead->play();
-
-		//load screen death
+		// load window game over
+		// change mario texture with dead
+		this->screenPlay = 2;
+		return;
 	}
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
@@ -426,6 +427,65 @@ void MyModel::drawInitGame() {
 	// reset color
 	glColor3f(1.0, 1.0, 1.0);
 
+}
+
+void MyModel::drawGameOver() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glAlphaFunc(GL_GREATER, 0);
+
+	glLoadIdentity();
+
+	glBindTexture(GL_TEXTURE_2D, this->backgroundtexture);
+	glBegin(GL_QUADS);
+	double resize = 0.0;
+	// b-s
+	glTexCoord2f(Background[0].u, Background[0].v);
+	glVertex3f(Background[0].x + resize, Background[0].y, Background[0].z);
+	//b-d
+	glTexCoord2f(Background[1].u, Background[1].v);
+	glVertex3f(Background[1].x - resize, Background[1].y, Background[1].z);
+
+	//a-d
+	glTexCoord2f(Background[2].u, Background[2].v);
+	glVertex3f(Background[2].x - resize, Background[2].y, Background[2].z);
+
+	//a-s
+	glTexCoord2f(Background[3].u, Background[3].v);
+	glVertex3f(Background[3].x + resize, Background[3].y, Background[3].z);
+
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glColor3f(0.0f, 100.0f, 0.0f);
+	glRasterPos3f(-0.2, 0.5, -1);
+
+	this->glPrint("Game Over press RETURN to restart o ESC to Exit");
+	if (this->keys[VK_RETURN]) {
+		this->screenPlay = 1;
+	};
+	// reset color
+	glColor3f(1.0, 1.0, 1.0); 
+	if (this->keys[VK_RETURN]) {
+		this->screenPlay = 1;
+		
+		mario =  PC(-0.2, -0.6, 0.05, 0.1);
+		pacman = EnemyPacman(-0.9, -0.6, 0.055, 0.1);
+		Cloud1 = Sky(-1, 0.51, 1.02, 0.5);
+		Cloud2= Sky(1.01, 0.51, 1.02, 0.5);
+		Mountain1= Sky(-1.9, -0.35, 1.01, 0.4);
+		Mountain2= Sky(0.105, -0.35, 1.01, 0.4);
+		posSchermoX = 0;
+	};
+
+
 
 }
 // call every time in MainProc
@@ -442,9 +502,14 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead,audiere::OutputStreamPtr
 	case 1:
 		drawGamePrincipale(dead,jump);
 		break;
-	}
+	case 2:
+		this->drawGameOver();
+		break;
+	default:
 		return true;
 
+	}
+	
 }
 
 //  bitmap fonts
