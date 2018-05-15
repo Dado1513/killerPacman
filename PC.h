@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream>
+#include "audiere.h"
+
 class PC
 {
 	//VARIABILI:
@@ -58,7 +60,7 @@ class PC
 		//gestisco le velocità
 		void addVelX(std::string dir);
 		void stopX();
-		void jump();
+		void jump(audiere::OutputStreamPtr jump);
 		void stopY();
 		double getVelX();
 		//aggiorno la posizione di mario

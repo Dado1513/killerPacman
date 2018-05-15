@@ -64,6 +64,10 @@ bool MyModel::InitGL(void)
   return true;										// Initialization Went OK
 }
 
+
+
+
+
 // resize window
 void MyModel::ReSizeGLScene(int width, int height)
 {
@@ -133,7 +137,7 @@ bool MyModel::LoadGLTextures(void)
 	char backgroundFile[100];
 	sprintf(backgroundFile,"Data/backgroundImageStart_2.png" );
 
-	this->backgroundtexture = SOIL_load_OGL_texture(backgroundFile, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	backgroundtexture = SOIL_load_OGL_texture("Data/backgroundImageStart_3.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (this->backgroundtexture == 0)
 		return false;
 	/*
@@ -223,8 +227,9 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump){
 
 	
 	if (this->keys[VK_UP]){
-		mario.jump();
-		jump->play();
+
+		//se non sta saltando
+		mario.jump(jump);
 
 	}
 
@@ -385,31 +390,38 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 void MyModel::drawInitGame() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
 	
-	glMatrixMode(GL_MODELVIEW);	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glAlphaFunc(GL_GREATER, 0);
 
-	glLoadIdentity();
+	
 
-	glBindTexture(GL_TEXTURE_2D, this->backgroundtexture);
+	glBindTexture(GL_TEXTURE_2D, backgroundtexture);
+	//glBindTexture(GL_TEXTURE_2D, marioTexture[1]);
+	glPushMatrix();
 	glBegin(GL_QUADS);
-	double resize = 0.0;
+
+	
 		// b-s
 		glTexCoord2f(Background[0].u, Background[0].v);
-		glVertex3f(Background[0].x+resize, Background[0].y, Background[0].z);
+		glVertex3f(Background[0].x, Background[0].y, Background[0].z );
 		//b-d
 		glTexCoord2f(Background[1].u, Background[1].v);
-		glVertex3f(Background[1].x-resize, Background[1].y, Background[1].z);
+		glVertex3f(Background[1].x, Background[1].y, Background[0].z );
 
 		//a-d
 		glTexCoord2f(Background[2].u, Background[2].v);
-		glVertex3f(Background[2].x -resize, Background[2].y, Background[2].z);
+		glVertex3f(Background[2].x, Background[2].y, Background[0].z );
 
 		//a-s
 		glTexCoord2f(Background[3].u, Background[3].v);
-		glVertex3f(Background[3].x+resize, Background[3].y, Background[3].z);
+		glVertex3f(Background[3].x, Background[3].y, Background[0].z );
+	
+
 
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
@@ -417,7 +429,9 @@ void MyModel::drawInitGame() {
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
 	glColor3f(0.0f, 100.0f, 0.0f);
+
 	glRasterPos3f(-0.2,0.5,-1);
 
 	this->glPrint("Killer Pacman: Only One Rule : RUN Press Enter to Start!");
@@ -445,18 +459,18 @@ void MyModel::drawGameOver() {
 	double resize = 0.0;
 	// b-s
 	glTexCoord2f(Background[0].u, Background[0].v);
-	glVertex3f(Background[0].x + resize, Background[0].y, Background[0].z);
+	glVertex3f(Background[0].x, Background[0].y, Background[0].z);
 	//b-d
 	glTexCoord2f(Background[1].u, Background[1].v);
-	glVertex3f(Background[1].x - resize, Background[1].y, Background[1].z);
+	glVertex3f(Background[1].x, Background[1].y, Background[1].z);
 
 	//a-d
 	glTexCoord2f(Background[2].u, Background[2].v);
-	glVertex3f(Background[2].x - resize, Background[2].y, Background[2].z);
+	glVertex3f(Background[2].x, Background[2].y, Background[2].z);
 
 	//a-s
 	glTexCoord2f(Background[3].u, Background[3].v);
-	glVertex3f(Background[3].x + resize, Background[3].y, Background[3].z);
+	glVertex3f(Background[3].x, Background[3].y, Background[3].z);
 
 	glEnd();
 	glDisable(GL_TEXTURE_2D);

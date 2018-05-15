@@ -108,13 +108,14 @@ void PC::stopX()
 bool PC::getFalling() {
 	return this->isFalling;
 }
-void PC::jump(){
+void PC::jump( audiere::OutputStreamPtr jump ){
 	//se non sta saltando, compio il salto
 	// no dovrebbe essere 3 e 4 invece che 3 e 2?
 	if(std::strcmp(state.c_str(),"upLeft") !=0  && std::strcmp(state.c_str(), "upRight") != 0 && !isFalling){
 	//if (state != 3 && state != 2 && !isFalling){
 		velY = 0.018;
 		isFalling = true;
+		jump->play();
 
 		if (std::strcmp(state.c_str(), "left") == 0 || std::strcmp(state.c_str(), "stopLeft") == 0) {
 			state = "upLeft";
