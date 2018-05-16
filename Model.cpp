@@ -131,7 +131,7 @@ bool MyModel::LoadGLTextures(void)
 		}
 	}
 	char backgroundFile[100];
-	sprintf(backgroundFile,"Data/backgroundImageStart_3.png" );
+	sprintf(backgroundFile,"Data/backgroundImageStart_3_rotate.png" );
 
 	backgroundtexture = SOIL_load_OGL_texture(backgroundFile, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (this->backgroundtexture == 0)
@@ -363,7 +363,7 @@ void MyModel::drawInitGame() {
 
 	//this->glPrint("Killer Pacman: Only One Rule : RUN Press Enter to Start!");
 
-
+	/*
 
 	if (this->keys[WM_LBUTTONDOWN]) {
 
@@ -381,7 +381,7 @@ void MyModel::drawInitGame() {
 				/*char out[100];
 				sprintf(out, "%lf", Data.cy);
 				OutputDebugString(out);
-				OutputDebugString("\n");*/
+				OutputDebugString("\n");
 				
 			}
 
@@ -389,6 +389,7 @@ void MyModel::drawInitGame() {
 				this->keys[VK_ESCAPE] = true;
 		}
 	}
+	*/
 
 
 	if (this->keys[VK_RETURN]) {
