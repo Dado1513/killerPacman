@@ -64,10 +64,6 @@ bool MyModel::InitGL(void)
   return true;										// Initialization Went OK
 }
 
-
-
-
-
 // resize window
 void MyModel::ReSizeGLScene(int width, int height)
 {
@@ -137,7 +133,7 @@ bool MyModel::LoadGLTextures(void)
 	char backgroundFile[100];
 	sprintf(backgroundFile,"Data/backgroundImageStart_2.png" );
 
-	backgroundtexture = SOIL_load_OGL_texture("Data/backgroundImageStart_3.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	backgroundtexture = SOIL_load_OGL_texture("Data/backgroundImageStart_3_rotate.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (this->backgroundtexture == 0)
 		return false;
 	/*
@@ -164,6 +160,15 @@ bool MyModel::LoadGLTextures(void)
 				return false;
 	}
 
+	char newgamebutton[200];
+	int numero_button = 2;
+
+	for (int i = 0; i < numero_button; i++) {
+		sprintf(newgamebutton, "Data/button%01d.png", i + 1);
+		this->newGame[i] = SOIL_load_OGL_texture(newgamebutton, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+		if (newGame[i] == 0)
+			return false;
+	}
 	/*
 	this->pacmanTexture[18] = SOIL_load_OGL_texture("../Data/PacmanSprite/pacman_evil_new.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (pacmanTexture[18] == 0)
@@ -178,12 +183,143 @@ bool MyModel::LoadGLTextures(void)
 	return true;										// Return Success
 }
 
-void MyModel::updateWorld(audiere::OutputStreamPtr jump){
+// call every time in MainProc
+bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump) {
+
+	// usato per caricare schermate diverse
+	// 0 schermata iniziale
+	// 1 schermata di gioco principale
+
+	switch (this->screenPlay) {
+	case 0:
+		this->drawInitGame();
+		break;
+	case 1:
+		drawGamePrincipale(dead, jump);
+		break;
+	case 2:
+		this->drawGameOver();
+		break;
+	default:
+		return true;
+
+	}
+
+}
+
+void MyModel::drawInitGame() {
+
+	//  TIMING - start
+	clock_t t = clock();
+	// elapsed time in seconds from the last draw
+	double elapsed = double(t - Tstamp) / (double)CLOCKS_PER_SEC;
+	// elapsed time in milliseconds from the last draw
+	int ms_elapsed = (int)(t - Tstamp);
+	// elapsed time in seconds from the beginning of the program
+	this->fullElapsed = double(t - Tstart) / (double)CLOCKS_PER_SEC;
+	this->frameTime += double(t - Tstamp) / (double)CLOCKS_PER_SEC;
+	this->Tstamp = t;
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
+	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glAlphaFunc(GL_GREATER, 0);
+
+	
+
+	glBindTexture(GL_TEXTURE_2D, backgroundtexture);
+	//glBindTexture(GL_TEXTURE_2D, marioTexture[1]);
+	glPushMatrix();
+	glBegin(GL_QUADS);
+
+	
+		// b-s
+		glTexCoord2f(Background[0].u, Background[0].v);
+		glVertex3f(Background[0].x, Background[0].y, Background[0].z );
+		
+		//b-d
+		glTexCoord2f(Background[1].u, Background[1].v);
+		glVertex3f(Background[1].x, Background[1].y, Background[0].z );
+
+		//a-d
+		glTexCoord2f(Background[2].u, Background[2].v);
+		glVertex3f(Background[2].x, Background[2].y, Background[0].z );
+
+		//a-s
+		glTexCoord2f(Background[3].u, Background[3].v);
+		glVertex3f(Background[3].x, Background[3].y, Background[0].z );
+	
+
+
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	
+	//glRasterPos3f(-0.2,0.5,-1);
+	// tasto new game
+	int newgamebutton = (sizeof(newGame) / sizeof(*newGame));
+	//Pacman texture
+	int buttonId = (int(fullElapsed * 7) % newgamebutton);
+	if (buttonId > newgamebutton) {
+		buttonId = 0;
+	}
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, newGame[buttonId]);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glPushMatrix();
+		glBegin(GL_QUADS);
+
+		double x_init = 0.4;
+		double x_end = 0.8;
+		double y_init = -0.4;
+		double y_end = -0.1;
+		// b-s
+		glTexCoord2f(Background[0].u, Background[0].v);
+		glVertex3f(x_init, y_init, Background[0].z);
+
+		//b-d
+		glTexCoord2f(Background[1].u, Background[1].v);
+		glVertex3f(x_end, y_init, Background[0].z);
+
+		//a-d
+		glTexCoord2f(Background[2].u, Background[2].v);
+		glVertex3f(x_end, y_end, Background[0].z);
+
+		//a-s
+		glTexCoord2f(Background[3].u, Background[3].v);
+		glVertex3f(x_init, y_end, Background[0].z);
+
+
+
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+
+
+	//this->glPrint("Killer Pacman: Only One Rule : RUN Press Enter to Start!");
+	if (this->keys[VK_RETURN]) {
+		this->screenPlay = 1;
+	};
+	// reset color
+	glColor3f(1.0, 1.0, 1.0);
+
+}
+
+void MyModel::updateWorld(audiere::OutputStreamPtr jump) {
 
 	// update pacman
 
 	//ToDo aggiungere nel caso mario sia fermo nella stessa x o mario stia saltando
-	if (mario.getVelX() == 0.0 && this->checkX(mario,pacman)) {
+	if (mario.getVelX() == 0.0 && this->checkX(mario, pacman)) {
 		// ci sono sopra se anche la y è ok allora è morto 
 		pacman.stopX();
 		if (!this->checkY(mario, pacman)) {
@@ -203,30 +339,31 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump){
 		pacman.stopY();
 
 	}
-	
+
 	// update mario
 	if (this->keys[VK_RIGHT]) {
 		// mario si deve spostare a destra
 		mario.addVelX("right");
-		
-		
 
-	}else{
+
+
+	}
+	else {
 
 		if (this->keys[VK_LEFT]) {
 			// mario si deve spostare a sinistra
-			if (mario.getLeft() > posSchermoX - 1) 
+			if (mario.getLeft() > posSchermoX - 1)
 				mario.addVelX("left");
 			else
 				mario.stopX();
-			
+
 		}
 		else
 			mario.stopX();
 	}
 
-	
-	if (this->keys[VK_UP]){
+
+	if (this->keys[VK_UP]) {
 
 		//se non sta saltando
 		mario.jump(jump);
@@ -236,7 +373,7 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump){
 	// update mario position
 	mario.update();
 
-	
+
 	if (mario.getDown() < -0.7) {
 		mario.stopY();
 
@@ -244,34 +381,9 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump){
 
 }
 
-bool MyModel::checkX(PC mario, EnemyPacman pacman) {
-	bool x = false;
-	if ((mario.getX() <= pacman.getRight()) && mario.getX() >= pacman.getLeft()) {
-		x = true;
-	}
-	return x;
-}
-
-bool MyModel::checkY(PC mario, EnemyPacman pacman) {
-	bool y = false;
-	// se la cordinata x del centro di mario è compresa fra gli estremi di pacman
-
-	// stessa cosa per la y
-	if ((mario.getY() <= pacman.getUp()) && mario.getY() >= pacman.getDown()) {
-		y = true;
-	}
-	return y;
-}
-
-// controlla se mario è stato mangiato da pacman
-bool MyModel::checkDead(PC mario, EnemyPacman pacman) {
-	
-	return this->checkX(mario,pacman) && this->checkY(mario,pacman);
-}
-
 // schermata di gioco
 void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump) {
-	
+
 	if (this->checkDead(mario, pacman)) {
 		dead->play();
 		// load window game over
@@ -372,11 +484,11 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	}
 
 	this->glPrint("Elapsed time: %6.2f sec.  -  Fps %6.2f - PositionMario x = %6.2f, y = %6.2f, velocity %6.5f", fullElapsed, fps, mario.getLeft(), mario.getDown(), mario.getVelX());
-	
+
 	/*
 	if (this->fullElapsed < 6) {
-		glRasterPos3f(-(float)plx + PixToCoord_X(10), (float)-ply + PixToCoord_Y(21), -4);
-		this->glPrint("...F2/F3/F4 for sounds");
+	glRasterPos3f(-(float)plx + PixToCoord_X(10), (float)-ply + PixToCoord_Y(21), -4);
+	this->glPrint("...F2/F3/F4 for sounds");
 	}
 	*/
 
@@ -384,62 +496,6 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	this->glPrint("%1d %1d  %s", cx, cy, captured ? "captured" : "Not captured");
 
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
-
-}
-
-void MyModel::drawInitGame() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
-	
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glAlphaFunc(GL_GREATER, 0);
-
-	
-
-	glBindTexture(GL_TEXTURE_2D, backgroundtexture);
-	//glBindTexture(GL_TEXTURE_2D, marioTexture[1]);
-	glPushMatrix();
-	glBegin(GL_QUADS);
-
-	
-		// b-s
-		glTexCoord2f(Background[0].u, Background[0].v);
-		glVertex3f(Background[0].x, Background[0].y, Background[0].z );
-		//b-d
-		glTexCoord2f(Background[1].u, Background[1].v);
-		glVertex3f(Background[1].x, Background[1].y, Background[0].z );
-
-		//a-d
-		glTexCoord2f(Background[2].u, Background[2].v);
-		glVertex3f(Background[2].x, Background[2].y, Background[0].z );
-
-		//a-s
-		glTexCoord2f(Background[3].u, Background[3].v);
-		glVertex3f(Background[3].x, Background[3].y, Background[0].z );
-	
-
-
-	glEnd();
-	glDisable(GL_TEXTURE_2D);
-
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glColor3f(0.0f, 100.0f, 0.0f);
-
-	glRasterPos3f(-0.2,0.5,-1);
-
-	this->glPrint("Killer Pacman: Only One Rule : RUN Press Enter to Start!");
-	if (this->keys[VK_RETURN]) {
-		this->screenPlay = 1;
-	};
-	// reset color
-	glColor3f(1.0, 1.0, 1.0);
 
 }
 
@@ -502,29 +558,7 @@ void MyModel::drawGameOver() {
 
 
 }
-// call every time in MainProc
-bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead,audiere::OutputStreamPtr jump){
-	
-	// usato per caricare schermate diverse
-	// 0 schermata iniziale
-	// 1 schermata di gioco principale
 
-	switch (this->screenPlay) {
-	case 0:
-		this->drawInitGame();
-		break;
-	case 1:
-		drawGamePrincipale(dead,jump);
-		break;
-	case 2:
-		this->drawGameOver();
-		break;
-	default:
-		return true;
-
-	}
-	
-}
 
 //  bitmap fonts
 void MyModel::BuildFont(void)								// Build Our Bitmap Font
@@ -578,6 +612,30 @@ void MyModel::glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 	glPopAttrib();										// Pops The Display List Bits
 }
 
+bool MyModel::checkX(PC mario, EnemyPacman pacman) {
+	bool x = false;
+	if ((mario.getX() <= pacman.getRight()) && mario.getX() >= pacman.getLeft()) {
+		x = true;
+	}
+	return x;
+}
+
+bool MyModel::checkY(PC mario, EnemyPacman pacman) {
+	bool y = false;
+	// se la cordinata x del centro di mario è compresa fra gli estremi di pacman
+
+	// stessa cosa per la y
+	if ((mario.getY() <= pacman.getUp()) && mario.getY() >= pacman.getDown()) {
+		y = true;
+	}
+	return y;
+}
+
+// controlla se mario è stato mangiato da pacman
+bool MyModel::checkDead(PC mario, EnemyPacman pacman) {
+
+	return this->checkX(mario, pacman) && this->checkY(mario, pacman);
+}
 
 void MyModel::buildPacman() {
 	// se carico l'immagine evil pacman
