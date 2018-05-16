@@ -68,8 +68,7 @@ double PC::getY()
 }
 
 
-void PC::addVelX(std::string dir)
-{
+void PC::addVelX(std::string dir){
 	if (std::strcmp(dir.c_str(),"right")==0){
 		//direzione destra
 		state = "right";
@@ -91,6 +90,7 @@ void PC::addVelX(std::string dir)
 		}
 	}
 }
+
 void PC::stopX()
 {
 	//se non sta saltando
@@ -108,6 +108,7 @@ void PC::stopX()
 bool PC::getFalling() {
 	return this->isFalling;
 }
+
 void PC::jump( audiere::OutputStreamPtr jump ){
 	
 	/*if (!isFalling) {
@@ -130,6 +131,7 @@ void PC::jump( audiere::OutputStreamPtr jump ){
 	}
 		
 }
+
 void PC::stopY(){
 
 	isFalling = false;
