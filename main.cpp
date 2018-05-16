@@ -1,13 +1,19 @@
+
 #include <windows.h>		// Header File For Windows
 #include <stdio.h>			// Header File For Standard Input/Output
 #include <gl\gl.h>			// Header File For The OpenGL32 Library
 #include <gl\glu.h>			// Header File For The GLu32 Library
+#include <iostream> 
+using namespace std;
+
 
 #include "Model.h"
 
 #include "audiere.h"
 #include "resource.h"
 using namespace audiere;
+
+
 #ifdef _MSC_VER                         // Check if MS Visual C compiler
 	#pragma comment( lib, "opengl32.lib" )				// Search For OpenGL32.lib While Linking 
 	#pragma comment( lib, "glu32.lib" )						// Search For GLu32.lib While Linking			
@@ -226,25 +232,66 @@ BOOL CreateGLWindow(char* title, int width, int height, int bits, bool fullscree
 // CALLBACK FUNCTION
 LRESULT CALLBACK WndProc(HWND hWnd, UINT	uMsg, WPARAM	wParam,	LPARAM	lParam)			
 {
-	switch (uMsg){									// Check For Windows Messages
-	
+	switch (uMsg) {									// Check For Windows Messages
+
 		case WM_ACTIVATE: {							// Watch For Window Activate Message
 			if (!HIWORD(wParam)) { 					// Check Minimization State
-				Data.active=TRUE; 
+				Data.active = TRUE;
 			}					// Program Is Active
-			else { 
-				Data.active=FALSE; 
+			else {
+				Data.active = FALSE;
 			}		// Program Is No Longer Active
 			return 0;								      // Return To The Message Loop
 		}
-		
-		// mouse move
-		case WM_MOUSEMOVE:{
+
+						  // mouse move
+		case WM_MOUSEMOVE: {
 			POINTS p;
-			 p = MAKEPOINTS(lParam);
-			 Data.cx = p.x; Data.cy = p.y;
-			 break;
+			p = MAKEPOINTS(lParam);
+			Data.cx = p.x; Data.cy = p.y;
+			break;
 		}
+
+		case WM_LBUTTONDOWN: {
+
+			Data.keys[WM_LBUTTONDOWN] = true;
+			POINTS ppo = MAKEPOINTS(lParam);
+
+
+			RECT rect;
+			GetWindowRect(hWnd, &rect);
+			double width = rect.right - rect.left;
+			double height = rect.bottom - rect.top;
+
+			Data.cx = ((double)ppo.x * 2.028) / width - 1;
+			Data.cy = (((double)ppo.y * 2.11) / height - 1)*(-1);
+
+			Data.mouseleft = true;
+			//	Cattura il mouse, usare l'help per capire perchè serve.
+			//	Ricordarsi sempre di liberarlo all'UP !
+			//	Capture of the mouse. Use the help to understand why is required.
+			//	You must release the mouse on the UP message!
+			SetCapture(hWnd);
+			return 0;
+			
+		}
+
+
+		case WM_LBUTTONUP: {
+			Data.mouseAlreadyPressed = false;
+			if (Data.mouseleft) {
+				Data.keys[WM_LBUTTONDOWN] = false;
+				Data.keys[WM_LBUTTONUP] = true;
+				Data.mouseleft = false;
+
+				//	Always release the mouse after a SetCapture !
+				//	Try to comment the following line: you cannot kill the program!
+				ReleaseCapture();
+			}
+			return 0;
+		}
+
+
 			
 		case WM_SYSCOMMAND: {							// Intercept System Commands
 		

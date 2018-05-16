@@ -47,8 +47,10 @@ class MyModel {
 		bool	active;		      // Window Active Flag Set To TRUE By Default
 		bool cursor;          // true if visible
 		bool captured;        // true if the mouse is captured
-		int cx, cy;           // client position of the cursor
+		double cx, cy;           // client position of the cursor
+		bool mouseleft;
 		bool	fullscreen;	    // Fullscreen Flag 
+		bool mouseAlreadyPressed;
 
 	private:
 		//  projection limits in X and Y: x in [-plx, plx], y in [-ply, ply]

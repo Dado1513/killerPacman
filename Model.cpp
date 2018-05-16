@@ -131,9 +131,9 @@ bool MyModel::LoadGLTextures(void)
 		}
 	}
 	char backgroundFile[100];
-	sprintf(backgroundFile,"Data/backgroundImageStart_2.png" );
+	sprintf(backgroundFile,"Data/backgroundImageStart_3.png" );
 
-	backgroundtexture = SOIL_load_OGL_texture("Data/backgroundImageStart_3_rotate.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	backgroundtexture = SOIL_load_OGL_texture(backgroundFile, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (this->backgroundtexture == 0)
 		return false;
 	/*
@@ -217,14 +217,29 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 void MyModel::drawInitGame() {
 
 
+	double x_init = 0.5;
+	double x_end = 0.8;
+	double y_init = 0.1;
+	double y_end = 0.3;
+	double fattore_y = 0.4;
+
+
+
+
 	if (this->keys[VK_UP]) {
-		this->select = 0;
-		
+		this->select = 0;	
 	}
+
 	if (this->keys[VK_DOWN]) {
-		this->select = 1;
-		
+			this->select = 1;
 	}
+
+
+
+	
+	
+	
+
 
 	//  TIMING - start
 	clock_t t = clock();
@@ -246,7 +261,6 @@ void MyModel::drawInitGame() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glAlphaFunc(GL_GREATER, 0);
 	glBindTexture(GL_TEXTURE_2D, backgroundtexture);
-	//glBindTexture(GL_TEXTURE_2D, marioTexture[1]);
 	glPushMatrix();
 	glBegin(GL_QUADS);
 
@@ -288,10 +302,7 @@ void MyModel::drawInitGame() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glPushMatrix();
 		glBegin(GL_QUADS);
-		double x_init = 0.5;
-		double x_end = 0.8;
-		double y_init = -0.1;
-		double y_end = 0.1;
+		
 		// b-s
 		glTexCoord2f(Background[0].u, Background[0].v);
 		glVertex3f(x_init, y_init, Background[0].z);
@@ -324,7 +335,7 @@ void MyModel::drawInitGame() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glPushMatrix();
 	glBegin(GL_QUADS);
-	double fattore_y = 0.4;
+	
 
 		// b-s
 		glTexCoord2f(Background[0].u, Background[0].v);
@@ -351,13 +362,42 @@ void MyModel::drawInitGame() {
 	glLoadIdentity();
 
 	//this->glPrint("Killer Pacman: Only One Rule : RUN Press Enter to Start!");
+
+
+
+	if (this->keys[WM_LBUTTONDOWN]) {
+
+		
+
+		if (Data.mouseleft && !Data.mouseAlreadyPressed) {
+
+			Data.mouseAlreadyPressed = true;
+			double x = Data.cx;
+			double y = Data.cy;
+
+			if (x > x_init && x < x_end && y > y_init && y < y_end) {
+				this->screenPlay = 1;
+
+				/*char out[100];
+				sprintf(out, "%lf", Data.cy);
+				OutputDebugString(out);
+				OutputDebugString("\n");*/
+				
+			}
+
+			if (x > x_init && x < x_end && y > y_init - fattore_y && y < y_end - fattore_y)
+				this->keys[VK_ESCAPE] = true;
+		}
+	}
+
+
 	if (this->keys[VK_RETURN]) {
 		if(this->select == 0)
 			this->screenPlay = 1;
 		else {
 			this->keys[VK_ESCAPE] = true;
 		}
-	};
+	}
 	// reset color
 	glColor3f(1.0, 1.0, 1.0);
 
@@ -652,7 +692,15 @@ void MyModel::glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 		return;											// Do Nothing
 
 	va_start(ap, fmt);									// Parses The String For Variables
-	    vsprintf(text, fmt, ap);						// And Converts Symbols To Actual Numbers
+	try {
+		vsprintf(text, fmt, ap);						// And Converts Symbols To Actual Number
+	}
+	catch (int e) {
+		char out[100];
+		sprintf(out, "error2");
+		OutputDebugString(out);
+		OutputDebugString("\n");
+	}
 	va_end(ap);											// Results Are Stored In Text
 
 	glPushAttrib(GL_LIST_BIT);							// Pushes The Display List Bits
