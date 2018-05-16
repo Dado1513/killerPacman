@@ -218,20 +218,12 @@ void MyModel::drawInitGame() {
 
 
 	if (this->keys[VK_UP]) {
-		if (this->select == 0) {
-			this->select = 1;
-		}
-		else {
-			this->select = 0;
-		}
+		this->select = 0;
+		
 	}
 	if (this->keys[VK_DOWN]) {
-		if (this->select == 0) {
-			this->select = 1;
-		}
-		else {
-			this->select = 0;
-		}
+		this->select = 1;
+		
 	}
 
 	//  TIMING - start
