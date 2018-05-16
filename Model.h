@@ -80,6 +80,7 @@ class MyModel {
 		GLuint backgroundtexture;
 		GLuint	marioTexture[8];
 		GLuint newGame[2];
+		GLuint exitGame[2];
 
 		GLuint	base;				// Base Display List For The Font Set
 	public:

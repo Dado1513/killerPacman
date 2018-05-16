@@ -164,9 +164,16 @@ bool MyModel::LoadGLTextures(void)
 	int numero_button = 2;
 
 	for (int i = 0; i < numero_button; i++) {
-		sprintf(newgamebutton, "Data/button%01d.png", i + 1);
+		sprintf(newgamebutton, "Data/button_new-game_%01d.png", i + 1);
 		this->newGame[i] = SOIL_load_OGL_texture(newgamebutton, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 		if (newGame[i] == 0)
+			return false;
+	}
+	char exitgamebutton[200];
+	for (int i = 0; i < numero_button; i++) {
+		sprintf(newgamebutton, "Data/button_exit-game_%01d.png", i + 1);
+		this->exitGame[i] = SOIL_load_OGL_texture(exitgamebutton, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+		if (exitGame == 0)
 			return false;
 	}
 	/*
@@ -267,7 +274,7 @@ void MyModel::drawInitGame() {
 	// tasto new game
 	int newgamebutton = (sizeof(newGame) / sizeof(*newGame));
 	//Pacman texture
-	int buttonId = (int(fullElapsed * 7) % newgamebutton);
+	int buttonId = (int(fullElapsed * 10) % newgamebutton);
 	if (buttonId > newgamebutton) {
 		buttonId = 0;
 	}
@@ -279,10 +286,10 @@ void MyModel::drawInitGame() {
 	glPushMatrix();
 		glBegin(GL_QUADS);
 
-		double x_init = 0.4;
+		double x_init = 0.5;
 		double x_end = 0.8;
-		double y_init = -0.4;
-		double y_end = -0.1;
+		double y_init = -0.1;
+		double y_end = 0.1;
 		// b-s
 		glTexCoord2f(Background[0].u, Background[0].v);
 		glVertex3f(x_init, y_init, Background[0].z);
