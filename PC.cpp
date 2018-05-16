@@ -110,9 +110,10 @@ bool PC::getFalling() {
 }
 void PC::jump( audiere::OutputStreamPtr jump ){
 	if(std::strcmp(state.c_str(),"upLeft") !=0  && std::strcmp(state.c_str(), "upRight") != 0 && !isFalling){
+		jump->play();
 		velY = 0.018;
 		isFalling = true;
-		jump->play();
+		
 
 		if (std::strcmp(state.c_str(), "left") == 0 || std::strcmp(state.c_str(), "stopLeft") == 0) {
 			state = "upLeft";
@@ -125,12 +126,13 @@ void PC::jump( audiere::OutputStreamPtr jump ){
 }
 void PC::stopY(){
 
+	isFalling = false;
 	if (std::strcmp(state.c_str(), "upRight") == 0)
 		state = "stopRight";
 	if (std::strcmp(state.c_str(), "upLeft") == 0)
 		state = "stopLeft";
 	velY = 0;
-	isFalling = false;
+	
 }
 
 

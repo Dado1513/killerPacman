@@ -171,7 +171,7 @@ bool MyModel::LoadGLTextures(void)
 	}
 	char exitgamebutton[200];
 	for (int i = 0; i < numero_button; i++) {
-		sprintf(newgamebutton, "Data/button_exit-game_%01d.png", i + 1);
+		sprintf(exitgamebutton, "Data/button_exit-game_%01d.png", i + 1);
 		this->exitGame[i] = SOIL_load_OGL_texture(exitgamebutton, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 		if (exitGame == 0)
 			return false;
@@ -216,6 +216,24 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 
 void MyModel::drawInitGame() {
 
+
+	if (this->keys[VK_UP]) {
+		if (this->select == 0) {
+			this->select = 1;
+		}
+		else {
+			this->select = 0;
+		}
+	}
+	if (this->keys[VK_DOWN]) {
+		if (this->select == 0) {
+			this->select = 1;
+		}
+		else {
+			this->select = 0;
+		}
+	}
+
 	//  TIMING - start
 	clock_t t = clock();
 	// elapsed time in seconds from the last draw
@@ -226,24 +244,20 @@ void MyModel::drawInitGame() {
 	this->fullElapsed = double(t - Tstart) / (double)CLOCKS_PER_SEC;
 	this->frameTime += double(t - Tstamp) / (double)CLOCKS_PER_SEC;
 	this->Tstamp = t;
+
+	// background
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
-	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glAlphaFunc(GL_GREATER, 0);
-
-	
-
 	glBindTexture(GL_TEXTURE_2D, backgroundtexture);
 	//glBindTexture(GL_TEXTURE_2D, marioTexture[1]);
 	glPushMatrix();
 	glBegin(GL_QUADS);
 
-	
 		// b-s
 		glTexCoord2f(Background[0].u, Background[0].v);
 		glVertex3f(Background[0].x, Background[0].y, Background[0].z );
@@ -260,32 +274,28 @@ void MyModel::drawInitGame() {
 		glTexCoord2f(Background[3].u, Background[3].v);
 		glVertex3f(Background[3].x, Background[3].y, Background[0].z );
 	
-
-
 	glEnd();
-	glDisable(GL_TEXTURE_2D);
 
-
+	// NEW GAME BUTTON
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
-	
-	//glRasterPos3f(-0.2,0.5,-1);
-	// tasto new game
 	int newgamebutton = (sizeof(newGame) / sizeof(*newGame));
-	//Pacman texture
-	int buttonId = (int(fullElapsed * 10) % newgamebutton);
+	// new game
+	
+	int buttonId = (int(fullElapsed * 5) % newgamebutton);
 	if (buttonId > newgamebutton) {
 		buttonId = 0;
 	}
 
-	glEnable(GL_TEXTURE_2D);
+	// se ho selezionato exit game lampeggia solo quello
+	if (this->select != 0) {
+		buttonId = 0;
+	}
 	glBindTexture(GL_TEXTURE_2D, newGame[buttonId]);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glPushMatrix();
 		glBegin(GL_QUADS);
-
 		double x_init = 0.5;
 		double x_end = 0.8;
 		double y_init = -0.1;
@@ -293,28 +303,68 @@ void MyModel::drawInitGame() {
 		// b-s
 		glTexCoord2f(Background[0].u, Background[0].v);
 		glVertex3f(x_init, y_init, Background[0].z);
-
 		//b-d
 		glTexCoord2f(Background[1].u, Background[1].v);
 		glVertex3f(x_end, y_init, Background[0].z);
-
 		//a-d
 		glTexCoord2f(Background[2].u, Background[2].v);
 		glVertex3f(x_end, y_end, Background[0].z);
-
 		//a-s
 		glTexCoord2f(Background[3].u, Background[3].v);
 		glVertex3f(x_init, y_end, Background[0].z);
+	glEnd();
+
+
+	// EXIT BUTTON
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	int buttonexitId = (int(fullElapsed * 5) % newgamebutton);
+	if (buttonexitId > newgamebutton) {
+		buttonexitId = 0;
+	}
+	// se ho selezionato new game lampeggia solo quello
+	if (this->select != 1) {
+		buttonexitId = 0;
+	}
+	glBindTexture(GL_TEXTURE_2D, exitGame[buttonexitId]);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	double fattore_y = 0.4;
+
+		// b-s
+		glTexCoord2f(Background[0].u, Background[0].v);
+		glVertex3f(x_init, y_init-fattore_y, Background[0].z);
+
+		//b-d
+		glTexCoord2f(Background[1].u, Background[1].v);
+		glVertex3f(x_end, y_init - fattore_y, Background[0].z);
+
+		//a-d
+		glTexCoord2f(Background[2].u, Background[2].v);
+		glVertex3f(x_end, y_end - fattore_y, Background[0].z);
+
+		//a-s
+		glTexCoord2f(Background[3].u, Background[3].v);
+		glVertex3f(x_init, y_end - fattore_y, Background[0].z);
 
 
 
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
 	//this->glPrint("Killer Pacman: Only One Rule : RUN Press Enter to Start!");
 	if (this->keys[VK_RETURN]) {
-		this->screenPlay = 1;
+		if(this->select == 0)
+			this->screenPlay = 1;
+		else {
+			this->keys[VK_ESCAPE] = true;
+		}
 	};
 	// reset color
 	glColor3f(1.0, 1.0, 1.0);
