@@ -18,6 +18,9 @@
 #include "Sky.h"
 #include "audiere.h"
 #include "Ostacolo.h"
+#include "Level.h"
+#include <list>
+#include <iterator>
 
 using namespace std;
 
@@ -35,12 +38,12 @@ Sky Mountain1(-1.9, -0.35, 1.01, 0.4);
 Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 
 
-Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, 0.1, "obs");
+Level level0(0, 100);
 
 double posSchermoX = 0;
 bool pacmanCanMove = false;
 
-
+bool first = true;
 
 // All Setup For OpenGL Goes Here
 bool MyModel::InitGL(void)
@@ -245,12 +248,6 @@ void MyModel::drawInitGame() {
 	}
 
 
-
-	
-	
-	
-
-
 	//  TIMING - start
 	clock_t t = clock();
 	// elapsed time in seconds from the last draw
@@ -414,6 +411,16 @@ void MyModel::drawInitGame() {
 
 }
 
+bool MyModel::pcCanMove(PC mario) {
+	/*
+		funzione per gestire gli ostacoli
+		se mario può muoversi allora si muove altrimenti no
+		si controlla sulla lista di ostacoli
+
+	*/
+	return true;
+}
+
 void MyModel::updateWorld(audiere::OutputStreamPtr jump) {
 
 	// update pacman
@@ -556,21 +563,16 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	// Draw the landscape
 	this->buildLandscape();
 
-	//ostacolo
-	this->buildLevel0();
 
 	// draw mario
 	this->buildMario();
-
+	this->buildLevel0();
+	
 	// draw pacman
 	this->buildPacman();
 
-
-
 	/*
-
 	//  Floating cursor - end
-
 	//  Some text
 	glMatrixMode(GL_MODELVIEW);				// Select The Modelview Matrix
 	glLoadIdentity();									// Reset The Current Modelview Matrix
@@ -607,6 +609,7 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 }
 
 void MyModel::drawGameOver() {
+
 	pacmanCanMove = false;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -666,7 +669,6 @@ void MyModel::drawGameOver() {
 
 
 }
-
 
 //  bitmap fonts
 void MyModel::BuildFont(void)								// Build Our Bitmap Font
@@ -1080,6 +1082,13 @@ void MyModel::buildLandscape(){
 }
 
 void MyModel::buildLevel0() {
+	
+	Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, 0.1, "obs");
+	Ostacolo ostacolo2(3.0, 3.1, -0.4, -0.2, 0.1, "obs");
+
+	level0.addOstacolo(obstacle);
+	level0.addOstacolo(ostacolo2);
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_ALPHA_TEST);
@@ -1087,10 +1096,47 @@ void MyModel::buildLevel0() {
 
 	//fattore di correzione x
 	float x = 0;
+	std::list<Ostacolo>::iterator it;
+	std::list<Ostacolo> listaOstacoli = level0.getOstacoli();
+	/* LENTISSIMO con questo
+	for (it = listaOstacoli.begin(); it != listaOstacoli.end(); ++it) {
+		
+		if(std::strcmp(it->getType().c_str(),"obs")==0)
+			glBindTexture(GL_TEXTURE_2D, texture[3]);
+		glBegin(GL_QUADS);
+		// TODO
+		// invece di questo usare Level.makeLevel()
+		// che inserisce gli ostacoli in una lista
+		// li riordina e poi quando quando si gioca nell'update mario si controlla
+		// se mario si può muovere/cade 
 
+		//basso sinistra
+		glTexCoord2f(Background[0].u + x, Background[0].v + x);
+		glVertex3f(it->getXInit(), it->getYInit(), Background[1].z);
+
+		//basso destra
+		glTexCoord2f(Background[1].u - x, Background[1].v + x);
+		glVertex3f(it->getXFin(), it->getYInit(), Background[1].z);
+
+		//alto destra
+		glTexCoord2f(Background[2].u - x, Background[2].v);
+		glVertex3f(it->getXFin(), it->getYFin(), Background[1].z);
+
+		//alto sinistra
+		glTexCoord2f(Background[3].u + x, Background[3].v);
+		glVertex3f(it->getXInit(), it->getYFin(), Background[1].z);
+
+
+		glEnd();
+	}
+	*/
 	glBindTexture(GL_TEXTURE_2D, texture[3]);
 	glBegin(GL_QUADS);
-
+	// TODO
+	// invece di questo usare Level.makeLevel()
+	// che inserisce gli ostacoli in una lista
+	// li riordina e poi quando quando si gioca nell'update mario si controlla
+	// se mario si può muovere/cade 
 
 	//basso sinistra
 	glTexCoord2f(Background[0].u + x, Background[0].v + x);
@@ -1107,6 +1153,32 @@ void MyModel::buildLevel0() {
 	//alto sinistra
 	glTexCoord2f(Background[3].u + x, Background[3].v);
 	glVertex3f(obstacle.getXInit(), obstacle.getYFin(), Background[1].z);
+
+
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, texture[3]);
+	glBegin(GL_QUADS);
+	// TODO
+	// invece di questo usare Level.makeLevel()
+	// che inserisce gli ostacoli in una lista
+	// li riordina e poi quando quando si gioca nell'update mario si controlla
+	// se mario si può muovere/cade 
+
+	//basso sinistra
+	glTexCoord2f(Background[0].u + x, Background[0].v + x);
+	glVertex3f(ostacolo2.getXInit(), ostacolo2.getYInit(), Background[1].z);
+
+	//basso destra
+	glTexCoord2f(Background[1].u - x, Background[1].v + x);
+	glVertex3f(ostacolo2.getXFin(), ostacolo2.getYInit(), Background[1].z);
+
+	//alto destra
+	glTexCoord2f(Background[2].u - x, Background[2].v);
+	glVertex3f(ostacolo2.getXFin(), ostacolo2.getYFin(), Background[1].z);
+
+	//alto sinistra
+	glTexCoord2f(Background[3].u + x, Background[3].v);
+	glVertex3f(ostacolo2.getXInit(), ostacolo2.getYFin(), Background[1].z);
 
 
 	glEnd();

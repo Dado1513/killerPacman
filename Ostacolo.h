@@ -24,6 +24,7 @@ class Ostacolo
 		double getYFin();
 		bool operator == (const Ostacolo& ostacolo);
 		bool operator > (const Ostacolo& ostacolo);
+		std::string getType();
 		bool operator < (const Ostacolo& ostacolo);
 		int Compare(const Ostacolo&);
 		~Ostacolo();

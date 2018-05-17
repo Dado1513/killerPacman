@@ -11,7 +11,7 @@ void Level::makeLevel(int massimoOstacoli) {
 	// creo ostacoli numero massimo per livello
 	// type ostacolo
 	std::string type[2];
-	type[0] = "block";
+	type[0] = "obs";
 	type[1] = "hole";
 
 	for (int i = 0; i < massimoOstacoli; i++) {
@@ -26,7 +26,7 @@ void Level::makeLevel(int massimoOstacoli) {
 	//this->listaOstacoli.sort();
 }
 void Level::addOstacolo(Ostacolo o) {
-
+	this->listaOstacoli.push_front(o);
 }
 std::list<Ostacolo> Level::getOstacoli() {
 	return this->listaOstacoli;

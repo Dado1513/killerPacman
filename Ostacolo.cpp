@@ -63,4 +63,8 @@ double Ostacolo::getYFin() {
 	return yFinish;
 }
 
+std::string Ostacolo::getType() {
+	return type;
+}
+
 
