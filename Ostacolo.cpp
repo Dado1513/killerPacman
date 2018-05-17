@@ -4,13 +4,16 @@
 #include <iostream>
 
 
-Ostacolo::Ostacolo(double xInit, double xFinish, double yInit, double yFinish, double length, std::string type) {
+Ostacolo::Ostacolo(double xInit, double xFinish, double yInit, double yFinish, std::string type) {
 	this->xInit = xInit;
 	this->xFinish = xFinish;
 	this->yInit = yInit;
 	this->yFinish = yFinish;
 	this->type = type;
-	this->length = length;
+	this->width = xFinish - xInit;
+	this->heigth = yFinish - yInit;
+	this->cx = xInit + width / 2;
+	this->cy = yInit + heigth / 2;
 }
 
 int Ostacolo::Compare(const Ostacolo& ostacolo) {
@@ -62,9 +65,16 @@ double Ostacolo::getYInit() {
 double Ostacolo::getYFin() {
 	return yFinish;
 }
+double Ostacolo::getCX() {
+	return cx;
+}
+double Ostacolo::getCY() {
+	return cy;
+}
 
 std::string Ostacolo::getType() {
 	return type;
 }
+
 
 

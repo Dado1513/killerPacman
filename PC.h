@@ -61,10 +61,12 @@ class PC
 		void addVelX(std::string dir);
 		void stopX();
 		void jump(audiere::OutputStreamPtr jump);
-		void stopY();
+		void stopY(double limY);
 		double getVelX();
 		//aggiorno la posizione di mario
 		void update();
 		bool getFalling();
+
+		void obstacleY();
 };
 

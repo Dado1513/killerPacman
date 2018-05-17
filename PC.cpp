@@ -130,7 +130,7 @@ void PC::jump( audiere::OutputStreamPtr jump ){
 	}
 		
 }
-void PC::stopY(){
+void PC::stopY(double limY){
 
 	isFalling = false;
 	if (std::strcmp(state.c_str(), "upRight") == 0)
@@ -138,10 +138,14 @@ void PC::stopY(){
 	if (std::strcmp(state.c_str(), "upLeft") == 0)
 		state = "stopLeft";
 	velY = 0;
+
+	posY = limY + height;
 	
 }
 
-
+void PC::obstacleY() {
+	velY = -0.002;
+}
 
 void PC::update()
 {

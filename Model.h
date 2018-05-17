@@ -149,6 +149,7 @@ class MyModel {
 		bool checkY(PC mario, EnemyPacman pacman);
 		bool checkDead(PC mario, EnemyPacman pacman);
 		bool pcCanMove(PC mario);
+
 		void drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump);
 
 	private:
