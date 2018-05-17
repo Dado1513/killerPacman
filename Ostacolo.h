@@ -1,5 +1,9 @@
 #pragma once
+#pragma warning(disable: 4996)
+
+
 #include <iostream>
+
 
 class Ostacolo
 {
@@ -13,7 +17,11 @@ class Ostacolo
 
 	public:
 		Ostacolo();
-		Ostacolo(double, double, double, double, double, std::string);
+		Ostacolo(double xInit, double xFin, double yInit, double yFin, double length, std::string type);
+		double getXInit();
+		double getXFin();
+		double getYInit();
+		double getYFin();
 		bool operator == (const Ostacolo& ostacolo);
 		bool operator > (const Ostacolo& ostacolo);
 		bool operator < (const Ostacolo& ostacolo);

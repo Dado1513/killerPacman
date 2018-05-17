@@ -14,6 +14,7 @@
 #include "audiere.h"
 #include "PC.h"
 #include "EnemyPacman.h"
+#include "Ostacolo.h"
 #define PI 3.141592654
 
 // A class for storing vetices
@@ -139,6 +140,7 @@ class MyModel {
 		void buildFloor();
 		void buildSky();
 		void buildMario();
+		void buildLevel0();
 		void buildPacman();
 		void buildLandscape();
 		void drawInitGame();

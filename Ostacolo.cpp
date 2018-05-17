@@ -50,4 +50,17 @@ Ostacolo::~Ostacolo()
 {
 }
 
+double Ostacolo::getXInit() {
+	return xInit;
+}
+double Ostacolo::getXFin() {
+	return xFinish;
+}
+double Ostacolo::getYInit() {
+	return yInit;
+}
+double Ostacolo::getYFin() {
+	return yFinish;
+}
+
 

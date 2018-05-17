@@ -17,6 +17,9 @@
 #include "EnemyPacman.h"
 #include "Sky.h"
 #include "audiere.h"
+#include "Ostacolo.h"
+
+using namespace std;
 
 // x iniziale, y iniziale, spessore e altezza personaggio e nemico
 PC mario(-0.2, -0.6, 0.05, 0.1);
@@ -31,7 +34,11 @@ Sky Cloud2(1.01, 0.51, 1.02, 0.5);
 Sky Mountain1(-1.9, -0.35, 1.01, 0.4);
 Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 
+
+Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, 0.1, "obs");
+
 double posSchermoX = 0;
+bool pacmanCanMove = false;
 
 
 
@@ -106,17 +113,20 @@ bool MyModel::LoadGLTextures(void)
 	if(texture[0] == 0) 
 		return false;
 
-	// sfondo blu togliere il commento
+	// SFONDO-NUVOLE-
 	texture[1] = SOIL_load_OGL_texture("Data/media/nuvole_trasparenti.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
-	//texture[1] = SOIL_load_OGL_texture("Data/media/nuvole.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
-
 	if (texture[1] == 0)
 		return false;
 
-	// sfondo blu togliere il commento
+	// SFONDO-MONTAGNE-
 	texture[2] = SOIL_load_OGL_texture("Data/media/mountain2_trasparenti.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
-	//texture[2] = SOIL_load_OGL_texture("Data/media/mountain2.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
-	if (texture[1] == 0)
+	if (texture[2] == 0)
+		return false;
+
+
+	// -OSTACOLO PROVA
+	texture[3] = SOIL_load_OGL_texture("Data/media/question.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	if (texture[3] == 0)
 		return false;
 
 	
@@ -407,31 +417,33 @@ void MyModel::drawInitGame() {
 void MyModel::updateWorld(audiere::OutputStreamPtr jump) {
 
 	// update pacman
-
-	//ToDo aggiungere nel caso mario sia fermo nella stessa x o mario stia saltando
-	if (mario.getVelX() == 0.0 && this->checkX(mario, pacman)) {
-		// ci sono sopra se anche la y è ok allora è morto 
-		pacman.stopX();
-		if (!this->checkY(mario, pacman)) {
-			pacman.jump();
-		}
-	}
-	else {
-		if (pacman.getX() > mario.getX()) {
-			pacman.addVelX("left");
+	if (pacmanCanMove) {
+		//ToDo aggiungere nel caso mario sia fermo nella stessa x o mario stia saltando
+		if (mario.getVelX() == 0.0 && this->checkX(mario, pacman)) {
+			// ci sono sopra se anche la y è ok allora è morto 
+			pacman.stopX();
+			if (!this->checkY(mario, pacman)) {
+				pacman.jump();
+			}
 		}
 		else {
-			pacman.addVelX("right");
+			if (pacman.getX() > mario.getX()) {
+				pacman.addVelX("left");
+			}
+			else {
+				pacman.addVelX("right");
+			}
 		}
-	}
-	pacman.update();
-	if (pacman.getDown() < -0.7) {
-		pacman.stopY();
+		pacman.update();
+		if (pacman.getDown() < -0.7) {
+			pacman.stopY();
 
+		}
 	}
 
 	// update mario
 	if (this->keys[VK_RIGHT]) {
+		pacmanCanMove = true;
 		// mario si deve spostare a destra
 		mario.addVelX("right");
 
@@ -544,11 +556,16 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	// Draw the landscape
 	this->buildLandscape();
 
+	//ostacolo
+	this->buildLevel0();
+
 	// draw mario
 	this->buildMario();
 
 	// draw pacman
 	this->buildPacman();
+
+
 
 	/*
 
@@ -590,6 +607,7 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 }
 
 void MyModel::drawGameOver() {
+	pacmanCanMove = false;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glMatrixMode(GL_MODELVIEW);
@@ -1058,6 +1076,40 @@ void MyModel::buildLandscape(){
 	glDisable(GL_BLEND);
 	glDisable(GL_ALPHA_TEST);
 
+
+}
+
+void MyModel::buildLevel0() {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0);
+
+	//fattore di correzione x
+	float x = 0;
+
+	glBindTexture(GL_TEXTURE_2D, texture[3]);
+	glBegin(GL_QUADS);
+
+
+	//basso sinistra
+	glTexCoord2f(Background[0].u + x, Background[0].v + x);
+	glVertex3f(obstacle.getXInit(), obstacle.getYInit(), Background[1].z);
+
+	//basso destra
+	glTexCoord2f(Background[1].u - x, Background[1].v + x);
+	glVertex3f(obstacle.getXFin(), obstacle.getYInit(), Background[1].z);
+
+	//alto destra
+	glTexCoord2f(Background[2].u - x, Background[2].v);
+	glVertex3f(obstacle.getXFin(), obstacle.getYFin(), Background[1].z);
+
+	//alto sinistra
+	glTexCoord2f(Background[3].u + x, Background[3].v);
+	glVertex3f(obstacle.getXInit(), obstacle.getYFin(), Background[1].z);
+
+
+	glEnd();
 
 }
 
