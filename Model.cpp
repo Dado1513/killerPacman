@@ -363,7 +363,7 @@ void MyModel::drawInitGame() {
 
 	//this->glPrint("Killer Pacman: Only One Rule : RUN Press Enter to Start!");
 
-	/*
+	
 
 	if (this->keys[WM_LBUTTONDOWN]) {
 
@@ -381,7 +381,7 @@ void MyModel::drawInitGame() {
 				/*char out[100];
 				sprintf(out, "%lf", Data.cy);
 				OutputDebugString(out);
-				OutputDebugString("\n");
+				OutputDebugString("\n");*/
 				
 			}
 
@@ -389,7 +389,7 @@ void MyModel::drawInitGame() {
 				this->keys[VK_ESCAPE] = true;
 		}
 	}
-	*/
+	
 
 
 	if (this->keys[VK_RETURN]) {
@@ -550,7 +550,7 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	// draw pacman
 	this->buildPacman();
 
-
+	/*
 
 	//  Floating cursor - end
 
@@ -574,17 +574,17 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	}
 
 	this->glPrint("Elapsed time: %6.2f sec.  -  Fps %6.2f - PositionMario x = %6.2f, y = %6.2f, velocity %6.5f", fullElapsed, fps, mario.getLeft(), mario.getDown(), mario.getVelX());
-
+	
 	/*
 	if (this->fullElapsed < 6) {
 	glRasterPos3f(-(float)plx + PixToCoord_X(10), (float)-ply + PixToCoord_Y(21), -4);
 	this->glPrint("...F2/F3/F4 for sounds");
 	}
 	*/
-
+	/*
 	glRasterPos3f(-(float)plx + PixToCoord_X(10), (float)-ply + PixToCoord_Y(61), -4);
 	this->glPrint("%1d %1d  %s", cx, cy, captured ? "captured" : "Not captured");
-
+	*/
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
 
 }
