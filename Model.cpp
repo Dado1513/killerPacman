@@ -523,7 +523,7 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump) {
 // schermata di gioco
 void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump) {
 
-	collisionSystem->phisic(&mario);
+	collisionSystem->physics(&mario);
 
 
 

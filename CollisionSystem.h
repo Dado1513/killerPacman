@@ -13,7 +13,7 @@ public:
 	CollisionSystem(double range);
 	~CollisionSystem();
 	void addObstacle(Ostacolo obs);
-	void phisic(PC* player);
+	void physics(PC* player);
 	bool checkCollision(PC* player, Ostacolo *obstacle);
 	bool isCollidingV1(double cx, double cy, double vertexX, double vertexY);
 	bool isCollidingV2(double cx, double cy, double vertexX, double vertexY);

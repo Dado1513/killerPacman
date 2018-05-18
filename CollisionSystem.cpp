@@ -71,7 +71,7 @@ int CollisionSystem::getIndex(double x) {
 }
 
 
-void CollisionSystem::phisic(PC* player) {
+void CollisionSystem::physics(PC* player) {
 
 
 	
