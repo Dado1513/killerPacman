@@ -23,7 +23,8 @@
 using namespace std;
 
 // x iniziale, y iniziale, spessore e altezza personaggio e nemico
-PC mario(-0.2, -0.6, 0.05, 0.1);
+//PC mario(-0.2, -0.6, 0.05, 0.1);
+PC mario(0.2, -0.6, 0.05, 0.1);
 EnemyPacman pacman(-0.9,-0.6,0.055,0.1);
 
 //Sky Cloud1(-0.4, 0.7, 0.18, 0.15);
@@ -38,6 +39,8 @@ Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 
 
 Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
+//pavimento temporaneo
+Ostacolo pavimento(0.0, 10.0, -1.0, -0.7, "Floor");
 
 CollisionSystem *collisionSystem;
 
@@ -224,9 +227,14 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 		delete(collisionSystem);
 		//nuovo livello
 
-		collisionSystem = new CollisionSystem();
+		collisionSystem = new CollisionSystem(0.05*2);		//gli passo la larghezza di mario*2
 
-		collisionSystem->addObstacle(&obstacle);
+		
+		collisionSystem->addObstacle(pavimento);
+
+		collisionSystem->addObstacle(obstacle);
+
+		//collisionSystem->read();
 
 		//schermata di gioco
 		drawGamePrincipale(dead, jump);
@@ -460,10 +468,10 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump) {
 			}
 		}
 		pacman.update();
+		/* //vecchio codice per il pavimento
 		if (pacman.getDown() < -0.7) {
 			pacman.stopY();
-
-		}
+		}*/
 	}
 
 	// update mario
@@ -515,7 +523,7 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump) {
 // schermata di gioco
 void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump) {
 
-	collisionSystem->checkCollision(&mario);
+	collisionSystem->phisic(&mario);
 
 
 

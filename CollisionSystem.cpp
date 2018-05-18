@@ -9,8 +9,9 @@
 
 int i;
 
-CollisionSystem::CollisionSystem()
+CollisionSystem::CollisionSystem(double range)
 {
+	this->range = range;
 }
 
 
@@ -19,17 +20,107 @@ CollisionSystem::~CollisionSystem()
 }
 
 
-void CollisionSystem::addObstacle(Ostacolo* obs) {
-	obstacle = obs;
+void CollisionSystem::addObstacle(Ostacolo obs) {
+	double posX = obs.getCX();
+	double limX1 = obs.getXInit();
+	double limX2 = obs.getXFin();
+
+
+
+
+	//aggiungo l'ostacolo nella relativa posizione
+	if (array.size() < getIndex(posX) + 1)
+		array.resize(getIndex(posX) + 1);
+	array[getIndex(posX)].push_back(obs);
+
+
+	//se il blocco è piu grande dell'intervallo considerato, lo aggiungo anche negli slot successivi
+	for (int i = getIndex(posX) + 1; i <= getIndex(limX2); i++) {
+		
+			if (array.size() < getIndex(limX2) + 1)
+				array.resize(getIndex(limX2) + 1);
+			array[i].push_back(obs);
+	}
+
+	//lo stesso per gli intervalli precedenti
+	for (int i = getIndex(posX) - 1; i >= getIndex(limX1); i--) {
+			array[i].push_back(obs);
+	}
+
+}
+
+void CollisionSystem::read() {
+
+	OutputDebugString("Leggo gli elementi presenti nel vettore:");
+	OutputDebugString("\n");
+
+	for (int l = 0; l < array.size(); l++) {
+		char out[100];
+		sprintf(out, " %d", array[l].size());
+		OutputDebugString(out);
+		OutputDebugString("\n");
+	}
 }
 
 
-void CollisionSystem::checkCollision(PC* player) {
+int CollisionSystem::getIndex(double x) {
+	int multiplier = (int) (1 / range);
+
+	int index = int(x * multiplier) + 1;
+	return index;
+}
+
+
+void CollisionSystem::phisic(PC* player) {
+
+
+	
+
+
+	//se vera, il player non deve precipitare
+	boolean isInGround = false;
+
+	//ottengo la posizione x del giocatore e dei suoi estremi.
+	double posXc = player->getX();
+	double posXl = player->getLeft();
+	double posXr = player->getRight();
+
+	//se non ci sono oggetti istanziati oltre la posizione di mario --> bug ( ci deve essere almeno il suolo )
+	if (getIndex(posXr) >= array.size()) {
+		player->setFalling(true);
+		return;
+	}
+		
+
+	
+	//controllo il quadrante dove è centrato il player
+	if (array[getIndex(posXc)].size() != 0) {
+		for (std::vector<Ostacolo>::iterator it = array[getIndex(posXc)].begin(); it != array[getIndex(posXc)].end(); ++it)
+			isInGround = isInGround || checkCollision(player, &(*it));		//brividi..
+	}
+	
+	//se il player supera il quadrante, devo verificare anche il successivo (o il precedente)
+	if (getIndex(posXc) != getIndex(posXl) && !array[getIndex(posXl)].empty()) {
+		for (std::vector<Ostacolo>::iterator it = array[getIndex(posXl)].begin(); it != array[getIndex(posXl)].end(); ++it)
+			isInGround = isInGround || checkCollision(player, &(*it));
+	}
+	
+	if (getIndex(posXc) != getIndex(posXr) && !array[getIndex(posXr)].empty()) {
+		for (std::vector<Ostacolo>::iterator it = array[getIndex(posXr)].begin(); it != array[getIndex(posXr)].end(); ++it)
+			isInGround = isInGround || checkCollision(player, &(*it));
+	}
+		
+	
+	//setto se mario sta cadendo o meno
+	player->setFalling(!isInGround);
+
+}
+
+bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 	//controllo se il giocatore è in basso a sin, basso a dx, alto a sin, alto a dx rispetto all'ostacolo
 	//NOTA: il player e l'ostacolo non si troveranno mai in situazioni degeneri di sovrapposizione (in assenza di bug..)
 
 	
-
 
 	double obsCX = obstacle->getCX();
 	double obsCY = obstacle->getCY();
@@ -43,6 +134,8 @@ void CollisionSystem::checkCollision(PC* player) {
 	double yDiff = obsCY - playerCY;
 
 	double correctionX = 0.01;
+
+	bool ground = false;
 
 	
 
@@ -88,6 +181,7 @@ void CollisionSystem::checkCollision(PC* player) {
 				player->setX(player->getX() - 0.001);
 			}else {
 				player->stopY(obstacle->getYFin());
+				ground = true;
 			}
 		}
 
@@ -100,12 +194,16 @@ void CollisionSystem::checkCollision(PC* player) {
 				player->stopX();
 			}else {
 				player->stopY(obstacle->getYFin());
+				ground = true;
 			}
 		}
 	}
 
 	}
 	}
+
+	//ritorno true se il player ha una base stabile senza precipitare
+	return ground;
 }
 
 /*

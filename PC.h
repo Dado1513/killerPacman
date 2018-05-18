@@ -66,6 +66,7 @@ class PC
 		//aggiorno la posizione di mario
 		void update();
 		bool getFalling();
+		void setFalling(bool fall);
 
 		void obstacleY();
 };

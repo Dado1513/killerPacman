@@ -108,6 +108,8 @@ void PC::stopX()
 bool PC::getFalling() {
 	return this->isFalling;
 }
+
+
 void PC::jump( audiere::OutputStreamPtr jump ){
 	
 	/*if (!isFalling) {
@@ -156,4 +158,9 @@ void PC::update()
 	posX += velX;
 	posY += velY;
 
+}
+
+
+void PC::setFalling(bool fall) {
+	isFalling = fall;
 }

@@ -5,16 +5,22 @@
 class CollisionSystem
 {
 private:
-	Ostacolo *obstacle;		//nota: senza inizializzazione diretta VS mi genera errori 
+	std::vector<std::vector<Ostacolo>> array;
+	double range;
+
 
 public:
-	CollisionSystem();
+	CollisionSystem(double range);
 	~CollisionSystem();
-	void addObstacle(Ostacolo *obs);
-	void checkCollision(PC* player);
+	void addObstacle(Ostacolo obs);
+	void phisic(PC* player);
+	bool checkCollision(PC* player, Ostacolo *obstacle);
 	bool isCollidingV1(double cx, double cy, double vertexX, double vertexY);
 	bool isCollidingV2(double cx, double cy, double vertexX, double vertexY);
+
+	int getIndex(double x);
 	
 
+	void read();
 };
 
