@@ -67,15 +67,14 @@ int CollisionSystem::getIndex(double x) {
 	int multiplier = (int) (1 / range);
 
 	int index = int(x * multiplier) + 1;
-	return index;
+	if (index >= 0)
+		return index;
+	else
+		return 0;
 }
 
 
 void CollisionSystem::physics(PC* player) {
-
-
-	
-
 
 	//se vera, il player non deve precipitare
 	boolean isInGround = false;
@@ -119,8 +118,6 @@ void CollisionSystem::physics(PC* player) {
 bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 	//controllo se il giocatore è in basso a sin, basso a dx, alto a sin, alto a dx rispetto all'ostacolo
 	//NOTA: il player e l'ostacolo non si troveranno mai in situazioni degeneri di sovrapposizione (in assenza di bug..)
-
-	
 
 	double obsCX = obstacle->getCX();
 	double obsCY = obstacle->getCY();

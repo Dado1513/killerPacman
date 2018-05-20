@@ -5,7 +5,7 @@
 class CollisionSystem
 {
 private:
-	std::vector<std::vector<Ostacolo>> array;
+	std::vector<std::vector<Ostacolo>> array; // perchè vector di vector ? 
 	double range;
 
 

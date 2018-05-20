@@ -40,7 +40,7 @@ Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 
 Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
 //pavimento temporaneo
-Ostacolo pavimento(0.0, 10.0, -1.0, -0.7, "Floor");
+Ostacolo pavimento(0.0, 50.0, -1.0, -0.7, "Floor");
 
 CollisionSystem *collisionSystem;
 
@@ -224,13 +224,11 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 		this->screenPlay = 3;
 
 		//cancello le tracce dei livelli precedenti
-		delete(collisionSystem);
 		//nuovo livello
-
 		collisionSystem = new CollisionSystem(0.05*2);		//gli passo la larghezza di mario*2
-
-		
-		collisionSystem->addObstacle(pavimento);
+		collisionSystem->addObstacle(pavimento); 
+		// perchè li passiamo il pavimento ? non possiamo semplicemente tenere in memoria 
+		// i buchi ? il pavimento ne occupa tantissima
 
 		collisionSystem->addObstacle(obstacle);
 
@@ -266,9 +264,6 @@ void MyModel::drawInitGame() {
 	double y_end = 0.3;
 	double fattore_y = 0.4;
 
-
-
-
 	if (this->keys[VK_UP]) {
 		this->select = 0;	
 	}
@@ -277,11 +272,6 @@ void MyModel::drawInitGame() {
 			this->select = 1;
 	}
 
-
-
-	
-	
-	
 
 
 	//  TIMING - start
@@ -468,10 +458,12 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump) {
 			}
 		}
 		pacman.update();
-		/* //vecchio codice per il pavimento
+		 //vecchio codice per il pavimento
+		// per il pavimento fare una funzione simile a
+		// check collision 
 		if (pacman.getDown() < -0.7) {
 			pacman.stopY();
-		}*/
+		}
 	}
 
 	// update mario
@@ -482,8 +474,7 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump) {
 
 
 
-	}
-	else {
+	}else {
 
 		if (this->keys[VK_LEFT]) {
 			// mario si deve spostare a sinistra
@@ -524,13 +515,9 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump) {
 void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump) {
 
 	collisionSystem->physics(&mario);
-
-
-
+	// same function per pacman
 	if (this->checkDead(mario, pacman)) {
 		dead->play();
-		// load window game over
-		// change mario texture with dead
 		this->screenPlay = 2;
 		return;
 	}
@@ -606,43 +593,7 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	// draw pacman
 	this->buildPacman();
 
-
-
-	/*
-
-	//  Floating cursor - end
-
-	//  Some text
-	glMatrixMode(GL_MODELVIEW);				// Select The Modelview Matrix
-	glLoadIdentity();									// Reset The Current Modelview Matrix
-	glDisable(GL_TEXTURE_2D);
-
-	// Color
-	glColor3f(1.0f, 1.0f, 1.0f);
-
-	// Position The Text On The Screen
-	glRasterPos3f(-(float)plx + PixToCoord_X(10), (float)ply - PixToCoord_Y(21), -4);
-
-	// compute fps and write fr
-	this->frames++;
-	if (this->frames > 18) {
-		this->fps = frames / frameTime;
-		this->frames = 0;
-		this->frameTime = 0;
-	}
-
-	this->glPrint("Elapsed time: %6.2f sec.  -  Fps %6.2f - PositionMario x = %6.2f, y = %6.2f, velocity %6.5f", fullElapsed, fps, mario.getLeft(), mario.getDown(), mario.getVelX());
 	
-	/*
-	if (this->fullElapsed < 6) {
-	glRasterPos3f(-(float)plx + PixToCoord_X(10), (float)-ply + PixToCoord_Y(21), -4);
-	this->glPrint("...F2/F3/F4 for sounds");
-	}
-	*/
-	/*
-	glRasterPos3f(-(float)plx + PixToCoord_X(10), (float)-ply + PixToCoord_Y(61), -4);
-	this->glPrint("%1d %1d  %s", cx, cy, captured ? "captured" : "Not captured");
-	*/
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
 
 }
@@ -689,22 +640,25 @@ void MyModel::drawGameOver() {
 	this->glPrint("Game Over press RETURN to restart o ESC to Exit");
 	if (this->keys[VK_RETURN]) {
 		this->screenPlay = 1;
+		delete(collisionSystem);
+
+		mario = PC(0.2, -0.6, 0.05, 0.1);
+		pacman = EnemyPacman(-0.9, -0.6, 0.055, 0.1);
+		Cloud1 = Sky(-1, 0.51, 1.02, 0.5);
+		Cloud2 = Sky(1.01, 0.51, 1.02, 0.5);
+		Mountain1 = Sky(-1.9, -0.35, 1.01, 0.4);
+		Mountain2 = Sky(0.105, -0.35, 1.01, 0.4);
+
+		obstacle= Ostacolo(0.7, 0.8, -0.4, -0.2, "obs");
+		//pavimento temporaneo
+		pavimento= Ostacolo(0.0, 50.0, -1.0, -0.7, "Floor");
+
+		posSchermoX = 0;
+
 	};
 	// reset color
 	glColor3f(1.0, 1.0, 1.0); 
-	if (this->keys[VK_RETURN]) {
-		this->screenPlay = 1;
-		
-		mario =  PC(-0.2, -0.6, 0.05, 0.1);
-		pacman = EnemyPacman(-0.9, -0.6, 0.055, 0.1);
-		Cloud1 = Sky(-1, 0.51, 1.02, 0.5);
-		Cloud2= Sky(1.01, 0.51, 1.02, 0.5);
-		Mountain1= Sky(-1.9, -0.35, 1.01, 0.4);
-		Mountain2= Sky(0.105, -0.35, 1.01, 0.4);
-		posSchermoX = 0;
-	};
-
-
+	
 
 }
 
