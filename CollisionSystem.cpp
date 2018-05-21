@@ -127,11 +127,13 @@ void CollisionSystem::physics(PC* player) {
 bool CollisionSystem::isHole(Ostacolo *ostacolo) {
 	return std::strcmp(ostacolo->getType().c_str(), "Hole")== 0;
 }
+bool CollisionSystem::checkCollision2(PC* player, Ostacolo *obstacle) {
+	return false;
+}
 bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 	
 	//controllo se il giocatore è in basso a sin, basso a dx, alto a sin, alto a dx rispetto all'ostacolo
 	//NOTA: il player e l'ostacolo non si troveranno mai in situazioni degeneri di sovrapposizione (in assenza di bug..)
-	// se l'ostacolo è un buco ?
 	double obsCX = obstacle->getCX();
 	double obsCY = obstacle->getCY();
 
