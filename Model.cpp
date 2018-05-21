@@ -507,10 +507,14 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 	mario.update();
 
 	// add controllo mario getFalling
-	if (mario.getIsInHole()) {
-		mario.stopY(-2);
-		dead->play();
-		this->screenPlay = 2;
+	if (mario.getIsInHole() && 
+		(std::strcmp(mario.getState().c_str(),"upLeft")!=0 &&
+		std::strcmp(mario.getState().c_str(), "upRight") != 0)) {
+		//mario.stopY(-2);
+		if (mario.getDown() < -0.7) {
+			dead->play();
+			this->screenPlay = 2;
+		}
 	}
 	else {
 		if (mario.getDown() < -0.7) {
@@ -583,13 +587,13 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	//Background cielo celeste
 	buildSky();
 	glEnable(GL_TEXTURE_2D);
+	this->buildLevel0();
+
 	//disegna la texture subito dopo
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glBindTexture(GL_TEXTURE_2D, texture[0]);
-	//"pulisco" il colore base"
+	
 	glColor3f(1.0, 1.0, 1.0);
 	// draw floor
+
 	this->buildFloor();
 
 	// Draw the landscape
@@ -936,34 +940,40 @@ void MyModel::buildMario() {
 }
 
 void MyModel::buildFloor() {
+	glEnable(GL_TEXTURE_2D);	
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
+	//"pulisco" il colore base"// Enable Texture Mapping
 
 	// Terreno
 	float blockFloorLength = 0.2;
 	//float lengthGame = 8.5; // lunghezza che vogliamo dare al mondo
 	// 2.5 vertice x fino al quale disegnare il background
 	for (float i = this->xStartGame; i < this->xEndGame; i += blockFloorLength) {
-		glBegin(GL_QUADS);
+			glBegin(GL_QUADS);
 
-		//fattore di correzione x (per evitare bordi tra texture sovrapposizionate
-		float x = 0.02;
-		//basso sinistra
-		glTexCoord2f(Background[0].u + x, Background[0].v + x);
-		glVertex3f(i, Background[0].y, Background[0].z+1);
+			//fattore di correzione x (per evitare bordi tra texture sovrapposizionate
+			float x = 0.02;
+			//basso sinistra
+			glTexCoord2f(Background[0].u + x, Background[0].v + x);
+			glVertex3f(i, Background[0].y, Background[0].z + 1);
 
-		//basso destra
-		glTexCoord2f(Background[1].u - x, Background[1].v + x);
-		glVertex3f(i + blockFloorLength, Background[1].y, Background[0].z+1);
+			//basso destra
+			glTexCoord2f(Background[1].u - x, Background[1].v + x);
+			glVertex3f(i + blockFloorLength, Background[1].y, Background[0].z + 1);
 
-		//alto destra
-		glTexCoord2f(Background[2].u - x, Background[2].v );
-		glVertex3f(i + blockFloorLength, Background[1].y + 0.3, Background[0].z+1);
+			//alto destra
+			glTexCoord2f(Background[2].u - x, Background[2].v);
+			glVertex3f(i + blockFloorLength, Background[1].y + 0.3, Background[0].z + 1);
 
-		//alto sinistra
-		glTexCoord2f(Background[3].u + x, Background[3].v );
-		glVertex3f(i, Background[0].y + 0.3, Background[0].z+1);
+			//alto sinistra
+			glTexCoord2f(Background[3].u + x, Background[3].v);
+			glVertex3f(i, Background[0].y + 0.3, Background[0].z + 1);
 
-		glEnd();
+			glEnd();
 	}
+	glDisable(GL_TEXTURE_2D);
 }
 
 void MyModel::buildSky() {
@@ -1163,6 +1173,27 @@ void MyModel::buildLevel0() {
 	glEnd();
 	// add hole
 	
+	// può essere disegnato una sola volta non tutte le volte
+	//Background cielo celeste
+	//basso sinistra
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(Background[0].u + x, Background[0].v + x);
+	glVertex3f(hole.getXInit(), hole.getYInit(), Background[1].z);
+
+	//basso destra
+	glTexCoord2f(Background[1].u - x, Background[1].v + x);
+	glVertex3f(hole.getXFin(), hole.getYInit(), Background[1].z);
+
+	//alto destra
+	glTexCoord2f(Background[2].u - x, Background[2].v);
+	glVertex3f(hole.getXFin(), hole.getYFin(), Background[1].z);
+
+	//alto sinistra
+	glTexCoord2f(Background[3].u + x, Background[3].v);
+	glVertex3f(hole.getXInit(), hole.getYFin(), Background[1].z);
+	glEnd();
+
 	glDisable(GL_TEXTURE_2D);
 
 }
