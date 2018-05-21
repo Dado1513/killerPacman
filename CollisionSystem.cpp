@@ -127,9 +127,24 @@ void CollisionSystem::physics(PC* player) {
 bool CollisionSystem::isHole(Ostacolo *ostacolo) {
 	return std::strcmp(ostacolo->getType().c_str(), "Hole")== 0;
 }
+
+// TODO 
 bool CollisionSystem::checkCollision2(PC* player, Ostacolo *obstacle) {
+	// collision sulla x
+	if (obstacle->getXInit() <= player->getX() && obstacle->getXFin() >= player->getX()) {
+		// sono sopra
+		if (obstacle->getYFin() <= player->getX()) {
+			player->stopY(obstacle->getYFin());
+		}
+		// ostacolo sopra la testa
+		if (obstacle->getYInit >= player->getX()) {
+			player->obstacleY();
+
+		}
+	}
 	return false;
 }
+
 bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 	
 	//controllo se il giocatore è in basso a sin, basso a dx, alto a sin, alto a dx rispetto all'ostacolo
@@ -154,6 +169,7 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 		if (obstacle->getXInit() -correctionX <= player->getLeft() && player->getRight() <= obstacle->getXFin() + correctionX) {
 			//OutputDebugString("Is in Hole");
 			player->setIsInHole(true);
+
 		}
 		else {
 			player->setIsInHole(false);
