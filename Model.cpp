@@ -41,9 +41,11 @@ Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
 Ostacolo obstacle2(10, 10.1, -0.4, -0.2, "obs");
 Ostacolo obstacle3(10.1, 10.2, -0.4, -0.2, "obs");
+Ostacolo pavimento2(9.2, 50, -1.0, -0.7, "Floor");
 
 //pavimento temporaneo
-Ostacolo pavimento(0.0, 50.0, -1.0, -0.7, "Floor");
+Ostacolo pavimento(0.0, 9, -1.0, -0.7, "Floor");
+
 
 CollisionSystem *collisionSystem;
 
@@ -236,7 +238,7 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 		collisionSystem->addObstacle(obstacle);
 		collisionSystem->addObstacle(obstacle2);
 		collisionSystem->addObstacle(obstacle3);
-
+		collisionSystem->addObstacle(pavimento2);
 		//collisionSystem->read();
 
 		//schermata di gioco
@@ -259,9 +261,6 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 }
 
 void MyModel::drawInitGame() {
-
-
-
 
 	double x_init = 0.5;
 	double x_end = 0.8;
@@ -463,6 +462,7 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump) {
 			}
 		}
 		pacman.update();
+
 		 //vecchio codice per il pavimento
 		// per il pavimento fare una funzione simile a
 		// check collision 
@@ -504,8 +504,9 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump) {
 	// update mario position
 	mario.update();
 
-
-	if (mario.getDown() < -0.7) {
+	// add controllo mario getFalling
+	
+	if (mario.getDown() < -0.7 && !mario.getIsInHole()) {
 		mario.stopY(-0.7);
 
 	}
@@ -658,8 +659,10 @@ void MyModel::drawGameOver() {
 		obstacle2 = Ostacolo(10, 10.1, -0.4, -0.2, "obs"); 
 		obstacle3= Ostacolo(10.1, 10.2, -0.4, -0.2, "obs");
 		//pavimento temporaneo
-		pavimento= Ostacolo(0.0, 50.0, -1.0, -0.7, "Floor");
-
+		pavimento= Ostacolo(0.0, 9.0, -1.0, -0.7, "Floor");
+		pavimento2 = Ostacolo(9.2, 50, -1.0, -0.7, "Floor");
+		//pavimento temporaneo
+		
 		posSchermoX = 0;
 
 	};
@@ -861,22 +864,21 @@ void MyModel::buildMario() {
 		|| std::strcmp(mario.getState().c_str(), "stopRight") == 0) {
 		marioId = 0;
 	// mario move
-	}
-	else if (std::strcmp(mario.getState().c_str(), "left") == 0
-		|| std::strcmp(mario.getState().c_str(), "right") == 0 && !mario.getFalling()) {
+	}else if ((std::strcmp(mario.getState().c_str(), "left") == 0
+		|| std::strcmp(mario.getState().c_str(), "right") == 0) && !mario.getFalling()) {
 		int lengthMarioTexture = 2;
 		marioId = (int(fullElapsed * 7) % lengthMarioTexture);
 		if (marioId > lengthMarioTexture) {
 			marioId = 0;
 		}
-	}
-	// mario jump
-	 else {
-		int lengthMarioTexture = 8;
-		marioId = (int(fullElapsed * 10) % lengthMarioTexture);
+	} else {
+		// mario jump
+		/*int lengthMarioTexture = 8;
+		marioId = (int(fullElapsed * 7) % lengthMarioTexture);
 		if (marioId > lengthMarioTexture) {
 			marioId = 0;
 		}
+		*/
 		marioId = 3;
 	}
 
@@ -1135,21 +1137,21 @@ void MyModel::buildLevel0() {
 	glBegin(GL_QUADS);
 
 
-	//basso sinistra
-	glTexCoord2f(Background[0].u + x, Background[0].v + x);
-	glVertex3f(obstacle3.getXInit(), obstacle3.getYInit(), Background[1].z);
+		//basso sinistra
+		glTexCoord2f(Background[0].u + x, Background[0].v + x);
+		glVertex3f(obstacle3.getXInit(), obstacle3.getYInit(), Background[1].z);
 
-	//basso destra
-	glTexCoord2f(Background[1].u - x, Background[1].v + x);
-	glVertex3f(obstacle3.getXFin(), obstacle3.getYInit(), Background[1].z);
+		//basso destra
+		glTexCoord2f(Background[1].u - x, Background[1].v + x);
+		glVertex3f(obstacle3.getXFin(), obstacle3.getYInit(), Background[1].z);
 
-	//alto destra
-	glTexCoord2f(Background[2].u - x, Background[2].v);
-	glVertex3f(obstacle3.getXFin(), obstacle3.getYFin(), Background[1].z);
+		//alto destra
+		glTexCoord2f(Background[2].u - x, Background[2].v);
+		glVertex3f(obstacle3.getXFin(), obstacle3.getYFin(), Background[1].z);
 
-	//alto sinistra
-	glTexCoord2f(Background[3].u + x, Background[3].v);
-	glVertex3f(obstacle3.getXInit(), obstacle3.getYFin(), Background[1].z);
+		//alto sinistra
+		glTexCoord2f(Background[3].u + x, Background[3].v);
+		glVertex3f(obstacle3.getXInit(), obstacle3.getYFin(), Background[1].z);
 
 	glEnd();
 

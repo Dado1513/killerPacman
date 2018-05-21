@@ -13,7 +13,7 @@ PC::PC(double posX, double posY, double width, double height){
 	this->velY = 0;
 	this->state = "stopRight";
 	this->isFalling = false;
-
+	this->isInHole = false;
 }
 
 
@@ -67,7 +67,13 @@ double PC::getY()
 	return this->posY;
 }
 
+bool PC::getIsInHole() {
+	return this->isInHole;
+}
 
+void PC::setIsInHole(bool value) {
+	this->isInHole = value;
+}
 void PC::addVelX(std::string dir)
 {
 	if (std::strcmp(dir.c_str(),"right")==0){
@@ -123,7 +129,7 @@ void PC::jump( audiere::OutputStreamPtr jump ){
 		isFalling = true;
 		
 
-		if (std::strcmp(state.c_str(), "left") == 0 || std::strcmp(state.c_str(), "stopLeft") == 0) {
+		if (std::strcmp(state.c_str(), "left") == 0 || std::strcmp(state.c_str(), "stopLeft") == 0 ) {
 			state = "upLeft";
 		}
 		else {

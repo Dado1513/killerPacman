@@ -21,6 +21,7 @@ class PC
 		std::string state;			//stato del pg.
 		bool isFalling;		//se il pg sta cadendo, non posso saltare.
 		std::string direction;
+		bool isInHole; // se sta cadendo in un buco
 		/*
 			direction = stopLeft == -1, stopRight==0, right==1, left==2, upRight==3, upLeft==4;
 		*/
@@ -67,7 +68,8 @@ class PC
 		void update();
 		bool getFalling();
 		void setFalling(bool fall);
-
+		void setIsInHole(bool value);
+		bool getIsInHole();
 		void obstacleY();
 };
 
