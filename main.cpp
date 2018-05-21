@@ -325,6 +325,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT	uMsg, WPARAM	wParam,	LPARAM	lParam)
 			Data.ReSizeGLScene(LOWORD(lParam),HIWORD(lParam));  
 			return 0;
 		}
+		
+		case WM_KILLFOCUS: {
+			//TODO
+			// lost focus try to set game in pause
+			Data.keys[VK_LEFT] = false;
+			Data.keys[VK_UP] = false;
+			Data.keys[VK_RIGHT] = false;
+			Data.keys[VK_DOWN] = false;
+
+			return 0;
+		}
 	}
 
 	return DefWindowProc(hWnd,uMsg,wParam,lParam);

@@ -473,7 +473,7 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump) {
 
 	// update mario
 	if (this->keys[VK_RIGHT]) {
-		pacmanCanMove = true;
+		pacmanCanMove = true ;
 		// mario si deve spostare a destra
 		mario.addVelX("right");
 
@@ -659,7 +659,7 @@ void MyModel::drawGameOver() {
 		obstacle2 = Ostacolo(10, 10.1, -0.4, -0.2, "obs"); 
 		obstacle3= Ostacolo(10.1, 10.2, -0.4, -0.2, "obs");
 		//pavimento temporaneo
-		pavimento= Ostacolo(0.0, 9.0, -1.0, -0.7, "Floor");
+		pavimento = Ostacolo(0.0, 9.0, -1.0, -0.7, "Floor");
 		pavimento2 = Ostacolo(9.2, 50, -1.0, -0.7, "Floor");
 		//pavimento temporaneo
 		
@@ -879,6 +879,7 @@ void MyModel::buildMario() {
 			marioId = 0;
 		}
 		*/
+	
 		marioId = 3;
 	}
 
