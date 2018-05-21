@@ -41,8 +41,8 @@ Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
 Ostacolo obstacle2(10, 10.1, -0.4, -0.2, "obs");
 Ostacolo obstacle3(10.1, 10.2, -0.4, -0.2, "obs");
-Ostacolo pavimento2(10.2, 50, -1.0, -0.7, "Floor");
-Ostacolo hole(10.12, 10.2, -1.0, -0.7, "Hole");
+Ostacolo pavimento2(10.25, 50, -1.0, -0.7, "Floor");
+Ostacolo hole(10.1, 10.25, -1.0, -0.7, "Hole");
 //pavimento temporaneo
 Ostacolo pavimento(0.0, 10.12, -1.0, -0.7, "Floor");
 
@@ -951,6 +951,7 @@ void MyModel::buildFloor() {
 	//float lengthGame = 8.5; // lunghezza che vogliamo dare al mondo
 	// 2.5 vertice x fino al quale disegnare il background
 	for (float i = this->xStartGame; i < this->xEndGame; i += blockFloorLength) {
+		if (i <= hole.getXInit() - 0.01 || i >= hole.getXFin() + 0.01) {
 			glBegin(GL_QUADS);
 
 			//fattore di correzione x (per evitare bordi tra texture sovrapposizionate
@@ -972,6 +973,7 @@ void MyModel::buildFloor() {
 			glVertex3f(i, Background[0].y + 0.3, Background[0].z + 1);
 
 			glEnd();
+		}
 	}
 	glDisable(GL_TEXTURE_2D);
 }
@@ -1055,7 +1057,6 @@ void MyModel::buildLandscape(){
 
 
 	glBindTexture(GL_TEXTURE_2D, texture[2]);
-
 
 	glBegin(GL_QUADS);
 	//basso sinistra
@@ -1171,29 +1172,7 @@ void MyModel::buildLevel0() {
 		glVertex3f(obstacle3.getXInit(), obstacle3.getYFin(), Background[1].z);
 
 	glEnd();
-	// add hole
 	
-	// può essere disegnato una sola volta non tutte le volte
-	//Background cielo celeste
-	//basso sinistra
-	glBegin(GL_QUADS);
-
-	glTexCoord2f(Background[0].u + x, Background[0].v + x);
-	glVertex3f(hole.getXInit(), hole.getYInit(), Background[1].z);
-
-	//basso destra
-	glTexCoord2f(Background[1].u - x, Background[1].v + x);
-	glVertex3f(hole.getXFin(), hole.getYInit(), Background[1].z);
-
-	//alto destra
-	glTexCoord2f(Background[2].u - x, Background[2].v);
-	glVertex3f(hole.getXFin(), hole.getYFin(), Background[1].z);
-
-	//alto sinistra
-	glTexCoord2f(Background[3].u + x, Background[3].v);
-	glVertex3f(hole.getXInit(), hole.getYFin(), Background[1].z);
-	glEnd();
-
 	glDisable(GL_TEXTURE_2D);
 
 }

@@ -162,6 +162,8 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 		
 		if (xDiff > 0 && yDiff > 0) {
 			//player in basso a sinistra
+			// check this per non far scivolare l'omino
+			// TODO
 			//if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() + 5, player->getRight(), player->getUp() + 5)) {
 			if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() , player->getRight(), player->getUp() )) {
 
@@ -218,6 +220,8 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 						if (abs(player->getLeft() - obstacle->getXFin()) <= abs(player->getDown() - obstacle->getYFin())) {
 							//stop corsa
 							player->stopX();
+							player->setX(player->getX() + 0.001);
+
 						}
 						else {
 							if(player->getX() <= obstacle->getXFin())
