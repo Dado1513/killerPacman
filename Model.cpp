@@ -256,6 +256,10 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 		//mondo di gioco con variabili inizializzate
 		drawGamePrincipale(dead, jump);
 		break;
+	case 4:
+		// win
+		drawWinGame();
+		break;
 
 	default:
 		return true;
@@ -477,7 +481,7 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 
 	// update mario
 	if (this->keys[VK_RIGHT]) {
-		pacmanCanMove = false ;
+		pacmanCanMove = true ;
 		// mario si deve spostare a destra
 		mario.addVelX("right");
 
@@ -538,6 +542,10 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump) {
 
 	collisionSystem->physics(&mario);
+	if (mario.getX() >= this->xEndGame - 20) {
+		this->screenPlay = 4;
+		return;
+	}
 	// same function per pacman
 	if (this->checkDead(mario, pacman) ||  mario.getDead()) {
 		dead->play();
@@ -612,7 +620,75 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
 
 }
+void MyModel::drawWinGame() {
+	pacmanCanMove = false;
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glAlphaFunc(GL_GREATER, 0);
+
+	glLoadIdentity();
+
+	glBindTexture(GL_TEXTURE_2D, this->backgroundtexture);
+	glBegin(GL_QUADS);
+	double resize = 0.0;
+	// b-s
+	glTexCoord2f(Background[0].u, Background[0].v);
+	glVertex3f(Background[0].x, Background[0].y, Background[0].z);
+	//b-d
+	glTexCoord2f(Background[1].u, Background[1].v);
+	glVertex3f(Background[1].x, Background[1].y, Background[1].z);
+
+	//a-d
+	glTexCoord2f(Background[2].u, Background[2].v);
+	glVertex3f(Background[2].x, Background[2].y, Background[2].z);
+
+	//a-s
+	glTexCoord2f(Background[3].u, Background[3].v);
+	glVertex3f(Background[3].x, Background[3].y, Background[3].z);
+
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glColor3f(0.0f, 100.0f, 0.0f);
+	glRasterPos3f(-0.2, 0.5, -1);
+
+	this->glPrint("Congratulation WIN Return restart, Esc to Exit");
+
+	if (this->keys[VK_RETURN]) {
+		this->screenPlay = 1;
+		delete(collisionSystem);
+
+		mario = PC(0.2, -0.6, 0.05, 0.1);
+		pacman = EnemyPacman(-0.9, -0.6, 0.055, 0.1);
+		Cloud1 = Sky(-1, 0.51, 1.02, 0.5);
+		Cloud2 = Sky(1.01, 0.51, 1.02, 0.5);
+		Mountain1 = Sky(-1.9, -0.35, 1.01, 0.4);
+		Mountain2 = Sky(0.105, -0.35, 1.01, 0.4);
+
+		obstacle = Ostacolo(0.7, 0.8, -0.4, -0.2, "obs");
+		obstacle2 = Ostacolo(10, 10.2, -0.4, -0.2, "obs");
+		//obstacle3= Ostacolo(10.1, 10.2, -0.4, -0.2, "obs");
+		//pavimento temporaneo
+		pavimento = Ostacolo(0.0, 9.9, -1.0, -0.7, "Floor");
+		hole = Ostacolo(10.01, 10.2, -1.0, -0.7, "Hole");
+		pavimento2 = Ostacolo(10.3, 50, -1.0, -0.7, "Floor");
+		//pavimento temporaneo
+
+		posSchermoX = 0;
+
+	};
+	// reset color
+	glColor3f(1.0, 1.0, 1.0);
+
+
+}
 void MyModel::drawGameOver() {
 	pacmanCanMove = false;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

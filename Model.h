@@ -145,6 +145,7 @@ class MyModel {
 		void buildLandscape();
 		void drawInitGame();
 		void drawGameOver();
+		void drawWinGame();
 		bool checkX(PC mario, EnemyPacman pacman);
 		bool checkY(PC mario, EnemyPacman pacman);
 		bool checkDead(PC mario, EnemyPacman pacman);
