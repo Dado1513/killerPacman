@@ -2,6 +2,8 @@
 #include "Ostacolo.h"
 #include "PC.h"
 #include <cmath>
+#include <sstream>
+
 
 #include <windows.h>
 
@@ -79,7 +81,7 @@ void CollisionSystem::physics(PC* player) {
 	//se vera, il player non deve precipitare
 	// TODO aggiungere il controllo se l'ostacolo è un buco e quindi il player deve precipitare
 	boolean isInGround = false;
-
+	boolean fall = false;
 	//ottengo la posizione x del giocatore e dei suoi estremi.
 	double posXc = player->getX();
 	double posXl = player->getLeft();
@@ -97,26 +99,28 @@ void CollisionSystem::physics(PC* player) {
 	// e ne basta uno falso che cado
 	//controllo il quadrante dove è centrato il player
 	if (array[getIndex(posXc)].size() != 0) {
-		for (std::vector<Ostacolo>::iterator it = array[getIndex(posXc)].begin(); it != array[getIndex(posXc)].end(); ++it)
+		for (std::vector<Ostacolo>::iterator it = array[getIndex(posXc)].begin(); it != array[getIndex(posXc)].end(); ++it) {
 			isInGround = isInGround || checkCollision(player, &(*it));		//brividi..
+
+		}
 	}
 	
 	//se il player supera il quadrante, devo verificare anche il successivo (o il precedente)
 	if (getIndex(posXc) != getIndex(posXl) && !array[getIndex(posXl)].empty()) {
-		for (std::vector<Ostacolo>::iterator it = array[getIndex(posXl)].begin(); it != array[getIndex(posXl)].end(); ++it)
+		for (std::vector<Ostacolo>::iterator it = array[getIndex(posXl)].begin(); it != array[getIndex(posXl)].end(); ++it) {
 			isInGround = isInGround || checkCollision(player, &(*it));
+		}
 	}
 	
 	if (getIndex(posXc) != getIndex(posXr) && !array[getIndex(posXr)].empty()) {
-		for (std::vector<Ostacolo>::iterator it = array[getIndex(posXr)].begin(); it != array[getIndex(posXr)].end(); ++it)
+		for (std::vector<Ostacolo>::iterator it = array[getIndex(posXr)].begin(); it != array[getIndex(posXr)].end(); ++it) {
 			isInGround = isInGround || checkCollision(player, &(*it));
+		}
 	}
 		
 	
 	//setto se mario sta cadendo o meno
 	player->setFalling(!isInGround);
-	if (!isInGround)
-		OutputDebugString("isInGround\n");
 	
 
 }
@@ -124,6 +128,7 @@ bool CollisionSystem::isHole(Ostacolo *ostacolo) {
 	return std::strcmp(ostacolo->getType().c_str(), "Hole")== 0;
 }
 bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
+	
 	//controllo se il giocatore è in basso a sin, basso a dx, alto a sin, alto a dx rispetto all'ostacolo
 	//NOTA: il player e l'ostacolo non si troveranno mai in situazioni degeneri di sovrapposizione (in assenza di bug..)
 	// se l'ostacolo è un buco ?
@@ -142,79 +147,84 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 	bool ground = false;
 
-	
-	if (xDiff > 0 && yDiff > 0) {
-		//player in basso a sinistra
-		if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() + 5, player->getRight(), player->getUp() + 5)) {
-
-			//controllo gli angoli per vedere se la collisione è in verticale (uno stop del salto) od orizzontale(stop corsa)
-			if (abs(player->getRight() - correctionX - obstacle->getXInit()) <= abs(player->getUp() - obstacle->getYInit())) {
-				//stop corsa
-				player->stopX();
-				player->setX(player->getX() - 0.001);
-			}
-			else {
-				player->obstacleY();
-			}
-		}
+	if (isHole(obstacle) && obstacle->getXInit() <= playerCX && playerCX <= obstacle->getXFin()) {
+		//OutputDebugString("Is in Hole");
+		player->setIsInHole(true);
 
 	}
 	else {
-		if (xDiff < 0 && yDiff > 0) {
-			//player in basso a destra
 
-			if (isCollidingV2(obstacle->getXFin(), obstacle->getYInit(), player->getLeft(), player->getUp())) {
-
+		
+		if (xDiff > 0 && yDiff > 0) {
+			//player in basso a sinistra
+			if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() + 5, player->getRight(), player->getUp() + 5)) {
+				player->setIsInHole(false);
 				//controllo gli angoli per vedere se la collisione è in verticale (uno stop del salto) od orizzontale(stop corsa)
-				if (abs(player->getLeft() - obstacle->getXFin()) <= abs(player->getUp() - obstacle->getYInit())) {
+				if (abs(player->getRight() - correctionX - obstacle->getXInit()) <= abs(player->getUp() - obstacle->getYInit())) {
 					//stop corsa
 					player->stopX();
+					player->setX(player->getX() - 0.001);
 				}
 				else {
 					player->obstacleY();
+
 				}
 			}
 
 		}
 		else {
-			if (xDiff > 0 && yDiff < 0) {
+			if (xDiff < 0 && yDiff > 0) {
+				//player in basso a destra
 
-				//player in alto a sinistra
-				if (isCollidingV2(player->getRight() - correctionX, player->getDown(), obstacle->getXInit(), obstacle->getYFin())) {
-
-					if (abs(player->getRight() - obstacle->getXInit()) <= abs(player->getDown() - obstacle->getYFin())) {
+				if (isCollidingV2(obstacle->getXFin(), obstacle->getYInit(), player->getLeft(), player->getUp())) {
+					player->setIsInHole(false);
+					//controllo gli angoli per vedere se la collisione è in verticale (uno stop del salto) od orizzontale(stop corsa)
+					if (abs(player->getLeft() - obstacle->getXFin()) <= abs(player->getUp() - obstacle->getYInit())) {
+						//stop corsa
 						player->stopX();
-						player->setX(player->getX() - 0.001);
 					}
 					else {
-						player->stopY(obstacle->getYFin());
-						ground = true;
+						player->obstacleY();
 					}
 				}
 
 			}
 			else {
-				//player in alto a destra
-				if (isCollidingV1(player->getLeft(), player->getDown(), obstacle->getXFin(), obstacle->getYFin())) {
+				if (xDiff > 0 && yDiff < 0) {
 
-					if (abs(player->getLeft() - obstacle->getXFin()) <= abs(player->getDown() - obstacle->getYFin())) {
-						//stop corsa
-						player->stopX();
+					//player in alto a sinistra
+					if (isCollidingV2(player->getRight() - correctionX, player->getDown(), obstacle->getXInit(), obstacle->getYFin())) {
+						player->setIsInHole(false);
+						if (abs(player->getRight() - obstacle->getXInit()) <= abs(player->getDown() - obstacle->getYFin())) {
+							player->stopX();
+							player->setX(player->getX() - 0.001);
+						}
+						else {
+							player->stopY(obstacle->getYFin());
+							ground = true;
+						}
 					}
-					else {
-						player->stopY(obstacle->getYFin());
-						ground = true;
+
+				}
+				else {
+					//player in alto a destra
+					if (isCollidingV1(player->getLeft(), player->getDown(), obstacle->getXFin(), obstacle->getYFin())) {
+						player->setIsInHole(false);
+						if (abs(player->getLeft() - obstacle->getXFin()) <= abs(player->getDown() - obstacle->getYFin())) {
+							//stop corsa
+							player->stopX();
+						}
+						else {
+							player->stopY(obstacle->getYFin());
+							ground = true;
+						}
 					}
 				}
-			}
 
+			}
 		}
 	}
-	bool hole = isHole(obstacle);
-
-	if (hole) {
-		OutputDebugString("Hole\n");
-	}
+	
 	//ritorno true se il player ha una base stabile senza precipitare
 	return ground;
 }

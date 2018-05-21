@@ -240,6 +240,7 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 		collisionSystem->addObstacle(obstacle2);
 		collisionSystem->addObstacle(obstacle3);
 		collisionSystem->addObstacle(pavimento2);
+		collisionSystem->addObstacle(hole);
 		//collisionSystem->read();
 
 		//schermata di gioco
@@ -506,8 +507,15 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 	mario.update();
 
 	// add controllo mario getFalling
-	if (mario.getDown() < -0.7) {
-		mario.stopY(-0.7);
+	if (mario.getIsInHole()) {
+		mario.stopY(-2);
+		dead->play();
+		this->screenPlay = 2;
+	}
+	else {
+		if (mario.getDown() < -0.7) {
+			mario.stopY(-0.7);
+		}
 	}
 	
 
