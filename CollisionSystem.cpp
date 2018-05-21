@@ -92,7 +92,9 @@ void CollisionSystem::physics(PC* player) {
 	}
 		
 
-	
+	// con OR ne basta uno vero e non precipita
+	// invece se sono in un buco ne dovrebbe essere tutti veri
+	// e ne basta uno falso che cado
 	//controllo il quadrante dove è centrato il player
 	if (array[getIndex(posXc)].size() != 0) {
 		for (std::vector<Ostacolo>::iterator it = array[getIndex(posXc)].begin(); it != array[getIndex(posXc)].end(); ++it)
@@ -113,9 +115,14 @@ void CollisionSystem::physics(PC* player) {
 	
 	//setto se mario sta cadendo o meno
 	player->setFalling(!isInGround);
+	if (!isInGround)
+		OutputDebugString("isInGround\n");
+	
 
 }
-
+bool CollisionSystem::isHole(Ostacolo *ostacolo) {
+	return std::strcmp(ostacolo->getType().c_str(), "Hole")== 0;
+}
 bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 	//controllo se il giocatore è in basso a sin, basso a dx, alto a sin, alto a dx rispetto all'ostacolo
 	//NOTA: il player e l'ostacolo non si troveranno mai in situazioni degeneri di sovrapposizione (in assenza di bug..)
@@ -203,8 +210,11 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 		}
 	}
-	
+	bool hole = isHole(obstacle);
 
+	if (hole) {
+		OutputDebugString("Hole\n");
+	}
 	//ritorno true se il player ha una base stabile senza precipitare
 	return ground;
 }
