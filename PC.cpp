@@ -14,6 +14,7 @@ PC::PC(double posX, double posY, double width, double height){
 	this->state = "stopRight";
 	this->isFalling = false;
 	this->isInHole = false;
+	this->dead = false;
 }
 
 
@@ -24,7 +25,12 @@ PC::~PC(){
 std::string PC::getState() {
 	return this->state;
 }
-
+bool PC::getDead() {
+	return this->dead;
+}
+void PC::setDead(bool dead) {
+	this->dead = dead;
+}
 double PC::getLeft(){
 	return posX - width;
 }

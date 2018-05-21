@@ -139,7 +139,8 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 	double playerCX = player->getX();
 	double playerCY = player->getY();
-
+	// NB se pavimento lungo 10 per esempio, quando mario supera il 5 in x non salta più
+	// perchè dice che dovrebbe collidere in basso a sinistra ma non funziona
 	double xDiff = obsCX - playerCX;
 	double yDiff = obsCY - playerCY;
 
@@ -148,7 +149,7 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 	bool ground = false;
 
 	if (isHole(obstacle)) {
-		if (obstacle->getXInit() -correctionX < player->getLeft() && player->getRight() < obstacle->getXFin() + correctionX) {
+		if (obstacle->getXInit() -correctionX <= player->getLeft() && player->getRight() <= obstacle->getXFin() + correctionX) {
 			//OutputDebugString("Is in Hole");
 			player->setIsInHole(true);
 		}
@@ -159,11 +160,9 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 	}
 	else {
 
-		
 		if (xDiff > 0 && yDiff > 0) {
-			//player in basso a sinistra
+			//player e ostacolo in basso a sinistra
 			// check this per non far scivolare l'omino
-			// TODO
 			//if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() + 5, player->getRight(), player->getUp() + 5)) {
 			if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() , player->getRight(), player->getUp() )) {
 
@@ -182,7 +181,7 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 		}
 		else {
 			if (xDiff < 0 && yDiff > 0) {
-				//player in basso a destra
+				//player e ostacolo in basso a destra
 
 				if (isCollidingV2(obstacle->getXFin(), obstacle->getYInit(), player->getLeft(), player->getUp())) {
 					//controllo gli angoli per vedere se la collisione è in verticale (uno stop del salto) od orizzontale(stop corsa)
@@ -197,16 +196,16 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 			}
 			else {
-				if (xDiff > 0 && yDiff < 0) {
+				if (xDiff > 0 && yDiff < 0 ) {
 
-					//player in alto a sinistra
+					//player e ostacolo in alto a sinistra
 					if (isCollidingV2(player->getRight() - correctionX, player->getDown(), obstacle->getXInit(), obstacle->getYFin())) {
 						if (abs(player->getRight() - obstacle->getXInit()) <= abs(player->getDown() - obstacle->getYFin())) {
 							player->stopX();
 							player->setX(player->getX() - 0.001);
 						}
 						else {
-							if (player->getX() <= obstacle->getXInit())
+							if (player->getX() >= obstacle->getXInit())
 								player->stopY(obstacle->getYFin());
 
 							ground = true;
@@ -215,8 +214,24 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 				}
 				else {
-					//player in alto a destra
-					if (isCollidingV1(player->getLeft(), player->getDown(), obstacle->getXFin(), obstacle->getYFin())) {
+					//player e ostacolo in alto a destra
+					if (std::strcmp(obstacle->getType().c_str(), "Floor") == 0) {
+						if (isCollidingV2(player->getRight() - correctionX, player->getDown(), obstacle->getXInit(), obstacle->getYFin())) {
+							if (abs(player->getRight() - obstacle->getXInit()) <= abs(player->getDown() - obstacle->getYFin())) {
+								player->stopX();
+								player->setX(player->getX() - 0.001);
+							}
+							else {
+								if (player->getX() <= obstacle->getXFin())
+									player->stopY(obstacle->getYFin());
+
+								ground = true;
+							}
+						}
+					}else 
+						if (isCollidingV1(player->getLeft() , player->getDown(), obstacle->getXFin(), obstacle->getYFin())) {
+						//	if (isCollidingV1(player->getLeft(), obstacle->getYFin(), obstacle->getXFin() , player->getDown())) {
+
 						if (abs(player->getLeft() - obstacle->getXFin()) <= abs(player->getDown() - obstacle->getYFin())) {
 							//stop corsa
 							player->stopX();
@@ -248,6 +263,9 @@ OutputDebugString(out);
 OutputDebugString("\n");
 */
 
+bool CollisionSystem::collisionFloor(double cy, double vertexY) {
+	return cy > vertexY;
+}
 bool CollisionSystem::isCollidingV1(double cx, double cy, double vertexX, double vertexY) {
 	if (cx < vertexX && cy < vertexY)
 		return true;

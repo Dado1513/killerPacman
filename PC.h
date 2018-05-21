@@ -22,6 +22,7 @@ class PC
 		bool isFalling;		//se il pg sta cadendo, non posso saltare.
 		std::string direction;
 		bool isInHole; // se sta cadendo in un buco
+		bool dead;
 		/*
 			direction = stopLeft == -1, stopRight==0, right==1, left==2, upRight==3, upLeft==4;
 		*/
@@ -73,5 +74,7 @@ class PC
 		void setIsInHole(bool value);
 		bool getIsInHole();
 		void obstacleY();
+		void setDead(bool);
+		bool getDead();
 };
 

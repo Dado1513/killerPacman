@@ -41,10 +41,10 @@ Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
 Ostacolo obstacle2(10, 10.1, -0.4, -0.2, "obs");
 Ostacolo obstacle3(10.1, 10.2, -0.4, -0.2, "obs");
-Ostacolo pavimento2(10.25, 50, -1.0, -0.7, "Floor");
-Ostacolo hole(10.1, 10.25, -1.0, -0.7, "Hole");
+Ostacolo pavimento2(10.3, 50, -1.0, -0.7, "Floor");
+Ostacolo hole(10.01, 10.2, -1.0, -0.7, "Hole");
 //pavimento temporaneo
-Ostacolo pavimento(0.0, 10.12, -1.0, -0.7, "Floor");
+Ostacolo pavimento(0.0, 9.9, -1.0, -0.7, "Floor");
 
 
 CollisionSystem *collisionSystem;
@@ -509,7 +509,9 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 		mario.update();
 		if (mario.getDown() < -0.72) {
 			dead->play();
-			this->screenPlay = 2;
+			this->screenPlay = 1;
+			mario.setDead(true);
+			
 		}
 	}
 	 if(!mario.getIsInHole()){
@@ -534,7 +536,7 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 
 	collisionSystem->physics(&mario);
 	// same function per pacman
-	if (this->checkDead(mario, pacman)) {
+	if (this->checkDead(mario, pacman) ||  mario.getDead()) {
 		dead->play();
 		this->screenPlay = 2;
 		return;
@@ -663,9 +665,9 @@ void MyModel::drawGameOver() {
 		obstacle2 = Ostacolo(10, 10.1, -0.4, -0.2, "obs"); 
 		obstacle3= Ostacolo(10.1, 10.2, -0.4, -0.2, "obs");
 		//pavimento temporaneo
-		pavimento = Ostacolo(0.0, 10.0, -1.0, -0.7, "Floor");
-		hole = Ostacolo(10, 10.1, -1.0, -0.7,"Hole");
-		pavimento2 = Ostacolo(10.1, 50, -1.0, -0.7, "Floor");
+		pavimento = Ostacolo(0.0, 9.9, -1.0, -0.7, "Floor");
+		hole = Ostacolo(10.01, 10.2, -1.0, -0.7, "Hole");
+		pavimento2 = Ostacolo(10.3, 50, -1.0, -0.7, "Floor");
 		//pavimento temporaneo
 		
 		posSchermoX = 0;
@@ -947,15 +949,15 @@ void MyModel::buildFloor() {
 	//"pulisco" il colore base"// Enable Texture Mapping
 
 	// Terreno
-	float blockFloorLength = 0.2;
+	float blockFloorLength = 0.1;
 	//float lengthGame = 8.5; // lunghezza che vogliamo dare al mondo
 	// 2.5 vertice x fino al quale disegnare il background
 	for (float i = this->xStartGame; i < this->xEndGame; i += blockFloorLength) {
-		if (i <= hole.getXInit() - 0.01 || i >= hole.getXFin() + 0.01) {
+		if (i+blockFloorLength <= hole.getXInit()  || i >= hole.getXFin() ) {
 			glBegin(GL_QUADS);
 
 			//fattore di correzione x (per evitare bordi tra texture sovrapposizionate
-			float x = 0.02;
+			float x = 0.01;
 			//basso sinistra
 			glTexCoord2f(Background[0].u + x, Background[0].v + x);
 			glVertex3f(i, Background[0].y, Background[0].z + 1);

@@ -116,8 +116,8 @@ class MyModel {
 			this->LastUpdateTime = 0;
 	
 			// set x start and x end
-			this->xStartGame = -100;
-			this->xEndGame = 100;
+			this->xStartGame = -10;
+			this->xEndGame = 80;
 
 			// to build same thing once
 			this->init = true;

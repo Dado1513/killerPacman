@@ -18,6 +18,7 @@ public:
 	bool isCollidingV1(double cx, double cy, double vertexX, double vertexY);
 	bool isCollidingV2(double cx, double cy, double vertexX, double vertexY);
 	bool isHole(Ostacolo *ostacolo);
+	bool collisionFloor(double, double);
 	int getIndex(double x);
 	
 
