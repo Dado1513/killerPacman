@@ -151,13 +151,8 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 	//NOTA: il player e l'ostacolo non si troveranno mai in situazioni degeneri di sovrapposizione (in assenza di bug..)
 	double obsCX = obstacle->getCX();
 	double obsCY = obstacle->getCY();
-
-	
-
 	double playerCX = player->getX();
 	double playerCY = player->getY();
-	// NB se pavimento lungo 10 per esempio, quando mario supera il 5 in x non salta più
-	// perchè dice che dovrebbe collidere in basso a sinistra ma non funziona
 	double xDiff = obsCX - playerCX;
 	double yDiff = obsCY - playerCY;
 
@@ -167,16 +162,12 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 	if (isHole(obstacle)) {
 		if (obstacle->getXInit() -correctionX <= player->getLeft() && player->getRight() <= obstacle->getXFin() + correctionX) {
-			//OutputDebugString("Is in Hole");
 			player->setIsInHole(true);
-
 		}
 		else {
 			player->setIsInHole(false);
 		}
-
-	}
-	else {
+	} else {
 
 		if (xDiff > 0 && yDiff > 0) {
 			//player e ostacolo in basso a sinistra
