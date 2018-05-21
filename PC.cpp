@@ -86,7 +86,7 @@ void PC::addVelX(std::string dir)
 		if (velX < 0.006) {
 			velX = velX + 0.00015;
 		}
-	} else{
+	} else if(std::strcmp(dir.c_str(), "left") == 0){
 		//direzione sinistra
 		state = "left";
 		if (velX > 0) {
@@ -97,10 +97,13 @@ void PC::addVelX(std::string dir)
 		}
 	}
 }
+double PC::getVelY() {
+	return this->velY;
+}
 void PC::stopX()
 {
 	//se non sta saltando
-	if (std::strcmp(state.c_str(), "upLeft") != 0 || std::strcmp(state.c_str(), "upRight") != 0){
+	if (!getFalling() && std::strcmp(state.c_str(), "upLeft") != 0 || std::strcmp(state.c_str(), "upRight") != 0){
 		//posizione vista
 		if (std::strcmp(state.c_str(),"left") == 0)
 			state = "stopLeft";

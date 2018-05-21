@@ -54,6 +54,8 @@ class PC
 		double getDown();
 		double getX();
 		double getY();
+		double getVelY();
+		void setVelY(double);
 		std::string getState();
 		void setX(double posX);
 		void setY(double posY);

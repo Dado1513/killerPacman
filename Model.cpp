@@ -41,11 +41,10 @@ Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
 Ostacolo obstacle2(10, 10.1, -0.4, -0.2, "obs");
 Ostacolo obstacle3(10.1, 10.2, -0.4, -0.2, "obs");
-Ostacolo pavimento2(9.1, 50, -1.0, -0.7, "Floor");
-Ostacolo hole(10, 10.1, -1.0, -0.7, "Hole");
-
+Ostacolo pavimento2(10.2, 50, -1.0, -0.7, "Floor");
+Ostacolo hole(10.12, 10.2, -1.0, -0.7, "Hole");
 //pavimento temporaneo
-Ostacolo pavimento(0.0, 9, -1.0, -0.7, "Floor");
+Ostacolo pavimento(0.0, 10.12, -1.0, -0.7, "Floor");
 
 
 CollisionSystem *collisionSystem;
@@ -479,8 +478,6 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 		// mario si deve spostare a destra
 		mario.addVelX("right");
 
-
-
 	}else {
 
 		if (this->keys[VK_LEFT]) {
@@ -505,7 +502,9 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 
 	// add controllo mario getFalling
 	if (mario.getIsInHole()) {
-		mario.update();
+		
+		// gestire se mario è in salto
+
 		mario.setFalling(true);
 		mario.update();
 		if (mario.getDown() < -0.72) {
@@ -664,9 +663,9 @@ void MyModel::drawGameOver() {
 		obstacle2 = Ostacolo(10, 10.1, -0.4, -0.2, "obs"); 
 		obstacle3= Ostacolo(10.1, 10.2, -0.4, -0.2, "obs");
 		//pavimento temporaneo
-		pavimento = Ostacolo(0.0, 9.0, -1.0, -0.7, "Floor");
+		pavimento = Ostacolo(0.0, 10.0, -1.0, -0.7, "Floor");
 		hole = Ostacolo(10, 10.1, -1.0, -0.7,"Hole");
-		pavimento2 = Ostacolo(9.2, 50, -1.0, -0.7, "Floor");
+		pavimento2 = Ostacolo(10.1, 50, -1.0, -0.7, "Floor");
 		//pavimento temporaneo
 		
 		posSchermoX = 0;

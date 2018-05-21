@@ -162,8 +162,10 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 		
 		if (xDiff > 0 && yDiff > 0) {
 			//player in basso a sinistra
-			if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() + 5, player->getRight(), player->getUp() + 5)) {
-				//controllo gli angoli per vedere se la collisione è in verticale (uno stop del salto) od orizzontale(stop corsa)
+			//if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() + 5, player->getRight(), player->getUp() + 5)) {
+			if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() , player->getRight(), player->getUp() )) {
+
+			//controllo gli angoli per vedere se la collisione è in verticale (uno stop del salto) od orizzontale(stop corsa)
 				if (abs(player->getRight() - correctionX - obstacle->getXInit()) <= abs(player->getUp() - obstacle->getYInit())) {
 					//stop corsa
 					player->stopX();
@@ -202,7 +204,7 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 							player->setX(player->getX() - 0.001);
 						}
 						else {
-							if(!player->getIsInHole())
+							if (player->getX() <= obstacle->getXInit())
 								player->stopY(obstacle->getYFin());
 
 							ground = true;
@@ -218,7 +220,7 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 							player->stopX();
 						}
 						else {
-							if (!player->getIsInHole())
+							if(player->getX() <= obstacle->getXFin())
 								player->stopY(obstacle->getYFin());
 
 							ground = true;
