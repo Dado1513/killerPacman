@@ -147,9 +147,14 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 	bool ground = false;
 
-	if (isHole(obstacle) && obstacle->getXInit() <= playerCX && playerCX <= obstacle->getXFin()) {
-		//OutputDebugString("Is in Hole");
-		player->setIsInHole(true);
+	if (isHole(obstacle)) {
+		if (obstacle->getXInit() -correctionX < player->getLeft() && player->getRight() < obstacle->getXFin() + correctionX) {
+			//OutputDebugString("Is in Hole");
+			player->setIsInHole(true);
+		}
+		else {
+			player->setIsInHole(false);
+		}
 
 	}
 	else {
@@ -158,7 +163,6 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 		if (xDiff > 0 && yDiff > 0) {
 			//player in basso a sinistra
 			if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() + 5, player->getRight(), player->getUp() + 5)) {
-				player->setIsInHole(false);
 				//controllo gli angoli per vedere se la collisione è in verticale (uno stop del salto) od orizzontale(stop corsa)
 				if (abs(player->getRight() - correctionX - obstacle->getXInit()) <= abs(player->getUp() - obstacle->getYInit())) {
 					//stop corsa
@@ -177,7 +181,6 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 				//player in basso a destra
 
 				if (isCollidingV2(obstacle->getXFin(), obstacle->getYInit(), player->getLeft(), player->getUp())) {
-					player->setIsInHole(false);
 					//controllo gli angoli per vedere se la collisione è in verticale (uno stop del salto) od orizzontale(stop corsa)
 					if (abs(player->getLeft() - obstacle->getXFin()) <= abs(player->getUp() - obstacle->getYInit())) {
 						//stop corsa
@@ -194,13 +197,14 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 					//player in alto a sinistra
 					if (isCollidingV2(player->getRight() - correctionX, player->getDown(), obstacle->getXInit(), obstacle->getYFin())) {
-						player->setIsInHole(false);
 						if (abs(player->getRight() - obstacle->getXInit()) <= abs(player->getDown() - obstacle->getYFin())) {
 							player->stopX();
 							player->setX(player->getX() - 0.001);
 						}
 						else {
-							player->stopY(obstacle->getYFin());
+							if(!player->getIsInHole())
+								player->stopY(obstacle->getYFin());
+
 							ground = true;
 						}
 					}
@@ -209,13 +213,14 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 				else {
 					//player in alto a destra
 					if (isCollidingV1(player->getLeft(), player->getDown(), obstacle->getXFin(), obstacle->getYFin())) {
-						player->setIsInHole(false);
 						if (abs(player->getLeft() - obstacle->getXFin()) <= abs(player->getDown() - obstacle->getYFin())) {
 							//stop corsa
 							player->stopX();
 						}
 						else {
-							player->stopY(obstacle->getYFin());
+							if (!player->getIsInHole())
+								player->stopY(obstacle->getYFin());
+
 							ground = true;
 						}
 					}

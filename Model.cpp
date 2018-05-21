@@ -42,7 +42,7 @@ Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
 Ostacolo obstacle2(10, 10.1, -0.4, -0.2, "obs");
 Ostacolo obstacle3(10.1, 10.2, -0.4, -0.2, "obs");
 Ostacolo pavimento2(9.1, 50, -1.0, -0.7, "Floor");
-Ostacolo hole(9.0, 9.1, -1.0, -0.7, "Hole");
+Ostacolo hole(10, 10.1, -1.0, -0.7, "Hole");
 
 //pavimento temporaneo
 Ostacolo pavimento(0.0, 9, -1.0, -0.7, "Floor");
@@ -503,25 +503,26 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 
 	}
 
-	// update mario position
-	mario.update();
-
 	// add controllo mario getFalling
-	if (mario.getIsInHole() && 
-		(std::strcmp(mario.getState().c_str(),"upLeft")!=0 &&
-		std::strcmp(mario.getState().c_str(), "upRight") != 0)) {
-		//mario.stopY(-2);
-		if (mario.getDown() < -0.7) {
+	if (mario.getIsInHole()) {
+		mario.update();
+		mario.setFalling(true);
+		mario.update();
+		if (mario.getDown() < -0.72) {
 			dead->play();
 			this->screenPlay = 2;
 		}
 	}
-	else {
-		if (mario.getDown() < -0.7) {
+	 if(!mario.getIsInHole()){
+		// update mario position
+		mario.update();
+
+		if (mario.getDown() <= -0.7) {
 			mario.stopY(-0.7);
 		}
 	}
 	
+
 
 
 	
@@ -664,7 +665,7 @@ void MyModel::drawGameOver() {
 		obstacle3= Ostacolo(10.1, 10.2, -0.4, -0.2, "obs");
 		//pavimento temporaneo
 		pavimento = Ostacolo(0.0, 9.0, -1.0, -0.7, "Floor");
-		hole = Ostacolo(9.0, 9.2, -1.0, -0.7,"hole");
+		hole = Ostacolo(10, 10.1, -1.0, -0.7,"Hole");
 		pavimento2 = Ostacolo(9.2, 50, -1.0, -0.7, "Floor");
 		//pavimento temporaneo
 		
