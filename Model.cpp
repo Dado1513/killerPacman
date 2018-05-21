@@ -39,6 +39,9 @@ Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 
 
 Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
+Ostacolo obstacle2(10, 10.1, -0.4, -0.2, "obs");
+Ostacolo obstacle3(10.1, 10.2, -0.4, -0.2, "obs");
+
 //pavimento temporaneo
 Ostacolo pavimento(0.0, 50.0, -1.0, -0.7, "Floor");
 
@@ -231,6 +234,8 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 		// i buchi ? il pavimento ne occupa tantissima
 
 		collisionSystem->addObstacle(obstacle);
+		collisionSystem->addObstacle(obstacle2);
+		collisionSystem->addObstacle(obstacle3);
 
 		//collisionSystem->read();
 
@@ -650,6 +655,8 @@ void MyModel::drawGameOver() {
 		Mountain2 = Sky(0.105, -0.35, 1.01, 0.4);
 
 		obstacle= Ostacolo(0.7, 0.8, -0.4, -0.2, "obs");
+		obstacle2 = Ostacolo(10, 10.1, -0.4, -0.2, "obs"); 
+		obstacle3= Ostacolo(10.1, 10.2, -0.4, -0.2, "obs");
 		//pavimento temporaneo
 		pavimento= Ostacolo(0.0, 50.0, -1.0, -0.7, "Floor");
 
@@ -1103,6 +1110,46 @@ void MyModel::buildLevel0() {
 	glTexCoord2f(Background[3].u + x, Background[3].v);
 	glVertex3f(obstacle.getXInit(), obstacle.getYFin(), Background[1].z);
 
+
+	glEnd();
+	glBegin(GL_QUADS);
+
+
+	//basso sinistra
+	glTexCoord2f(Background[0].u + x, Background[0].v + x);
+	glVertex3f(obstacle2.getXInit(), obstacle2.getYInit(), Background[1].z);
+
+	//basso destra
+	glTexCoord2f(Background[1].u - x, Background[1].v + x);
+	glVertex3f(obstacle2.getXFin(), obstacle2.getYInit(), Background[1].z);
+
+	//alto destra
+	glTexCoord2f(Background[2].u - x, Background[2].v);
+	glVertex3f(obstacle2.getXFin(), obstacle2.getYFin(), Background[1].z);
+
+	//alto sinistra
+	glTexCoord2f(Background[3].u + x, Background[3].v);
+	glVertex3f(obstacle2.getXInit(), obstacle2.getYFin(), Background[1].z);
+
+	glEnd();
+	glBegin(GL_QUADS);
+
+
+	//basso sinistra
+	glTexCoord2f(Background[0].u + x, Background[0].v + x);
+	glVertex3f(obstacle3.getXInit(), obstacle3.getYInit(), Background[1].z);
+
+	//basso destra
+	glTexCoord2f(Background[1].u - x, Background[1].v + x);
+	glVertex3f(obstacle3.getXFin(), obstacle3.getYInit(), Background[1].z);
+
+	//alto destra
+	glTexCoord2f(Background[2].u - x, Background[2].v);
+	glVertex3f(obstacle3.getXFin(), obstacle3.getYFin(), Background[1].z);
+
+	//alto sinistra
+	glTexCoord2f(Background[3].u + x, Background[3].v);
+	glVertex3f(obstacle3.getXInit(), obstacle3.getYFin(), Background[1].z);
 
 	glEnd();
 
