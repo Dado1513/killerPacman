@@ -41,8 +41,8 @@ Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
 Ostacolo obstacle2(10, 10.1, -0.4, -0.2, "obs");
 Ostacolo obstacle3(10.1, 10.2, -0.4, -0.2, "obs");
-Ostacolo pavimento2(9.2, 50, -1.0, -0.7, "Floor");
-Ostacolo hole(9.0, 9.2, -1.0, -0.7, "Hole");
+Ostacolo pavimento2(9.1, 50, -1.0, -0.7, "Floor");
+Ostacolo hole(9.0, 9.1, -1.0, -0.7, "Hole");
 
 //pavimento temporaneo
 Ostacolo pavimento(0.0, 9, -1.0, -0.7, "Floor");
@@ -474,7 +474,7 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 
 	// update mario
 	if (this->keys[VK_RIGHT]) {
-		pacmanCanMove = true ;
+		pacmanCanMove = false ;
 		// mario si deve spostare a destra
 		mario.addVelX("right");
 
@@ -506,7 +506,6 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 	mario.update();
 
 	// add controllo mario getFalling
-	
 	if (mario.getDown() < -0.7) {
 		mario.stopY(-0.7);
 	}
@@ -764,6 +763,8 @@ void MyModel::buildPacman() {
 
 	//pacmanId = 18;
 	// PACMAN PRINT
+	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
+
 	glBindTexture(GL_TEXTURE_2D, pacmanTexture[pacmanId]);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -844,6 +845,7 @@ void MyModel::buildPacman() {
 }
 
 void MyModel::buildMario() {
+	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -979,6 +981,8 @@ void MyModel::buildSky() {
 
 void MyModel::buildLandscape(){
 	glEnable(GL_BLEND);
+	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
+
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0);
@@ -1079,6 +1083,8 @@ void MyModel::buildLandscape(){
 
 void MyModel::buildLevel0() {
 	glEnable(GL_BLEND);
+	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
+
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0);
@@ -1111,23 +1117,21 @@ void MyModel::buildLevel0() {
 	glEnd();
 	glBegin(GL_QUADS);
 
+		//basso sinistra
+		glTexCoord2f(Background[0].u + x, Background[0].v + x);
+		glVertex3f(obstacle2.getXInit(), obstacle2.getYInit(), Background[1].z);
 
-	//basso sinistra
-	glTexCoord2f(Background[0].u + x, Background[0].v + x);
-	glVertex3f(obstacle2.getXInit(), obstacle2.getYInit(), Background[1].z);
+		//basso destra
+		glTexCoord2f(Background[1].u - x, Background[1].v + x);
+		glVertex3f(obstacle2.getXFin(), obstacle2.getYInit(), Background[1].z);
 
-	//basso destra
-	glTexCoord2f(Background[1].u - x, Background[1].v + x);
-	glVertex3f(obstacle2.getXFin(), obstacle2.getYInit(), Background[1].z);
+		//alto destra
+		glTexCoord2f(Background[2].u - x, Background[2].v);
+		glVertex3f(obstacle2.getXFin(), obstacle2.getYFin(), Background[1].z);
 
-	//alto destra
-	glTexCoord2f(Background[2].u - x, Background[2].v);
-	glVertex3f(obstacle2.getXFin(), obstacle2.getYFin(), Background[1].z);
-
-	//alto sinistra
-	glTexCoord2f(Background[3].u + x, Background[3].v);
-	glVertex3f(obstacle2.getXInit(), obstacle2.getYFin(), Background[1].z);
-
+		//alto sinistra
+		glTexCoord2f(Background[3].u + x, Background[3].v);
+		glVertex3f(obstacle2.getXInit(), obstacle2.getYFin(), Background[1].z);
 	glEnd();
 	glBegin(GL_QUADS);
 
@@ -1151,7 +1155,7 @@ void MyModel::buildLevel0() {
 	glEnd();
 	// add hole
 	
-	
+	glDisable(GL_TEXTURE_2D);
 
 }
 
