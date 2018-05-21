@@ -17,7 +17,7 @@ public:
 	bool checkCollision(PC* player, Ostacolo *obstacle);
 	bool isCollidingV1(double cx, double cy, double vertexX, double vertexY);
 	bool isCollidingV2(double cx, double cy, double vertexX, double vertexY);
-
+	bool isHole(Ostacolo *ostacolo);
 	int getIndex(double x);
 	
 

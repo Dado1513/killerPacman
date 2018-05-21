@@ -42,6 +42,7 @@ Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
 Ostacolo obstacle2(10, 10.1, -0.4, -0.2, "obs");
 Ostacolo obstacle3(10.1, 10.2, -0.4, -0.2, "obs");
 Ostacolo pavimento2(9.2, 50, -1.0, -0.7, "Floor");
+Ostacolo hole(9.0, 9.2, -1.0, -0.7, "Hole");
 
 //pavimento temporaneo
 Ostacolo pavimento(0.0, 9, -1.0, -0.7, "Floor");
@@ -441,7 +442,7 @@ void MyModel::drawInitGame() {
 
 }
 
-void MyModel::updateWorld(audiere::OutputStreamPtr jump) {
+void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPtr dead) {
 
 	// update pacman
 	if (pacmanCanMove) {
@@ -506,10 +507,10 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump) {
 
 	// add controllo mario getFalling
 	
-	if (mario.getDown() < -0.7 && !mario.getIsInHole()) {
+	if (mario.getDown() < -0.7) {
 		mario.stopY(-0.7);
-
 	}
+	
 
 
 	
@@ -568,7 +569,7 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	// se minore di 0.001 --> potremmmo non disegno niente
 	if (fullElapsed - LastUpdateTime > 0.001) {
 		this->LastUpdateTime = fullElapsed;
-		updateWorld(jump);
+		updateWorld(jump,dead);
 	}
 
 	// può essere disegnato una sola volta non tutte le volte
@@ -581,25 +582,17 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	//"pulisco" il colore base"
 	glColor3f(1.0, 1.0, 1.0);
-
-
-
 	// draw floor
 	this->buildFloor();
 
 	// Draw the landscape
 	this->buildLandscape();
-
 	//ostacolo
 	this->buildLevel0();
-
 	// draw mario
 	this->buildMario();
-
 	// draw pacman
 	this->buildPacman();
-
-	
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
 
 }
@@ -660,6 +653,7 @@ void MyModel::drawGameOver() {
 		obstacle3= Ostacolo(10.1, 10.2, -0.4, -0.2, "obs");
 		//pavimento temporaneo
 		pavimento = Ostacolo(0.0, 9.0, -1.0, -0.7, "Floor");
+		hole = Ostacolo(9.0, 9.2, -1.0, -0.7,"hole");
 		pavimento2 = Ostacolo(9.2, 50, -1.0, -0.7, "Floor");
 		//pavimento temporaneo
 		
@@ -671,7 +665,6 @@ void MyModel::drawGameOver() {
 	
 
 }
-
 
 //  bitmap fonts
 void MyModel::BuildFont(void)								// Build Our Bitmap Font
@@ -1092,26 +1085,27 @@ void MyModel::buildLevel0() {
 
 	//fattore di correzione x
 	float x = 0;
+	// può essere disegnato una sola volta non tutte le volte
 
 	glBindTexture(GL_TEXTURE_2D, texture[3]);
 	glBegin(GL_QUADS);
 
 
-	//basso sinistra
-	glTexCoord2f(Background[0].u + x, Background[0].v + x);
-	glVertex3f(obstacle.getXInit(), obstacle.getYInit(), Background[1].z);
+		//basso sinistra
+		glTexCoord2f(Background[0].u + x, Background[0].v + x);
+		glVertex3f(obstacle.getXInit(), obstacle.getYInit(), Background[1].z);
 
-	//basso destra
-	glTexCoord2f(Background[1].u - x, Background[1].v + x);
-	glVertex3f(obstacle.getXFin(), obstacle.getYInit(), Background[1].z);
+		//basso destra
+		glTexCoord2f(Background[1].u - x, Background[1].v + x);
+		glVertex3f(obstacle.getXFin(), obstacle.getYInit(), Background[1].z);
 
-	//alto destra
-	glTexCoord2f(Background[2].u - x, Background[2].v);
-	glVertex3f(obstacle.getXFin(), obstacle.getYFin(), Background[1].z);
+		//alto destra
+		glTexCoord2f(Background[2].u - x, Background[2].v);
+		glVertex3f(obstacle.getXFin(), obstacle.getYFin(), Background[1].z);
 
-	//alto sinistra
-	glTexCoord2f(Background[3].u + x, Background[3].v);
-	glVertex3f(obstacle.getXInit(), obstacle.getYFin(), Background[1].z);
+		//alto sinistra
+		glTexCoord2f(Background[3].u + x, Background[3].v);
+		glVertex3f(obstacle.getXInit(), obstacle.getYFin(), Background[1].z);
 
 
 	glEnd();
@@ -1155,6 +1149,9 @@ void MyModel::buildLevel0() {
 		glVertex3f(obstacle3.getXInit(), obstacle3.getYFin(), Background[1].z);
 
 	glEnd();
+	// add hole
+	
+	
 
 }
 

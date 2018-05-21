@@ -136,7 +136,7 @@ class MyModel {
 		bool InitGL(void);
 		void ReSizeGLScene(int width, int height);
 		void glPrint(const char *fmt, ...);			// Custom GL "Print" Routine
-		void updateWorld(audiere::OutputStreamPtr jump);
+		void updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPtr dead);
 		void buildFloor();
 		void buildSky();
 		void buildMario();
