@@ -137,7 +137,7 @@ bool CollisionSystem::checkCollision2(PC* player, Ostacolo *obstacle) {
 			player->stopY(obstacle->getYFin());
 		}
 		// ostacolo sopra la testa
-		if (obstacle->getYInit >= player->getX()) {
+		if (obstacle->getYInit() >= player->getX()) {
 			player->obstacleY();
 
 		}
@@ -175,9 +175,8 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 			//if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() + 5, player->getRight(), player->getUp() + 5)) {
 			if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() , player->getRight(), player->getUp() )) {
 
-			//controllo gli angoli per vedere se la collisione è in verticale (uno stop del salto) od orizzontale(stop corsa)
+				//controllo gli angoli per vedere se la collisione è in verticale (uno stop del salto) od orizzontale(stop corsa)
 				if (abs(player->getRight() - correctionX - obstacle->getXInit()) <= abs(player->getUp() - obstacle->getYInit())) {
-					//stop corsa
 					player->stopX();
 					player->setX(player->getX() - 0.001);
 				}

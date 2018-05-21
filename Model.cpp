@@ -39,12 +39,15 @@ Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 
 
 Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
-Ostacolo obstacle2(10, 10.1, -0.4, -0.2, "obs");
-Ostacolo obstacle3(10.1, 10.2, -0.4, -0.2, "obs");
+
+
+Ostacolo obstacle2_to_print(10, 10.1, -0.4, -0.2, "obs"); // solo per texture
+Ostacolo obstacle3_to_print(10.1, 10.2, -0.4, -0.2, "obs"); // solo per texture
+Ostacolo obstacle2(10, 10.2, -0.4, -0.2, "obs");
 Ostacolo pavimento2(10.3, 50, -1.0, -0.7, "Floor");
-Ostacolo hole(10.01, 10.2, -1.0, -0.7, "Hole");
+Ostacolo hole(10.01, 10.2, -1.0, -0.7, "Hole"); // 10.01 --> per non iniziare a disegnare il floor
 //pavimento temporaneo
-Ostacolo pavimento(0.0, 9.9, -1.0, -0.7, "Floor");
+Ostacolo pavimento(0.0, 9.9, -1.0, -0.7, "Floor"); // 9.9 
 
 
 CollisionSystem *collisionSystem;
@@ -237,7 +240,7 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 
 		collisionSystem->addObstacle(obstacle);
 		collisionSystem->addObstacle(obstacle2);
-		collisionSystem->addObstacle(obstacle3);
+		//collisionSystem->addObstacle(obstacle3);
 		collisionSystem->addObstacle(pavimento2);
 		collisionSystem->addObstacle(hole);
 		//collisionSystem->read();
@@ -662,8 +665,8 @@ void MyModel::drawGameOver() {
 		Mountain2 = Sky(0.105, -0.35, 1.01, 0.4);
 
 		obstacle= Ostacolo(0.7, 0.8, -0.4, -0.2, "obs");
-		obstacle2 = Ostacolo(10, 10.1, -0.4, -0.2, "obs"); 
-		obstacle3= Ostacolo(10.1, 10.2, -0.4, -0.2, "obs");
+		obstacle2 = Ostacolo(10, 10.2, -0.4, -0.2, "obs");
+		//obstacle3= Ostacolo(10.1, 10.2, -0.4, -0.2, "obs");
 		//pavimento temporaneo
 		pavimento = Ostacolo(0.0, 9.9, -1.0, -0.7, "Floor");
 		hole = Ostacolo(10.01, 10.2, -1.0, -0.7, "Hole");
@@ -1140,38 +1143,38 @@ void MyModel::buildLevel0() {
 
 		//basso sinistra
 		glTexCoord2f(Background[0].u + x, Background[0].v + x);
-		glVertex3f(obstacle2.getXInit(), obstacle2.getYInit(), Background[1].z);
+		glVertex3f(obstacle2_to_print.getXInit(), obstacle2_to_print.getYInit(), Background[1].z);
 
 		//basso destra
 		glTexCoord2f(Background[1].u - x, Background[1].v + x);
-		glVertex3f(obstacle2.getXFin(), obstacle2.getYInit(), Background[1].z);
+		glVertex3f(obstacle2_to_print.getXFin(), obstacle2_to_print.getYInit(), Background[1].z);
 
 		//alto destra
 		glTexCoord2f(Background[2].u - x, Background[2].v);
-		glVertex3f(obstacle2.getXFin(), obstacle2.getYFin(), Background[1].z);
+		glVertex3f(obstacle2_to_print.getXFin(), obstacle2_to_print.getYFin(), Background[1].z);
 
 		//alto sinistra
 		glTexCoord2f(Background[3].u + x, Background[3].v);
-		glVertex3f(obstacle2.getXInit(), obstacle2.getYFin(), Background[1].z);
+		glVertex3f(obstacle2_to_print.getXInit(), obstacle2_to_print.getYFin(), Background[1].z);
 	glEnd();
 	glBegin(GL_QUADS);
 
 
 		//basso sinistra
 		glTexCoord2f(Background[0].u + x, Background[0].v + x);
-		glVertex3f(obstacle3.getXInit(), obstacle3.getYInit(), Background[1].z);
+		glVertex3f(obstacle3_to_print.getXInit(), obstacle3_to_print.getYInit(), Background[1].z);
 
 		//basso destra
 		glTexCoord2f(Background[1].u - x, Background[1].v + x);
-		glVertex3f(obstacle3.getXFin(), obstacle3.getYInit(), Background[1].z);
+		glVertex3f(obstacle3_to_print.getXFin(), obstacle3_to_print.getYInit(), Background[1].z);
 
 		//alto destra
 		glTexCoord2f(Background[2].u - x, Background[2].v);
-		glVertex3f(obstacle3.getXFin(), obstacle3.getYFin(), Background[1].z);
+		glVertex3f(obstacle3_to_print.getXFin(), obstacle3_to_print.getYFin(), Background[1].z);
 
 		//alto sinistra
 		glTexCoord2f(Background[3].u + x, Background[3].v);
-		glVertex3f(obstacle3.getXInit(), obstacle3.getYFin(), Background[1].z);
+		glVertex3f(obstacle3_to_print.getXInit(), obstacle3_to_print.getYFin(), Background[1].z);
 
 	glEnd();
 	
