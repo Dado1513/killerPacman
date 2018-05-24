@@ -39,7 +39,6 @@ Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 
 
 Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
-Ostacolo obstacleAdd(0.8, 0.9, -0.4, -0.2, "obs");
 
 
 Ostacolo obstacle2_to_print(10, 10.1, -0.4, -0.2, "obs"); // solo per texture
