@@ -39,6 +39,7 @@ Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 
 
 Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
+Ostacolo obstacleAdd(0.8, 0.9, -0.4, -0.2, "obs");
 
 
 Ostacolo obstacle2_to_print(10, 10.1, -0.4, -0.2, "obs"); // solo per texture
@@ -246,7 +247,10 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 		collisionSystem->addObstacle(obstacle2);
 		//collisionSystem->addObstacle(obstacle3);
 		collisionSystem->addObstacle(pavimento2);
-		collisionSystem->addObstacle(hole);
+		collisionSystem->addObstacle(hole);  
+
+
+
 		//collisionSystem->read();
 		debug = 0;
 
@@ -487,7 +491,7 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 
 	// update mario
 	if (this->keys[VK_RIGHT]) {
-		//pacmanCanMove = true ;
+		pacmanCanMove = true ;
 		// mario si deve spostare a destra
 		mario.addVelX("right");
 
