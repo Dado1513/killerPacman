@@ -92,7 +92,7 @@ void CollisionSystem::physics(PC* player) {
 		player->setFalling(true);
 		return;
 	}
-		
+
 
 	// con OR ne basta uno vero e non precipita
 	// invece se sono in un buco ne dovrebbe essere tutti veri
@@ -105,6 +105,8 @@ void CollisionSystem::physics(PC* player) {
 		}
 	}
 	
+
+
 	//se il player supera il quadrante, devo verificare anche il successivo (o il precedente)
 	if (getIndex(posXc) != getIndex(posXl) && !array[getIndex(posXl)].empty()) {
 		for (std::vector<Ostacolo>::iterator it = array[getIndex(posXl)].begin(); it != array[getIndex(posXl)].end(); ++it) {
@@ -117,6 +119,8 @@ void CollisionSystem::physics(PC* player) {
 			isInGround = isInGround || checkCollision(player, &(*it));
 		}
 	}
+
+
 		
 	
 	//setto se mario sta cadendo o meno
@@ -156,7 +160,7 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 	double xDiff = obsCX - playerCX;
 	double yDiff = obsCY - playerCY;
 
-	double correctionX = 0.01;
+	double correctionX = 0.05;
 
 	bool ground = false;
 
@@ -171,6 +175,8 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 		if (xDiff > 0 && yDiff > 0) {
 			//player e ostacolo in basso a sinistra
+
+
 			// check this per non far scivolare l'omino
 			//if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() + 5, player->getRight(), player->getUp() + 5)) {
 			if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() , player->getRight(), player->getUp() )) {
@@ -207,22 +213,37 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 				if (xDiff > 0 && yDiff < 0 ) {
 
 					//player e ostacolo in alto a sinistra
-					if (isCollidingV2(player->getRight() - correctionX, player->getDown(), obstacle->getXInit(), obstacle->getYFin())) {
-						if (abs(player->getRight() - obstacle->getXInit()) <= abs(player->getDown() - obstacle->getYFin())) {
+
+					//if (isCollidingV2(player->getRight() - correctionX, player->getDown(), obstacle->getXInit(), obstacle->getYFin())) {
+					if (isCollidingV2(player->getRight() , player->getDown(), obstacle->getXInit(), obstacle->getYFin())) {
+
+
+
+						if (abs(player->getRight() - obstacle->getXInit()   +20.0) <= abs(player->getDown() - obstacle->getYFin())) {
 							player->stopX();
 							player->setX(player->getX() - 0.001);
+
+
 						}
 						else {
-							if (player->getX() >= obstacle->getXInit())
+							//if (player->getX() >= obstacle->getXInit()) {
+							if (player->getRight() -correctionX*0.5 >= obstacle->getXInit()) {
+
 								player->stopY(obstacle->getYFin());
 
-							ground = true;
+								ground = true;
+							}
 						}
 					}
 
 				}
 				else {
 					//player e ostacolo in alto a destra
+
+
+					//si attiva se si tocca il suolo (non dovrebbe essere il contrario?)
+
+					/* NASCOSTO PERCHE' APPARENTEMENTE NON SI ATTIVA MAI
 					if (std::strcmp(obstacle->getType().c_str(), "Floor") == 0) {
 						if (isCollidingV2(player->getRight() - correctionX, player->getDown(), obstacle->getXInit(), obstacle->getYFin())) {
 							if (abs(player->getRight() - obstacle->getXInit()) <= abs(player->getDown() - obstacle->getYFin())) {
@@ -230,29 +251,47 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 								player->setX(player->getX() - 0.001);
 							}
 							else {
-								if (player->getX() <= obstacle->getXFin())
+								if (player->getX() <= obstacle->getXFin()) {
+
+
 									player->stopY(obstacle->getYFin());
 
-								ground = true;
+									ground = true;
+								}
 							}
 						}
-					}else 
-						if (isCollidingV1(player->getLeft() , player->getDown(), obstacle->getXFin(), obstacle->getYFin())) {
-						//	if (isCollidingV1(player->getLeft(), obstacle->getYFin(), obstacle->getXFin() , player->getDown())) {
-
-						if (abs(player->getLeft() - obstacle->getXFin()) <= abs(player->getDown() - obstacle->getYFin())) {
-							//stop corsa
-							player->stopX();
-							player->setX(player->getX() + 0.001);
-
-						}
-						else {
-							if(player->getX() <= obstacle->getXFin())
-								player->stopY(obstacle->getYFin());
-
-							ground = true;
-						}
 					}
+					else {
+					*/
+
+						
+
+						if (isCollidingV1(player->getLeft(), player->getDown(), obstacle->getXFin(), obstacle->getYFin())) {
+							//	if (isCollidingV1(player->getLeft(), obstacle->getYFin(), obstacle->getXFin() , player->getDown())) {
+
+
+
+
+							if (abs(player->getLeft() - obstacle->getXFin() ) <= abs(player->getDown() - obstacle->getYFin())) {
+								//stop corsa
+								player->stopX();
+								player->setX(player->getX() + 0.001);
+
+
+							}
+							else {
+								//if (player->getX() <= obstacle->getXFin()) {
+								if (player->getLeft() + correctionX * 0.4 <= obstacle->getXFin()) {
+
+
+									player->stopY(obstacle->getYFin());
+
+									ground = true;
+								}
+
+							}
+						}
+					//}
 				}
 
 			}
@@ -265,7 +304,7 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 /*
 char out[100];
-sprintf(out, " CollisionSystem");
+sprintf(out, " CollisionSystem  %d", i);
 i++;
 OutputDebugString(out);
 OutputDebugString("\n");
@@ -275,7 +314,7 @@ bool CollisionSystem::collisionFloor(double cy, double vertexY) {
 	return cy > vertexY;
 }
 bool CollisionSystem::isCollidingV1(double cx, double cy, double vertexX, double vertexY) {
-	if (cx < vertexX && cy < vertexY)
+	if (cx <= vertexX && cy <= vertexY)
 		return true;
 	else
 		return false;

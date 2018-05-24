@@ -58,6 +58,10 @@ bool pacmanCanMove = false;
 
 
 
+int debug;
+
+
+
 // All Setup For OpenGL Goes Here
 bool MyModel::InitGL(void)
 {
@@ -244,6 +248,7 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 		collisionSystem->addObstacle(pavimento2);
 		collisionSystem->addObstacle(hole);
 		//collisionSystem->read();
+		debug = 0;
 
 		//schermata di gioco
 		drawGamePrincipale(dead, jump);
@@ -471,19 +476,22 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 		}
 		pacman.update();
 
-		 //vecchio codice per il pavimento
-		// per il pavimento fare una funzione simile a
-		// check collision 
+		
 		if (pacman.getDown() < -0.7) {
 			pacman.stopY();
 		}
+		
+
+
 	}
 
 	// update mario
 	if (this->keys[VK_RIGHT]) {
-		pacmanCanMove = true ;
+		//pacmanCanMove = true ;
 		// mario si deve spostare a destra
 		mario.addVelX("right");
+
+		
 
 	}else {
 
@@ -525,9 +533,13 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 		// update mario position
 		mario.update();
 
+		//vecchio codice per il pavimento
+		//(prima avevo rimosso la parte relativa a pacman)
+		/*
 		if (mario.getDown() <= -0.7) {
 			mario.stopY(-0.7);
 		}
+		*/
 	}
 	
 
@@ -542,6 +554,16 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump) {
 
 	collisionSystem->physics(&mario);
+	
+	/*	DEBUG COLLISION SYSTEM
+	char out[100];
+	sprintf(out, " CollisionSystem  %d   %d    %lf     %lf", mario.getFalling(), debug, mario.getX(), mario.getY() );
+	debug++;
+	OutputDebugString(out);
+	OutputDebugString("\n");
+	*/
+	
+
 	if (mario.getX() >= this->xEndGame - 20) {
 		this->screenPlay = 4;
 		return;

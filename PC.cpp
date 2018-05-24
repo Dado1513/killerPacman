@@ -150,6 +150,7 @@ void PC::jump( audiere::OutputStreamPtr jump ){
 void PC::stopY(double limY){
 
 	isFalling = false;
+
 	if (std::strcmp(state.c_str(), "upRight") == 0)
 		state = "stopRight";
 	if (std::strcmp(state.c_str(), "upLeft") == 0)
