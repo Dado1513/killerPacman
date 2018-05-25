@@ -105,7 +105,7 @@ void CollisionSystem::physics(PC* player) {
 		}
 	}
 	
-
+	
 
 	//se il player supera il quadrante, devo verificare anche il successivo (o il precedente)
 	if (getIndex(posXc) != getIndex(posXl) && !array[getIndex(posXl)].empty()) {
@@ -120,7 +120,7 @@ void CollisionSystem::physics(PC* player) {
 		}
 	}
 
-
+	
 		
 	
 	//setto se mario sta cadendo o meno
@@ -149,6 +149,9 @@ bool CollisionSystem::checkCollision2(PC* player, Ostacolo *obstacle) {
 	return false;
 }
 
+
+
+
 bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 	
 	//controllo se il giocatore è in basso a sin, basso a dx, alto a sin, alto a dx rispetto all'ostacolo
@@ -164,6 +167,7 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 	bool ground = false;
 
+	/*
 	if (isHole(obstacle)) {
 		if (obstacle->getXInit() -correctionX <= player->getLeft() && player->getRight() <= obstacle->getXFin() + correctionX) {
 			player->setIsInHole(true);
@@ -171,20 +175,25 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 		else {
 			player->setIsInHole(false);
 		}
-	} else {
+	} else {*/
 
-		if (xDiff > 0 && yDiff > 0) {
+		if (xDiff >= 0 && yDiff >= 0) {
 			//player e ostacolo in basso a sinistra
+
 
 
 			// check this per non far scivolare l'omino
 			//if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() + 5, player->getRight(), player->getUp() + 5)) {
 			if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() , player->getRight(), player->getUp() )) {
 
+
+				
+
 				//controllo gli angoli per vedere se la collisione è in verticale (uno stop del salto) od orizzontale(stop corsa)
 				if (abs(player->getRight() - correctionX - obstacle->getXInit()) <= abs(player->getUp() - obstacle->getYInit())) {
 					player->stopX();
 					player->setX(player->getX() - 0.001);
+
 				}
 				else {
 					player->obstacleY();
@@ -194,7 +203,7 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 		}
 		else {
-			if (xDiff < 0 && yDiff > 0) {
+			if (xDiff <= 0 && yDiff >= 0) {
 				//player e ostacolo in basso a destra
 
 				if (isCollidingV2(obstacle->getXFin(), obstacle->getYInit(), player->getLeft(), player->getUp())) {
@@ -202,6 +211,8 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 					if (abs(player->getLeft() - obstacle->getXFin()) <= abs(player->getUp() - obstacle->getYInit())) {
 						//stop corsa
 						player->stopX();
+						player->setX(player->getX() + 0.001);
+
 					}
 					else {
 						player->obstacleY();
@@ -210,16 +221,16 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 			}
 			else {
-				if (xDiff > 0 && yDiff < 0 ) {
+				if (xDiff >= 0 && yDiff <= 0 ) {
 
-					//player e ostacolo in alto a sinistra
+						//player e ostacolo in alto a sinistra
 
 					//if (isCollidingV2(player->getRight() - correctionX, player->getDown(), obstacle->getXInit(), obstacle->getYFin())) {
-					if (isCollidingV2(player->getRight() , player->getDown(), obstacle->getXInit(), obstacle->getYFin())) {
+					if (isCollidingV2(player->getRight() , player->getDown(), obstacle->getXInit(), obstacle->getYFin()+0.001  )) {
 
 
 
-						if (abs(player->getRight() - obstacle->getXInit()   +20.0) <= abs(player->getDown() - obstacle->getYFin())) {
+						if (abs(player->getRight() - obstacle->getXInit() ) <= abs(player->getDown() - obstacle->getYFin())) {
 							player->stopX();
 							player->setX(player->getX() - 0.001);
 
@@ -229,6 +240,7 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 							//if (player->getX() >= obstacle->getXInit()) {
 							if (player->getRight() -correctionX*0.5 >= obstacle->getXInit()) {
 
+								
 								player->stopY(obstacle->getYFin());
 
 								ground = true;
@@ -266,7 +278,7 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 						
 
-						if (isCollidingV1(player->getLeft(), player->getDown(), obstacle->getXFin(), obstacle->getYFin())) {
+						if (isCollidingV1(player->getLeft(), player->getDown(), obstacle->getXFin(), obstacle->getYFin() + 0.001)) {
 							//	if (isCollidingV1(player->getLeft(), obstacle->getYFin(), obstacle->getXFin() , player->getDown())) {
 
 
@@ -278,6 +290,8 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 								player->setX(player->getX() + 0.001);
 
 
+
+
 							}
 							else {
 								//if (player->getX() <= obstacle->getXFin()) {
@@ -287,8 +301,8 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 									player->stopY(obstacle->getYFin());
 
 									ground = true;
-								}
 
+								}
 							}
 						}
 					//}
@@ -296,7 +310,7 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 			}
 		}
-	}
+	//}
 	
 	//ritorno true se il player ha una base stabile senza precipitare
 	return ground;

@@ -116,7 +116,7 @@ class MyModel {
 			this->LastUpdateTime = 0;
 	
 			// set x start and x end
-			this->xStartGame = -10;
+			this->xStartGame = -1;
 			this->xEndGame = 80;
 
 			// to build same thing once
@@ -137,10 +137,10 @@ class MyModel {
 		void ReSizeGLScene(int width, int height);
 		void glPrint(const char *fmt, ...);			// Custom GL "Print" Routine
 		void updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPtr dead);
-		void buildFloor();
+		void buildFloor(double start, double end);
 		void buildSky();
 		void buildMario();
-		void buildLevel0();
+		//void buildLevel0();
 		void buildPacman();
 		void buildLandscape();
 		void drawInitGame();
@@ -152,6 +152,7 @@ class MyModel {
 		bool pcCanMove(PC mario);
 
 		void drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump);
+		void drawLevelA();
 
 	private:
 		bool LoadGLTextures(void);

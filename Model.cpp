@@ -19,6 +19,7 @@
 #include "audiere.h"
 #include "Ostacolo.h"
 #include "CollisionSystem.h"
+#include "LevelA.h"
 
 using namespace std;
 
@@ -37,17 +38,21 @@ Sky Mountain1(-1.9, -0.35, 1.01, 0.4);
 Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 
 
+LevelA *levA;
 
-Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
 
+//Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
 
+/*
 Ostacolo obstacle2_to_print(10, 10.1, -0.4, -0.2, "obs"); // solo per texture
 Ostacolo obstacle3_to_print(10.1, 10.2, -0.4, -0.2, "obs"); // solo per texture
 Ostacolo obstacle2(10, 10.2, -0.4, -0.2, "obs");
 Ostacolo pavimento2(10.3, 50, -1.0, -0.7, "Floor");
 Ostacolo hole(10.01, 10.2, -1.0, -0.7, "Hole"); // 10.01 --> per non iniziare a disegnare il floor
+*/
+
 //pavimento temporaneo
-Ostacolo pavimento(0.0, 9.9, -1.0, -0.7, "Floor"); // 9.9 
+Ostacolo pavimento(0.0, 0.7, -1.0, -0.7, "Floor"); // 9.9 
 
 
 CollisionSystem *collisionSystem;
@@ -57,8 +62,7 @@ double posSchermoX = 0;
 bool pacmanCanMove = false;
 
 
-
-int debug;
+int debug = 0;
 
 
 
@@ -235,23 +239,34 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 		//inizializzazione delle variabili per il mondo di gioco
 		this->screenPlay = 3;
 
+		
+
 		//cancello le tracce dei livelli precedenti
 		//nuovo livello
 		collisionSystem = new CollisionSystem(0.05*2);		//gli passo la larghezza di mario*2
+
+
+
+
+		levA = new LevelA();
+		levA->fillCollisionSystem( collisionSystem );
+
+
+
+
 		collisionSystem->addObstacle(pavimento); 
 		// perchè li passiamo il pavimento ? non possiamo semplicemente tenere in memoria 
 		// i buchi ? il pavimento ne occupa tantissima
 
-		collisionSystem->addObstacle(obstacle);
+		/*
 		collisionSystem->addObstacle(obstacle2);
 		//collisionSystem->addObstacle(obstacle3);
 		collisionSystem->addObstacle(pavimento2);
 		collisionSystem->addObstacle(hole);  
+		*/
 
 
-
-		//collisionSystem->read();
-		debug = 0;
+		
 
 		//schermata di gioco
 		drawGamePrincipale(dead, jump);
@@ -536,13 +551,10 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 		// update mario position
 		mario.update();
 
-		//vecchio codice per il pavimento
-		//(prima avevo rimosso la parte relativa a pacman)
-		/*
-		if (mario.getDown() <= -0.7) {
-			mario.stopY(-0.7);
+
+		if (mario.getDown() < -1.1) {
+			this->screenPlay = 2;
 		}
-		*/
 	}
 	
 
@@ -558,13 +570,13 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 
 	collisionSystem->physics(&mario);
 	
-	/*	DEBUG COLLISION SYSTEM
+	/*	//DEBUG COLLISION SYSTEM
 	char out[100];
 	sprintf(out, " CollisionSystem  %d   %d    %lf     %lf", mario.getFalling(), debug, mario.getX(), mario.getY() );
 	debug++;
 	OutputDebugString(out);
 	OutputDebugString("\n");
-	*/
+	
 	
 
 	if (mario.getX() >= this->xEndGame - 20) {
@@ -625,26 +637,38 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	//Background cielo celeste
 	buildSky();
 	glEnable(GL_TEXTURE_2D);
-	this->buildLevel0();
+
 
 	//disegna la texture subito dopo
 	
 	glColor3f(1.0, 1.0, 1.0);
-	// draw floor
-
-	this->buildFloor();
+	
+	
+	
 
 	// Draw the landscape
 	this->buildLandscape();
+
+	// draw floor
+	this->buildFloor(-1, 0.7);
+	
+
 	//ostacolo
-	this->buildLevel0();
+	this->drawLevelA();
+
+	
+
 	// draw mario
 	this->buildMario();
 	// draw pacman
 	this->buildPacman();
+
+	
+
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
 
 }
+
 void MyModel::drawWinGame() {
 	pacmanCanMove = false;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -689,6 +713,7 @@ void MyModel::drawWinGame() {
 	if (this->keys[VK_RETURN]) {
 		this->screenPlay = 1;
 		delete(collisionSystem);
+		delete(levA);
 
 		mario = PC(0.2, -0.6, 0.05, 0.1);
 		pacman = EnemyPacman(-0.9, -0.6, 0.055, 0.1);
@@ -697,14 +722,16 @@ void MyModel::drawWinGame() {
 		Mountain1 = Sky(-1.9, -0.35, 1.01, 0.4);
 		Mountain2 = Sky(0.105, -0.35, 1.01, 0.4);
 
-		obstacle = Ostacolo(0.7, 0.8, -0.4, -0.2, "obs");
+		//obstacle = Ostacolo(0.7, 0.8, -0.4, -0.2, "obs");
+
+		/*
 		obstacle2 = Ostacolo(10, 10.2, -0.4, -0.2, "obs");
 		//obstacle3= Ostacolo(10.1, 10.2, -0.4, -0.2, "obs");
 		//pavimento temporaneo
 		pavimento = Ostacolo(0.0, 9.9, -1.0, -0.7, "Floor");
 		hole = Ostacolo(10.01, 10.2, -1.0, -0.7, "Hole");
 		pavimento2 = Ostacolo(10.3, 50, -1.0, -0.7, "Floor");
-		//pavimento temporaneo
+		*/
 
 		posSchermoX = 0;
 
@@ -714,6 +741,7 @@ void MyModel::drawWinGame() {
 
 
 }
+
 void MyModel::drawGameOver() {
 	pacmanCanMove = false;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -765,14 +793,18 @@ void MyModel::drawGameOver() {
 		Mountain1 = Sky(-1.9, -0.35, 1.01, 0.4);
 		Mountain2 = Sky(0.105, -0.35, 1.01, 0.4);
 
+
+		
+
+		/*   Perchè li ricrei?
+
 		obstacle= Ostacolo(0.7, 0.8, -0.4, -0.2, "obs");
 		obstacle2 = Ostacolo(10, 10.2, -0.4, -0.2, "obs");
 		//obstacle3= Ostacolo(10.1, 10.2, -0.4, -0.2, "obs");
-		//pavimento temporaneo
-		pavimento = Ostacolo(0.0, 9.9, -1.0, -0.7, "Floor");
 		hole = Ostacolo(10.01, 10.2, -1.0, -0.7, "Hole");
 		pavimento2 = Ostacolo(10.3, 50, -1.0, -0.7, "Floor");
-		//pavimento temporaneo
+
+		*/
 		
 		posSchermoX = 0;
 
@@ -1045,10 +1077,14 @@ void MyModel::buildMario() {
 	glDisable(GL_ALPHA_TEST);
 }
 
-void MyModel::buildFloor() {
-	glEnable(GL_TEXTURE_2D);	
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
+void MyModel::buildFloor(double start, double end) {
+	glEnable(GL_BLEND);
+	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0);
+
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	//"pulisco" il colore base"// Enable Texture Mapping
 
@@ -1056,30 +1092,31 @@ void MyModel::buildFloor() {
 	float blockFloorLength = 0.1;
 	//float lengthGame = 8.5; // lunghezza che vogliamo dare al mondo
 	// 2.5 vertice x fino al quale disegnare il background
-	for (float i = this->xStartGame; i < this->xEndGame; i += blockFloorLength) {
-		if (i+blockFloorLength <= hole.getXInit()  || i >= hole.getXFin() ) {
-			glBegin(GL_QUADS);
+	for (float i = start; i < end; i += blockFloorLength) {
+		
+		glBegin(GL_QUADS);
 
-			//fattore di correzione x (per evitare bordi tra texture sovrapposizionate
-			float x = 0.01;
-			//basso sinistra
-			glTexCoord2f(Background[0].u + x, Background[0].v + x);
-			glVertex3f(i, Background[0].y, Background[0].z + 1);
+		//fattore di correzione x (per evitare bordi tra texture sovrapposizionate
+		float x = 0.01;
 
-			//basso destra
-			glTexCoord2f(Background[1].u - x, Background[1].v + x);
-			glVertex3f(i + blockFloorLength, Background[1].y, Background[0].z + 1);
+		//basso sinistra
+		glTexCoord2f(Background[0].u + x, Background[0].v + x);
+		glVertex3f(i, Background[0].y, Background[0].z );
 
-			//alto destra
-			glTexCoord2f(Background[2].u - x, Background[2].v);
-			glVertex3f(i + blockFloorLength, Background[1].y + 0.3, Background[0].z + 1);
+		//basso destra
+		glTexCoord2f(Background[1].u - x, Background[1].v + x);
+		glVertex3f(i + blockFloorLength, Background[1].y, Background[0].z );
 
-			//alto sinistra
-			glTexCoord2f(Background[3].u + x, Background[3].v);
-			glVertex3f(i, Background[0].y + 0.3, Background[0].z + 1);
+		//alto destra
+		glTexCoord2f(Background[2].u - x, Background[2].v);
+		glVertex3f(i + blockFloorLength, Background[1].y + 0.3, Background[0].z );
 
-			glEnd();
-		}
+		//alto sinistra
+		glTexCoord2f(Background[3].u + x, Background[3].v);
+		glVertex3f(i, Background[0].y + 0.3, Background[0].z );
+
+		glEnd();
+		
 	}
 	glDisable(GL_TEXTURE_2D);
 }
@@ -1206,6 +1243,7 @@ void MyModel::buildLandscape(){
 
 }
 
+/*
 void MyModel::buildLevel0() {
 	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
@@ -1282,4 +1320,96 @@ void MyModel::buildLevel0() {
 	glDisable(GL_TEXTURE_2D);
 
 }
+*/
+
+
+void MyModel::drawLevelA() {
+
+	glEnable(GL_BLEND);
+	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0);
+
+	//fattore di correzione x
+	float x = 0;
+	// può essere disegnato una sola volta non tutte le volte
+
+	glBindTexture(GL_TEXTURE_2D, texture[3]);
+	vector<Ostacolo> obstacleList = levA->getObstacleVector();
+
+	for (vector<Ostacolo>::iterator it = obstacleList.begin(); it != obstacleList.end(); ++it) {
+		
+		glBegin(GL_QUADS);
+
+
+		//basso sinistra
+		glTexCoord2f(Background[0].u + x, Background[0].v + x);
+		glVertex3f(it->getXInit(), it->getYInit(), Background[1].z);
+
+		//basso destra
+		glTexCoord2f(Background[1].u - x, Background[1].v + x);
+		glVertex3f(it->getXFin(), it->getYInit(), Background[1].z);
+
+		//alto destra
+		glTexCoord2f(Background[2].u - x, Background[2].v);
+		glVertex3f(it->getXFin(), it->getYFin(), Background[1].z);
+
+		//alto sinistra
+		glTexCoord2f(Background[3].u + x, Background[3].v);
+		glVertex3f(it->getXInit(), it->getYFin(), Background[1].z);
+
+
+		glEnd();
+	}
+
+
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
+
+	//costruisco il pavimento
+	vector<Ostacolo> groundList = levA->getFloorVector();
+	for (vector<Ostacolo>::iterator it = groundList.begin(); it != groundList.end(); ++it) {
+
+		float blockFloorLength = 0.1;
+		for (float i = it->getXInit(); i < it->getXFin(); i += blockFloorLength) {
+
+			glBegin(GL_QUADS);
+
+			//fattore di correzione x (per evitare bordi tra texture sovrapposizionate
+			float x = 0.01;
+
+			//basso sinistra
+			glTexCoord2f(Background[0].u + x, Background[0].v + x);
+			glVertex3f(i, Background[0].y, Background[0].z);
+
+			//basso destra
+			glTexCoord2f(Background[1].u - x, Background[1].v + x);
+			glVertex3f(i + blockFloorLength, Background[1].y, Background[0].z);
+
+			//alto destra
+			glTexCoord2f(Background[2].u - x, Background[2].v);
+			glVertex3f(i + blockFloorLength, Background[1].y + 0.3, Background[0].z);
+
+			//alto sinistra
+			glTexCoord2f(Background[3].u + x, Background[3].v);
+			glVertex3f(i, Background[0].y + 0.3, Background[0].z);
+
+			glEnd();
+
+		}
+
+
+	}
+	
+
+
+
+
+
+	glDisable(GL_TEXTURE_2D);
+
+}
+
+
 
