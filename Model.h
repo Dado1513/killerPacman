@@ -152,7 +152,7 @@ class MyModel {
 		bool pcCanMove(PC mario);
 
 		void drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump);
-		void drawLevelA();
+		void drawLevel();
 
 	private:
 		bool LoadGLTextures(void);

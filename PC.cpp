@@ -22,6 +22,9 @@ PC::~PC(){
 
 }
 
+double PC::getWidth() {
+	return this->width;
+}
 std::string PC::getState() {
 	return this->state;
 }
@@ -134,7 +137,7 @@ void PC::jump( audiere::OutputStreamPtr jump ){
 	// std::strcmp(state.c_str(),"upLeft") !=0  && std::strcmp(state.c_str(), "upRight") != 0 && 
 	if(!isFalling){
 		jump->play();
-		velY = 0.018;
+		velY = 0.02;
 		isFalling = true;
 		
 

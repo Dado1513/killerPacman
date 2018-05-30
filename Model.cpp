@@ -19,7 +19,7 @@
 #include "audiere.h"
 #include "Ostacolo.h"
 #include "CollisionSystem.h"
-#include "LevelA.h"
+#include "Level.h"
 
 using namespace std;
 
@@ -38,7 +38,7 @@ Sky Mountain1(-1.9, -0.35, 1.01, 0.4);
 Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 
 
-LevelA *levA;
+Level *levA;
 
 
 //Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
@@ -243,31 +243,18 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 
 		//cancello le tracce dei livelli precedenti
 		//nuovo livello
-		collisionSystem = new CollisionSystem(0.05*2);		//gli passo la larghezza di mario*2
+		collisionSystem = new CollisionSystem(mario.getWidth()*2);		//gli passo la larghezza di mario*2
 
 
 
-
-		levA = new LevelA();
-		levA->fillCollisionSystem( collisionSystem );
-
+		levA = new Level();
+		levA->fillCollisionSystemA( collisionSystem ); // add 
+		levA->fillCollisionSystemB(collisionSystem);
 
 
 
 		collisionSystem->addObstacle(pavimento); 
-		// perchè li passiamo il pavimento ? non possiamo semplicemente tenere in memoria 
-		// i buchi ? il pavimento ne occupa tantissima
-
-		/*
-		collisionSystem->addObstacle(obstacle2);
-		//collisionSystem->addObstacle(obstacle3);
-		collisionSystem->addObstacle(pavimento2);
-		collisionSystem->addObstacle(hole);  
-		*/
-
-
 		
-
 		//schermata di gioco
 		drawGamePrincipale(dead, jump);
 		break;
@@ -554,12 +541,11 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 
 		if (mario.getDown() < -1.1) {
 			this->screenPlay = 2;
+			dead->play();
+			mario.setDead(true);
+
 		}
 	}
-	
-
-
-
 	
 
 
@@ -579,23 +565,21 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	
 	
 
+	// DA DECOMENT
 	if (mario.getX() >= this->xEndGame - 20) {
 		this->screenPlay = 4;
 		return;
 	}
+	
 	// same function per pacman
 	if (this->checkDead(mario, pacman) ||  mario.getDead()) {
 		dead->play();
 		this->screenPlay = 2;
 		return;
 	}
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
-														/*
-														glMatrixMode(GL_MODELVIEW);
-														glLoadIdentity();*/
-
-														// muove il mondo insieme a mario
+	*/
+	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -610,7 +594,6 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 		Mountain2.move(-mario.getVelX()*0.35, posSchermoX - 1, posSchermoX + 1);
 
 	}
-
 
 
 	//  TIMING - start
@@ -628,7 +611,7 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	//aggiorno la posizione del gioco ogni 1ms per prevenire il tremolio --> riduco la valocità massima  
 
 	// se minore di 0.001 --> potremmmo non disegno niente
-	if (fullElapsed - LastUpdateTime > 0.001) {
+	if (fullElapsed - LastUpdateTime > 0.0015) {
 		this->LastUpdateTime = fullElapsed;
 		updateWorld(jump,dead);
 	}
@@ -654,7 +637,7 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	
 
 	//ostacolo
-	this->drawLevelA();
+	this->drawLevel();
 
 	
 
@@ -722,16 +705,7 @@ void MyModel::drawWinGame() {
 		Mountain1 = Sky(-1.9, -0.35, 1.01, 0.4);
 		Mountain2 = Sky(0.105, -0.35, 1.01, 0.4);
 
-		//obstacle = Ostacolo(0.7, 0.8, -0.4, -0.2, "obs");
-
-		/*
-		obstacle2 = Ostacolo(10, 10.2, -0.4, -0.2, "obs");
-		//obstacle3= Ostacolo(10.1, 10.2, -0.4, -0.2, "obs");
-		//pavimento temporaneo
-		pavimento = Ostacolo(0.0, 9.9, -1.0, -0.7, "Floor");
-		hole = Ostacolo(10.01, 10.2, -1.0, -0.7, "Hole");
-		pavimento2 = Ostacolo(10.3, 50, -1.0, -0.7, "Floor");
-		*/
+		
 
 		posSchermoX = 0;
 
@@ -794,17 +768,6 @@ void MyModel::drawGameOver() {
 		Mountain2 = Sky(0.105, -0.35, 1.01, 0.4);
 
 
-		
-
-		/*   Perchè li ricrei?
-
-		obstacle= Ostacolo(0.7, 0.8, -0.4, -0.2, "obs");
-		obstacle2 = Ostacolo(10, 10.2, -0.4, -0.2, "obs");
-		//obstacle3= Ostacolo(10.1, 10.2, -0.4, -0.2, "obs");
-		hole = Ostacolo(10.01, 10.2, -1.0, -0.7, "Hole");
-		pavimento2 = Ostacolo(10.3, 50, -1.0, -0.7, "Floor");
-
-		*/
 		
 		posSchermoX = 0;
 
@@ -1243,87 +1206,7 @@ void MyModel::buildLandscape(){
 
 }
 
-/*
-void MyModel::buildLevel0() {
-	glEnable(GL_BLEND);
-	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0);
-
-	//fattore di correzione x
-	float x = 0;
-	// può essere disegnato una sola volta non tutte le volte
-
-	glBindTexture(GL_TEXTURE_2D, texture[3]);
-	glBegin(GL_QUADS);
-
-
-		//basso sinistra
-		glTexCoord2f(Background[0].u + x, Background[0].v + x);
-		glVertex3f(obstacle.getXInit(), obstacle.getYInit(), Background[1].z);
-
-		//basso destra
-		glTexCoord2f(Background[1].u - x, Background[1].v + x);
-		glVertex3f(obstacle.getXFin(), obstacle.getYInit(), Background[1].z);
-
-		//alto destra
-		glTexCoord2f(Background[2].u - x, Background[2].v);
-		glVertex3f(obstacle.getXFin(), obstacle.getYFin(), Background[1].z);
-
-		//alto sinistra
-		glTexCoord2f(Background[3].u + x, Background[3].v);
-		glVertex3f(obstacle.getXInit(), obstacle.getYFin(), Background[1].z);
-
-
-	glEnd();
-	glBegin(GL_QUADS);
-
-		//basso sinistra
-		glTexCoord2f(Background[0].u + x, Background[0].v + x);
-		glVertex3f(obstacle2_to_print.getXInit(), obstacle2_to_print.getYInit(), Background[1].z);
-
-		//basso destra
-		glTexCoord2f(Background[1].u - x, Background[1].v + x);
-		glVertex3f(obstacle2_to_print.getXFin(), obstacle2_to_print.getYInit(), Background[1].z);
-
-		//alto destra
-		glTexCoord2f(Background[2].u - x, Background[2].v);
-		glVertex3f(obstacle2_to_print.getXFin(), obstacle2_to_print.getYFin(), Background[1].z);
-
-		//alto sinistra
-		glTexCoord2f(Background[3].u + x, Background[3].v);
-		glVertex3f(obstacle2_to_print.getXInit(), obstacle2_to_print.getYFin(), Background[1].z);
-	glEnd();
-	glBegin(GL_QUADS);
-
-
-		//basso sinistra
-		glTexCoord2f(Background[0].u + x, Background[0].v + x);
-		glVertex3f(obstacle3_to_print.getXInit(), obstacle3_to_print.getYInit(), Background[1].z);
-
-		//basso destra
-		glTexCoord2f(Background[1].u - x, Background[1].v + x);
-		glVertex3f(obstacle3_to_print.getXFin(), obstacle3_to_print.getYInit(), Background[1].z);
-
-		//alto destra
-		glTexCoord2f(Background[2].u - x, Background[2].v);
-		glVertex3f(obstacle3_to_print.getXFin(), obstacle3_to_print.getYFin(), Background[1].z);
-
-		//alto sinistra
-		glTexCoord2f(Background[3].u + x, Background[3].v);
-		glVertex3f(obstacle3_to_print.getXInit(), obstacle3_to_print.getYFin(), Background[1].z);
-
-	glEnd();
-	
-	glDisable(GL_TEXTURE_2D);
-
-}
-*/
-
-
-void MyModel::drawLevelA() {
+void MyModel::drawLevel() {
 
 	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
@@ -1337,7 +1220,7 @@ void MyModel::drawLevelA() {
 	// può essere disegnato una sola volta non tutte le volte
 
 	glBindTexture(GL_TEXTURE_2D, texture[3]);
-	vector<Ostacolo> obstacleList = levA->getObstacleVector();
+	vector<Ostacolo> obstacleList = levA->getObstacleVectorA();
 
 	for (vector<Ostacolo>::iterator it = obstacleList.begin(); it != obstacleList.end(); ++it) {
 		
@@ -1362,13 +1245,69 @@ void MyModel::drawLevelA() {
 
 
 		glEnd();
+	
 	}
 
+	obstacleList = levA->getObstacleVectorB();
+	for (vector<Ostacolo>::iterator it = obstacleList.begin(); it != obstacleList.end(); ++it) {
+
+		glBegin(GL_QUADS);
+
+		//basso sinistra
+		glTexCoord2f(Background[0].u + x, Background[0].v + x);
+		glVertex3f(it->getXInit(), it->getYInit(), Background[1].z);
+
+		//basso destra
+		glTexCoord2f(Background[1].u - x, Background[1].v + x);
+		glVertex3f(it->getXFin(), it->getYInit(), Background[1].z);
+
+		//alto destra
+		glTexCoord2f(Background[2].u - x, Background[2].v);
+		glVertex3f(it->getXFin(), it->getYFin(), Background[1].z);
+
+		//alto sinistra
+		glTexCoord2f(Background[3].u + x, Background[3].v);
+		glVertex3f(it->getXInit(), it->getYFin(), Background[1].z);
+
+
+		glEnd();
+	}
 
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
-
 	//costruisco il pavimento
-	vector<Ostacolo> groundList = levA->getFloorVector();
+	vector<Ostacolo> groundList = levA->getFloorVectorA();
+	for (vector<Ostacolo>::iterator it = groundList.begin(); it != groundList.end(); ++it) {
+
+		float blockFloorLength = 0.1;
+		for (float i = it->getXInit(); i < it->getXFin(); i += blockFloorLength) {
+
+			glBegin(GL_QUADS);
+
+			//fattore di correzione x (per evitare bordi tra texture sovrapposizionate
+			float x = 0.01;
+
+			//basso sinistra
+			glTexCoord2f(Background[0].u + x, Background[0].v + x);
+			glVertex3f(i, Background[0].y, Background[0].z);
+
+			//basso destra
+			glTexCoord2f(Background[1].u - x, Background[1].v + x);
+			glVertex3f(i + blockFloorLength, Background[1].y, Background[0].z);
+
+			//alto destra
+			glTexCoord2f(Background[2].u - x, Background[2].v);
+			glVertex3f(i + blockFloorLength, Background[1].y + 0.3, Background[0].z);
+
+			//alto sinistra
+			glTexCoord2f(Background[3].u + x, Background[3].v);
+			glVertex3f(i, Background[0].y + 0.3, Background[0].z);
+
+			glEnd();
+
+		}
+	}
+		
+	groundList = levA->getFloorVectorB();
 	for (vector<Ostacolo>::iterator it = groundList.begin(); it != groundList.end(); ++it) {
 
 		float blockFloorLength = 0.1;
@@ -1402,10 +1341,6 @@ void MyModel::drawLevelA() {
 
 	}
 	
-
-
-
-
 
 	glDisable(GL_TEXTURE_2D);
 
