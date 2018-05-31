@@ -111,6 +111,7 @@ bool EnemyPacman::getFalling() {
 	return this->isFalling;
 }
 void EnemyPacman::jump() {
+	
 	//se non sta saltando, compio il salto
 	// no dovrebbe essere 3 e 4 invece che 3 e 2?
 	if (std::strcmp(state.c_str(), "upLeft") != 0 && std::strcmp(state.c_str(), "upRight") != 0 && !isFalling) {

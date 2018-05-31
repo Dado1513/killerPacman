@@ -534,11 +534,10 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 			
 		}
 	}
-	 if(!mario.getIsInHole()){
+
+	if(!mario.getIsInHole()){
 		// update mario position
 		mario.update();
-
-
 		if (mario.getDown() < -1.1) {
 			this->screenPlay = 2;
 			dead->play();
