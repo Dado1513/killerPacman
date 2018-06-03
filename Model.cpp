@@ -218,7 +218,7 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 		levA = new Level();
 		levA->fillCollisionSystemA(collisionSystem); // add level A
 		levA->fillCollisionSystemB(collisionSystem); // add level B
-
+		levA->fillCollisionSystemC(collisionSystem);
 		//schermata di gioco
 		drawGamePrincipale(dead, jump);
 		break;
@@ -413,8 +413,6 @@ void MyModel::drawInitGame() {
 		}
 	}
 	
-
-
 	if (this->keys[VK_RETURN]) {
 		if(this->select == 0)
 			this->screenPlay = 1;
@@ -478,20 +476,7 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 	}
 
 	// add controllo mario getFalling
-	/*
-	if (mario.getIsInHole()) {
-		
-		// gestire se mario è in salto
-
-		mario.setFalling(true);
-		mario.update();
-		if (mario.getDown() < -0.72) {
-			dead->play();
-			this->screenPlay = 1;
-			mario.setDead(true);
-			
-		}
-	}*/
+	
 	if(!mario.getIsInHole()){
 		// update mario position
 		mario.update();
@@ -501,6 +486,27 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 			mario.setDead(true);
 		}
 	}
+
+	// cheat ahahah
+	if (this->keys[VK_F11] && this->keys[VK_F12]) {
+		mario.setVelMaxX(mario.getVelMaxX() * 2);
+	}
+
+	// reset cheat ahah
+	if (this->keys[VK_F1] && this->keys[VK_F2]) {
+		mario.setVelMaxX(0.0015);
+	}
+
+	if (this->keys[VK_F8]) {
+		// update vel max pacman
+		pacman.setVelMaxX(pacman.getVelMaxX() * 2);
+	}
+
+	if (this->keys[VK_F9]) {
+		// update vel max pacman
+		pacman.setVelMaxX(0.0015);
+	}
+
 }
 
 // schermata di gioco
@@ -514,8 +520,9 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	OutputDebugString(out);
 	OutputDebugString("\n");
 	
+	*/
 	// DA DECOMENT
-	if (mario.getX() >= this->xEndGame - 20) {
+	if (mario.getX() >= this->xEndGame) {
 		this->screenPlay = 4;
 		return;
 	}
@@ -525,7 +532,6 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 		this->screenPlay = 2;
 		return;
 	}
-	*/
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
@@ -1163,6 +1169,32 @@ void MyModel::drawLevel() {
 		glEnd();
 	}
 
+
+	obstacleList = levA->getObstacleVectorC();
+	for (vector<Ostacolo>::iterator it = obstacleList.begin(); it != obstacleList.end(); ++it) {
+
+		glBegin(GL_QUADS);
+
+		//basso sinistra
+		glTexCoord2f(Background[0].u + x, Background[0].v + x);
+		glVertex3f(it->getXInit(), it->getYInit(), Background[1].z);
+
+		//basso destra
+		glTexCoord2f(Background[1].u - x, Background[1].v + x);
+		glVertex3f(it->getXFin(), it->getYInit(), Background[1].z);
+
+		//alto destra
+		glTexCoord2f(Background[2].u - x, Background[2].v);
+		glVertex3f(it->getXFin(), it->getYFin(), Background[1].z);
+
+		//alto sinistra
+		glTexCoord2f(Background[3].u + x, Background[3].v);
+		glVertex3f(it->getXInit(), it->getYFin(), Background[1].z);
+
+
+		glEnd();
+	}
+
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	//costruisco il pavimento
 	vector<Ostacolo> groundList = levA->getFloorVectorA();
@@ -1231,7 +1263,39 @@ void MyModel::drawLevel() {
 
 	}
 	
+	groundList = levA->getFloorVectorC();
+	for (vector<Ostacolo>::iterator it = groundList.begin(); it != groundList.end(); ++it) {
 
+		float blockFloorLength = 0.1;
+		for (float i = it->getXInit(); i < it->getXFin(); i += blockFloorLength) {
+
+			glBegin(GL_QUADS);
+
+			//fattore di correzione x (per evitare bordi tra texture sovrapposizionate
+			float x = 0.01;
+
+			//basso sinistra
+			glTexCoord2f(Background[0].u + x, Background[0].v + x);
+			glVertex3f(i, Background[0].y, Background[0].z);
+
+			//basso destra
+			glTexCoord2f(Background[1].u - x, Background[1].v + x);
+			glVertex3f(i + blockFloorLength, Background[1].y, Background[0].z);
+
+			//alto destra
+			glTexCoord2f(Background[2].u - x, Background[2].v);
+			glVertex3f(i + blockFloorLength, Background[1].y + 0.3, Background[0].z);
+
+			//alto sinistra
+			glTexCoord2f(Background[3].u + x, Background[3].v);
+			glVertex3f(i, Background[0].y + 0.3, Background[0].z);
+
+			glEnd();
+
+		}
+
+
+	}
 	glDisable(GL_TEXTURE_2D);
 
 }

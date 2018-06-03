@@ -118,7 +118,7 @@ class MyModel {
 	
 			// set x start and x end
 			this->xStartGame = -1;
-			this->xEndGame = 80;
+			this->xEndGame = 29;
 			this->lastTimeChangeVelocityPacman = 1;
 			// to build same thing once
 			this->init = true;

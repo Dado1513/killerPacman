@@ -14,7 +14,8 @@ private:
 	double startPoint;
 	double endPoint;
 	double widthSingleLevel; // larghezza di ogni singolo livello 
-
+	double startA, startB, startC;
+	double endA, endB, endC;
 	vector<Ostacolo> obstacleListA; // level A
 	vector<Ostacolo> floorListA;
 
@@ -34,9 +35,10 @@ public:
 	void fillCollisionSystemB(CollisionSystem *CS);
 	void fillCollisionSystemC(CollisionSystem *CS);
 
-	void makeLevelA(double start, double end);
-	void makeLevelB(double start, double end);
-	void makeLevelC(double start, double end);
+	void makeLevelA();
+	void makeLevelB();
+	void makeLevelC();
+
 
 	
 	vector<Ostacolo> getObstacleVectorA();
@@ -51,6 +53,13 @@ public:
 
 	double getStartPoint();
 	double getEndPoint();
+	double getStartA();
+	double getStartB();
+	double getStartC();
+	double getEndA();
+	double getEndB();
+	double getEndC();
+
 
 };
 
