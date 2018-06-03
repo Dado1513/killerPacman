@@ -40,7 +40,6 @@ Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 
 Level *levA; // make level
 
-Ostacolo pavimento(0.0, 0.7, -1.0, -0.7, "Floor"); // 9.9 
 
 CollisionSystem *collisionSystem; // System to handle collision
 
@@ -136,7 +135,7 @@ bool MyModel::LoadGLTextures(void)
 
 
 	// -OSTACOLO PROVA
-	texture[3] = SOIL_load_OGL_texture("Data/media/question.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	texture[3] = SOIL_load_OGL_texture("Data/media/baseWall.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (texture[3] == 0)
 		return false;
 
@@ -217,11 +216,9 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 		collisionSystem = new CollisionSystem(mario.getWidth()*2);		//gli passo la larghezza di mario*2
 
 		levA = new Level();
-		levA->fillCollisionSystemA( collisionSystem ); // add level A
+		levA->fillCollisionSystemA(collisionSystem); // add level A
 		levA->fillCollisionSystemB(collisionSystem); // add level B
 
-		collisionSystem->addObstacle(pavimento); // pavimento iniziale prima dei livelli
-		
 		//schermata di gioco
 		drawGamePrincipale(dead, jump);
 		break;

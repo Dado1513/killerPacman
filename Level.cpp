@@ -11,11 +11,21 @@ Level::Level()
 	// per esempio numero random tra 1 e 3 per il livello A a seconda del numero uscito si posizionerà nella
 	// posizione prestabilita 1 o 2 o 3
 	// stessa cosa per gli altri due andando ad esclusion naturalmente
-	startPoint = 0.7; // numeri fittizi per adesso
-	endPoint = 10;
-	widthSingleLevel = 30; // larghezza di ogni singolo 
-	this->makeLevelA(10,20); // parte da 10 da quando finisce il levelB
-	this->makeLevelB(0.7,10); // parte da 0.7 da quando finisce il paviemnto
+	
+	startPoint = 00; // numeri fittizi per adesso
+	endPoint = 20;
+	widthSingleLevel = 10; // larghezza di ogni singolo 
+	
+	int startA = rand() % 2 * 10; // 0 o 10
+	int endA = startA + widthSingleLevel;
+	int startB = 10;
+	if (startA == 10)
+		startB = 0;
+	int endB = startB + widthSingleLevel;
+
+	this->makeLevelA(startA,endA); // parte da 10 da quando finisce il levelB
+	
+	this->makeLevelB(startB,endB); // parte da 0.7 da quando finisce il paviemnto
 
 }
 
@@ -27,25 +37,35 @@ void Level::makeLevelA(double start, double end) {
 
 	//start = 0.7;
 	//endPoint = start + 1.4;
+	floorListA.push_back(Ostacolo(start , start + 2, -1.0, -0.70, "Floor"));
 
 	// così basta cambiare lo start point per spostare il livello
-	obstacleListA.push_back(Ostacolo(start + 0.0, start + 0.1, -0.4, -0.2, "obs"));
-	obstacleListA.push_back(Ostacolo(start + 0.1, start + 0.2, -0.4, -0.2, "obs"));
+	obstacleListA.push_back(Ostacolo(start + 2.0, start + 2.1, -0.4, -0.2, "obs"));
+	obstacleListA.push_back(Ostacolo(start + 2.1, start + 2.2, -0.4, -0.2, "obs"));
 
-	obstacleListA.push_back(Ostacolo(start + 0.25, start + 0.35, 0.1, 0.3, "obs"));
-	obstacleListA.push_back(Ostacolo(start + 0.35, start + 0.45, 0.1, 0.3, "obs"));
-	obstacleListA.push_back(Ostacolo(start + 0.45, start + 0.55, 0.1, 0.3, "obs"));
+	obstacleListA.push_back(Ostacolo(start + 2.25, start + 2.35, 0.1, 0.3, "obs"));
+	obstacleListA.push_back(Ostacolo(start + 2.35, start + 2.45, 0.1, 0.3, "obs"));
+	obstacleListA.push_back(Ostacolo(start + 2.45, start + 2.55, 0.1, 0.3, "obs"));
 
-	obstacleListA.push_back(Ostacolo(start + 0.6, start + 0.7, -0.4, -0.2, "obs"));
+	obstacleListA.push_back(Ostacolo(start + 2.6, start + 2.7, -0.4, -0.2, "obs"));
 
-	obstacleListA.push_back(Ostacolo(start + 1.05, start + 1.15, -0.1, 0.1, "obs"));
-	obstacleListA.push_back(Ostacolo(start + 1.05, start + 1.15, -0.3, -0.1, "obs"));
-	obstacleListA.push_back(Ostacolo(start + 1.05, start + 1.15, -0.5, -0.3, "obs"));
-	obstacleListA.push_back(Ostacolo(start + 1.05, start + 1.15, -0.70, -0.50, "obs"));
+	obstacleListA.push_back(Ostacolo(start + 3.05, start + 3.15, -0.1, 0.1, "obs"));
+	obstacleListA.push_back(Ostacolo(start + 3.05, start + 3.15, -0.3, -0.1, "obs"));
+	obstacleListA.push_back(Ostacolo(start + 3.05, start + 3.15, -0.5, -0.3, "obs"));
+	obstacleListA.push_back(Ostacolo(start + 3.05, start + 3.15, -0.70, -0.50, "obs"));
 	
-	// floor finale
 	//floorListA.push_back(Ostacolo(start + 1.05, start + widthSingleLevel + 1.05, -1.0, -0.70, "Floor"));
-	floorListA.push_back(Ostacolo(start + 1.05, end, -1.0, -0.70, "Floor"));
+	floorListA.push_back(Ostacolo(start + 3.05, start +4.05, -1.0, -0.70, "Floor"));
+	
+	obstacleListA.push_back(Ostacolo(start + 4.15, start + 4.25, -0.4, -0.2, "obs"));
+	obstacleListA.push_back(Ostacolo(start + 4.25, start + 4.35, -0.4, -0.2, "obs"));
+	obstacleListA.push_back(Ostacolo(start + 4.35, start + 4.45, -0.2, 0.0, "obs"));
+	obstacleListA.push_back(Ostacolo(start + 4.45, start + 4.55, -0.2, 0.0, "obs"));
+
+	obstacleListA.push_back(Ostacolo(start + 4.75, start + 4.85, -0.4, -0.2, "obs"));
+	obstacleListA.push_back(Ostacolo(start + 4.85, start + 4.95, -0.4, -0.2, "obs"));
+
+	floorListA.push_back(Ostacolo(start + 5.05, end, -1.0, -0.70, "Floor"));
 
 }
 
