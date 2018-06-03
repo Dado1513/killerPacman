@@ -34,9 +34,9 @@ public:
 	void fillCollisionSystemB(CollisionSystem *CS);
 	void fillCollisionSystemC(CollisionSystem *CS);
 
-	void makeLevelA(double start);
-	void makeLevelB(double start);
-	void makeLevelC(double start);
+	void makeLevelA(double start, double end);
+	void makeLevelB(double start, double end);
+	void makeLevelC(double start, double end);
 
 	
 	vector<Ostacolo> getObstacleVectorA();

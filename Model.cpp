@@ -274,8 +274,8 @@ void MyModel::drawInitGame() {
 	this->frameTime += double(t - Tstamp) / (double)CLOCKS_PER_SEC;
 	this->Tstamp = t;
 	// ogni 10 minuti aumento la velocità di pacman
-	if (fullElapsed > 600 * lastTimeChangeVelocityPacman) {
-		pacman.setVelMaxX(pacman.getVelMaxX() + 0.0005);
+	if (fullElapsed > 300 * lastTimeChangeVelocityPacman) {
+		pacman.setVelMaxX(pacman.getVelMaxX() + 0.0002);
 	}
 
 	// background
@@ -328,7 +328,6 @@ void MyModel::drawInitGame() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glPushMatrix();
 		glBegin(GL_QUADS);
-		
 		// b-s
 		glTexCoord2f(Background[0].u, Background[0].v);
 		glVertex3f(x_init, y_init, Background[0].z);
@@ -356,6 +355,7 @@ void MyModel::drawInitGame() {
 	if (this->select != 1) {
 		buttonexitId = 0;
 	}
+
 	glBindTexture(GL_TEXTURE_2D, exitGame[buttonexitId]);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -439,7 +439,7 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 			// ci sono sopra se anche la y è ok allora è morto 
 			pacman.stopX();
 			if (!this->checkY(mario, pacman)) {
-				pacman.jump();
+				pacman.jump(); // aggiungere che si raggiunge il salto al valore x
 			}
 		}
 		else {
@@ -451,16 +451,11 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 			}
 		}
 		pacman.update();
-
-		
 		if (pacman.getDown() < -0.7) {
 			// now check se mario non in falling e getY  > 0.7 allora 
 			// sostituisco la stopY con quella di mario 
 			pacman.stopY();
 		}
-		
-
-
 	}
 
 	// update mario
@@ -468,29 +463,21 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 		pacmanCanMove = true ;
 		// mario si deve spostare a destra
 		mario.addVelX("right");
-
-		
-
 	}else {
-
 		if (this->keys[VK_LEFT]) {
 			// mario si deve spostare a sinistra
 			if (mario.getLeft() > posSchermoX - 1)
 				mario.addVelX("left");
 			else
 				mario.stopX();
-
 		}
 		else
 			mario.stopX();
 	}
 
-
 	if (this->keys[VK_UP]) {
-
 		//se non sta saltando
 		mario.jump(jump);
-
 	}
 
 	// add controllo mario getFalling
@@ -508,7 +495,6 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 			
 		}
 	}*/
-
 	if(!mario.getIsInHole()){
 		// update mario position
 		mario.update();
@@ -516,19 +502,14 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 			this->screenPlay = 2;
 			dead->play();
 			mario.setDead(true);
-
 		}
 	}
-	
-
-
 }
 
 // schermata di gioco
 void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump) {
 
 	collisionSystem->physics(&mario);
-	
 	/*	//DEBUG COLLISION SYSTEM
 	char out[100];
 	sprintf(out, " CollisionSystem  %d   %d    %lf     %lf", mario.getFalling(), debug, mario.getX(), mario.getY() );
@@ -536,14 +517,11 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	OutputDebugString(out);
 	OutputDebugString("\n");
 	
-	
-
 	// DA DECOMENT
 	if (mario.getX() >= this->xEndGame - 20) {
 		this->screenPlay = 4;
 		return;
 	}
-	
 	// same function per pacman
 	if (this->checkDead(mario, pacman) ||  mario.getDead()) {
 		dead->play();
@@ -560,14 +538,11 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	glTranslatef(-(float)posSchermoX, 0, 0);
 	if (mario.getLeft() > posSchermoX + 0.0001) {
 		posSchermoX = mario.getLeft();
-
 		Cloud1.move(-mario.getVelX()*0.6, posSchermoX - 1, posSchermoX + 1);
 		Cloud2.move(-mario.getVelX()*0.6, posSchermoX - 1, posSchermoX + 1);
 		Mountain1.move(-mario.getVelX()*0.35, posSchermoX - 1, posSchermoX + 1);
 		Mountain2.move(-mario.getVelX()*0.35, posSchermoX - 1, posSchermoX + 1);
-
 	}
-
 
 	//  TIMING - start
 	clock_t t = clock();
@@ -582,45 +557,27 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	//  TIMING - end
 
 	//aggiorno la posizione del gioco ogni 1ms per prevenire il tremolio --> riduco la valocità massima  
-
-	// se minore di 0.001 --> potremmmo non disegno niente
+	// se minore di 0.0008 --> potremmmo non disegno niente
 	if (fullElapsed - LastUpdateTime > 0.0008) {
 		this->LastUpdateTime = fullElapsed;
 		updateWorld(jump,dead);
 	}
-
 	// può essere disegnato una sola volta non tutte le volte
 	//Background cielo celeste
 	buildSky();
 	glEnable(GL_TEXTURE_2D);
-
-
 	//disegna la texture subito dopo
-	
 	glColor3f(1.0, 1.0, 1.0);
-	
-	
-	
-
 	// Draw the landscape
 	this->buildLandscape();
-
 	// draw floor
 	this->buildFloor(-1, 0.7);
-	
-
 	//ostacolo
 	this->drawLevel();
-
-	
-
 	// draw mario
 	this->buildMario();
 	// draw pacman
 	this->buildPacman();
-
-	
-
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
 
 }
@@ -628,64 +585,42 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 void MyModel::drawWinGame() {
 	pacmanCanMove = false;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glAlphaFunc(GL_GREATER, 0);
-
 	glLoadIdentity();
-
 	glBindTexture(GL_TEXTURE_2D, this->backgroundtexture);
 	glBegin(GL_QUADS);
-	double resize = 0.0;
-	// b-s
-	glTexCoord2f(Background[0].u, Background[0].v);
-	glVertex3f(Background[0].x, Background[0].y, Background[0].z);
-	//b-d
-	glTexCoord2f(Background[1].u, Background[1].v);
-	glVertex3f(Background[1].x, Background[1].y, Background[1].z);
+		double resize = 0.0;
+		// b-s
+		glTexCoord2f(Background[0].u, Background[0].v);
+		glVertex3f(Background[0].x, Background[0].y, Background[0].z);
+		//b-d
+		glTexCoord2f(Background[1].u, Background[1].v);
+		glVertex3f(Background[1].x, Background[1].y, Background[1].z);
 
-	//a-d
-	glTexCoord2f(Background[2].u, Background[2].v);
-	glVertex3f(Background[2].x, Background[2].y, Background[2].z);
+		//a-d
+		glTexCoord2f(Background[2].u, Background[2].v);
+		glVertex3f(Background[2].x, Background[2].y, Background[2].z);
 
-	//a-s
-	glTexCoord2f(Background[3].u, Background[3].v);
-	glVertex3f(Background[3].x, Background[3].y, Background[3].z);
+		//a-s
+		glTexCoord2f(Background[3].u, Background[3].v);
+		glVertex3f(Background[3].x, Background[3].y, Background[3].z);
 
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
-
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glColor3f(0.0f, 100.0f, 0.0f);
 	glRasterPos3f(-0.2, 0.5, -1);
-
 	this->glPrint("Congratulation WIN Return restart, Esc to Exit");
-
 	if (this->keys[VK_RETURN]) {
-		this->screenPlay = 1;
-		delete(collisionSystem);
-		delete(levA);
-
-		mario = PC(0.2, -0.6, 0.05, 0.1);
-		pacman = EnemyPacman(-0.9, -0.6, 0.055, 0.1);
-		Cloud1 = Sky(-1, 0.51, 1.02, 0.5);
-		Cloud2 = Sky(1.01, 0.51, 1.02, 0.5);
-		Mountain1 = Sky(-1.9, -0.35, 1.01, 0.4);
-		Mountain2 = Sky(0.105, -0.35, 1.01, 0.4);
-
-		
-
-		posSchermoX = 0;
-
-	};
+		this->resetGame();
+	}
 	// reset color
 	glColor3f(1.0, 1.0, 1.0);
-
 
 }
 
@@ -703,57 +638,49 @@ void MyModel::drawGameOver() {
 
 	glBindTexture(GL_TEXTURE_2D, this->backgroundtexture);
 	glBegin(GL_QUADS);
-	double resize = 0.0;
-	// b-s
-	glTexCoord2f(Background[0].u, Background[0].v);
-	glVertex3f(Background[0].x, Background[0].y, Background[0].z);
-	//b-d
-	glTexCoord2f(Background[1].u, Background[1].v);
-	glVertex3f(Background[1].x, Background[1].y, Background[1].z);
+		double resize = 0.0;
+		// b-s
+		glTexCoord2f(Background[0].u, Background[0].v);
+		glVertex3f(Background[0].x, Background[0].y, Background[0].z);
+		//b-d
+		glTexCoord2f(Background[1].u, Background[1].v);
+		glVertex3f(Background[1].x, Background[1].y, Background[1].z);
 
-	//a-d
-	glTexCoord2f(Background[2].u, Background[2].v);
-	glVertex3f(Background[2].x, Background[2].y, Background[2].z);
+		//a-d
+		glTexCoord2f(Background[2].u, Background[2].v);
+		glVertex3f(Background[2].x, Background[2].y, Background[2].z);
 
-	//a-s
-	glTexCoord2f(Background[3].u, Background[3].v);
-	glVertex3f(Background[3].x, Background[3].y, Background[3].z);
-
+		//a-s
+		glTexCoord2f(Background[3].u, Background[3].v);
+		glVertex3f(Background[3].x, Background[3].y, Background[3].z);
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
-
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glColor3f(0.0f, 100.0f, 0.0f);
 	glRasterPos3f(-0.2, 0.5, -1);
-
 	this->glPrint("Game Over press RETURN to restart o ESC to Exit");
 	if (this->keys[VK_RETURN]) {
-		this->screenPlay = 1;
-		delete(collisionSystem);
-
-		mario = PC(0.2, -0.6, 0.05, 0.1);
-		pacman = EnemyPacman(-0.9, -0.6, 0.055, 0.1);
-		Cloud1 = Sky(-1, 0.51, 1.02, 0.5);
-		Cloud2 = Sky(1.01, 0.51, 1.02, 0.5);
-		Mountain1 = Sky(-1.9, -0.35, 1.01, 0.4);
-		Mountain2 = Sky(0.105, -0.35, 1.01, 0.4);
-
-
-		
-		posSchermoX = 0;
-
-	};
-	// reset color
+		this->resetGame();
+	}
 	glColor3f(1.0, 1.0, 1.0); 
-	
+}
 
+void MyModel::resetGame() {
+	this->screenPlay = 1;
+	delete(collisionSystem);
+	delete(levA);
+	mario = PC(0.2, -0.6, 0.05, 0.1);
+	pacman = EnemyPacman(-0.9, -0.6, 0.055, 0.1);
+	Cloud1 = Sky(-1, 0.51, 1.02, 0.5);
+	Cloud2 = Sky(1.01, 0.51, 1.02, 0.5);
+	Mountain1 = Sky(-1.9, -0.35, 1.01, 0.4);
+	Mountain2 = Sky(0.105, -0.35, 1.01, 0.4);
+	posSchermoX = 0;
 }
 
 //  bitmap fonts
-void MyModel::BuildFont(void)								// Build Our Bitmap Font
-{
+void MyModel::BuildFont(void){								// Build Our Bitmap Font
 	HFONT	font;										// Windows Font ID
 	HFONT	oldfont;									// Used For Good House Keeping
 
@@ -954,13 +881,6 @@ void MyModel::buildMario() {
 		}
 	} else {
 		// mario jump
-		/*int lengthMarioTexture = 8;
-		marioId = (int(fullElapsed * 7) % lengthMarioTexture);
-		if (marioId > lengthMarioTexture) {
-			marioId = 0;
-		}
-		*/
-	
 		marioId = 3;
 	}
 
