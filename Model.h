@@ -75,6 +75,7 @@ class MyModel {
 		std::vector<Vertex> curs;         // floating cursor
 		clock_t Tstamp, Tstart;
 		double fullElapsed;  // elapsed time in seconds from the beginning of the program
+		int lastTimeChangeVelocityPacman; // valore per aumentare progressivamente la velocità di pacman se si gioca troppo
 
 		GLuint	texture[28];	
 		// Storage For 28 Textures!
@@ -118,7 +119,7 @@ class MyModel {
 			// set x start and x end
 			this->xStartGame = -1;
 			this->xEndGame = 80;
-
+			this->lastTimeChangeVelocityPacman = 1;
 			// to build same thing once
 			this->init = true;
 

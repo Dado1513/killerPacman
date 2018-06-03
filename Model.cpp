@@ -26,7 +26,7 @@ using namespace std;
 // x iniziale, y iniziale, spessore e altezza personaggio e nemico
 //PC mario(-0.2, -0.6, 0.05, 0.1);
 PC mario(0.2, -0.6, 0.05, 0.1);
-EnemyPacman pacman(-0.9,-0.6,0.055,0.1);
+EnemyPacman pacman(-0.9,-0.6, 0.055,0.1);
 
 //Sky Cloud1(-0.4, 0.7, 0.18, 0.15);
 //Sky Cloud2(0.7, 0.6, 0.15, 0.12);
@@ -38,24 +38,11 @@ Sky Mountain1(-1.9, -0.35, 1.01, 0.4);
 Sky Mountain2(0.105, -0.35, 1.01, 0.4);
 
 
-Level *levA;
+Level *levA; // make level
 
-
-//Ostacolo obstacle(0.7, 0.8, -0.4, -0.2, "obs");
-
-/*
-Ostacolo obstacle2_to_print(10, 10.1, -0.4, -0.2, "obs"); // solo per texture
-Ostacolo obstacle3_to_print(10.1, 10.2, -0.4, -0.2, "obs"); // solo per texture
-Ostacolo obstacle2(10, 10.2, -0.4, -0.2, "obs");
-Ostacolo pavimento2(10.3, 50, -1.0, -0.7, "Floor");
-Ostacolo hole(10.01, 10.2, -1.0, -0.7, "Hole"); // 10.01 --> per non iniziare a disegnare il floor
-*/
-
-//pavimento temporaneo
 Ostacolo pavimento(0.0, 0.7, -1.0, -0.7, "Floor"); // 9.9 
 
-
-CollisionSystem *collisionSystem;
+CollisionSystem *collisionSystem; // System to handle collision
 
 
 double posSchermoX = 0;
@@ -170,17 +157,6 @@ bool MyModel::LoadGLTextures(void)
 	backgroundtexture = SOIL_load_OGL_texture(backgroundFile, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (this->backgroundtexture == 0)
 		return false;
-	/*
-	char badGuy[200];
-	for (int i = 0; i < 43; i++) {
-		sprintf(badGuy, "../Data/badGuyRun/1_%03d.png", i );
-		//OutputDebugString(badGuy);
-		this->marioTexture[i] = SOIL_load_OGL_texture(badGuy, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
-		if (marioTexture[i] == 0) {
-			return false;
-		}
-	}
-	*/
 	
 	//  Load 19 pacman textures (front and back)
 	char pacman[200];
@@ -210,12 +186,7 @@ bool MyModel::LoadGLTextures(void)
 		if (exitGame == 0)
 			return false;
 	}
-	/*
-	this->pacmanTexture[18] = SOIL_load_OGL_texture("../Data/PacmanSprite/pacman_evil_new.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
-	if (pacmanTexture[18] == 0)
-		return false;
-	*/
-
+	
 	// Typical Texture Generation Using Data From The Bitmap
 	//glBindTexture(GL_TEXTURE_2D, texture[0]);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
@@ -245,15 +216,11 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 		//nuovo livello
 		collisionSystem = new CollisionSystem(mario.getWidth()*2);		//gli passo la larghezza di mario*2
 
-
-
 		levA = new Level();
-		levA->fillCollisionSystemA( collisionSystem ); // add 
-		levA->fillCollisionSystemB(collisionSystem);
+		levA->fillCollisionSystemA( collisionSystem ); // add level A
+		levA->fillCollisionSystemB(collisionSystem); // add level B
 
-
-
-		collisionSystem->addObstacle(pavimento); 
+		collisionSystem->addObstacle(pavimento); // pavimento iniziale prima dei livelli
 		
 		//schermata di gioco
 		drawGamePrincipale(dead, jump);
@@ -306,6 +273,10 @@ void MyModel::drawInitGame() {
 	this->fullElapsed = double(t - Tstart) / (double)CLOCKS_PER_SEC;
 	this->frameTime += double(t - Tstamp) / (double)CLOCKS_PER_SEC;
 	this->Tstamp = t;
+	// ogni 10 minuti aumento la velocità di pacman
+	if (fullElapsed > 600 * lastTimeChangeVelocityPacman) {
+		pacman.setVelMaxX(pacman.getVelMaxX() + 0.0005);
+	}
 
 	// background
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
@@ -483,6 +454,8 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 
 		
 		if (pacman.getDown() < -0.7) {
+			// now check se mario non in falling e getY  > 0.7 allora 
+			// sostituisco la stopY con quella di mario 
 			pacman.stopY();
 		}
 		
@@ -521,6 +494,7 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 	}
 
 	// add controllo mario getFalling
+	/*
 	if (mario.getIsInHole()) {
 		
 		// gestire se mario è in salto
@@ -533,7 +507,7 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 			mario.setDead(true);
 			
 		}
-	}
+	}*/
 
 	if(!mario.getIsInHole()){
 		// update mario position
@@ -610,7 +584,7 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	//aggiorno la posizione del gioco ogni 1ms per prevenire il tremolio --> riduco la valocità massima  
 
 	// se minore di 0.001 --> potremmmo non disegno niente
-	if (fullElapsed - LastUpdateTime > 0.0015) {
+	if (fullElapsed - LastUpdateTime > 0.0008) {
 		this->LastUpdateTime = fullElapsed;
 		updateWorld(jump,dead);
 	}

@@ -23,6 +23,13 @@ class PC
 		std::string direction;
 		bool isInHole; // se sta cadendo in un buco
 		bool dead;
+		double velMaxX;
+		// valore per gestire per quanto tempo mario deve stare in volo
+		// prima di cadere
+		int timeFly; 
+		double accMaxX;
+					
+
 		/*
 			direction = stopLeft == -1, stopRight==0, right==1, left==2, upRight==3, upLeft==4;
 		*/
@@ -77,5 +84,7 @@ class PC
 		void obstacleY();
 		void setDead(bool);
 		bool getDead();
+		double getVelMaxX();
+		void setVelMaxX(double);
 };
 

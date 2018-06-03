@@ -14,8 +14,8 @@ Level::Level()
 	startPoint = 0.7; // numeri fittizi per adesso
 	endPoint = 10;
 	widthSingleLevel = 30; // larghezza di ogni singolo 
-	this->makeLevelA(10);
-	this->makeLevelB(0.7);
+	this->makeLevelA(10); // parte da 10 da quando finisce il levelB
+	this->makeLevelB(0.7); // parte da 0.7 da quando finisce il paviemnto
 
 }
 

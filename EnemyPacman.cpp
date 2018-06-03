@@ -13,7 +13,9 @@ EnemyPacman::EnemyPacman(double posX, double posY, double width, double height) 
 	this->velY = 0;
 	this->state = "stopRight";
 	this->isFalling = false;
-	this->velMaxX = 0.003;
+	this->velMaxX = 0.0012;
+	this->timeFly = 0;
+	this->accMaxX = 0.00002;
 
 }
 
@@ -28,6 +30,14 @@ std::string EnemyPacman::getState() {
 
 double EnemyPacman::getLeft() {
 	return posX - width;
+}
+
+double EnemyPacman::getVelMaxX() {
+	return this->velMaxX;
+}
+
+void EnemyPacman::setVelMaxX(double velMaxX) {
+	this->velMaxX = velMaxX;
 }
 
 double EnemyPacman::getVelX() {
@@ -79,7 +89,7 @@ void EnemyPacman::addVelX(std::string dir)
 		}
 		// ridotto la velocità per provenire tremolio del personaggio
 		if (velX < this->velMaxX) {
-			velX = velX + 0.00015;
+			velX = velX + accMaxX;
 		}
 	}
 	else {
@@ -89,7 +99,7 @@ void EnemyPacman::addVelX(std::string dir)
 			velX = 0;
 		}
 		if (velX > -this->velMaxX) {
-			velX = velX - 0.00015;
+			velX = velX - accMaxX;
 		}
 	}
 }
@@ -114,9 +124,9 @@ void EnemyPacman::jump() {
 	
 	//se non sta saltando, compio il salto
 	// no dovrebbe essere 3 e 4 invece che 3 e 2?
-	if (std::strcmp(state.c_str(), "upLeft") != 0 && std::strcmp(state.c_str(), "upRight") != 0 && !isFalling) {
-		//if (state != 3 && state != 2 && !isFalling){
-		velY = 0.018;
+	if (!isFalling) {
+		//velY = 0.018;
+		velY = 0.006;
 		isFalling = true;
 
 		if (std::strcmp(state.c_str(), "left") == 0 || std::strcmp(state.c_str(), "stopLeft") == 0) {
@@ -143,8 +153,12 @@ void EnemyPacman::stopY() {
 void EnemyPacman::update()
 {
 	//gestisco l'accelerazione decrescente del salto
-	if (isFalling)
-		velY -= 0.0003;
+	if (isFalling && timeFly > 11) {
+		velY -= 0.0004;
+		timeFly = 0;
+	}else {
+		timeFly++;
+	}
 
 	posX += velX;
 	posY += velY;

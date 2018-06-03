@@ -15,6 +15,9 @@ PC::PC(double posX, double posY, double width, double height){
 	this->isFalling = false;
 	this->isInHole = false;
 	this->dead = false;
+	this->velMaxX = 0.0015;
+	this->timeFly = 0;
+	this->accMaxX = 0.00002;
 }
 
 
@@ -83,6 +86,15 @@ bool PC::getIsInHole() {
 void PC::setIsInHole(bool value) {
 	this->isInHole = value;
 }
+
+double PC::getVelMaxX() {
+	return velMaxX;
+}
+
+void PC::setVelMaxX(double velMaxX) {
+	this->velMaxX = velMaxX;
+}
+
 void PC::addVelX(std::string dir)
 {
 	if (std::strcmp(dir.c_str(),"right")==0){
@@ -92,8 +104,8 @@ void PC::addVelX(std::string dir)
 			velX = 0;
 		}
 		// ridotto la velocità per provenire tremolio del personaggio
-		if (velX < 0.006) {
-			velX = velX + 0.00015;
+		if (velX < velMaxX) {
+			velX = velX + accMaxX;
 		}
 	} else if(std::strcmp(dir.c_str(), "left") == 0){
 		//direzione sinistra
@@ -101,16 +113,17 @@ void PC::addVelX(std::string dir)
 		if (velX > 0) {
 			velX = 0;
 		}
-		if (velX > -0.006) {
-			velX = velX - 0.00015;
+		if (velX > -velMaxX) {
+			velX = velX - accMaxX;
 		}
 	}
 }
+
 double PC::getVelY() {
 	return this->velY;
 }
-void PC::stopX()
-{
+
+void PC::stopX(){
 	//se non sta saltando
 	if (!getFalling() && std::strcmp(state.c_str(), "upLeft") != 0 || std::strcmp(state.c_str(), "upRight") != 0){
 		//posizione vista
@@ -130,14 +143,9 @@ bool PC::getFalling() {
 
 void PC::jump( audiere::OutputStreamPtr jump ){
 	
-	/*if (!isFalling) {
-		jump->play();
-	}
-	*/
-	// std::strcmp(state.c_str(),"upLeft") !=0  && std::strcmp(state.c_str(), "upRight") != 0 && 
 	if(!isFalling){
 		jump->play();
-		velY = 0.02;
+		velY = 0.006;
 		isFalling = true;
 		
 
@@ -150,6 +158,7 @@ void PC::jump( audiere::OutputStreamPtr jump ){
 	}
 		
 }
+
 void PC::stopY(double limY){
 
 	isFalling = false;
@@ -171,9 +180,15 @@ void PC::obstacleY() {
 void PC::update()
 {
 	//gestisco l'accelerazione decrescente del salto
-	if (isFalling)
-		velY -= 0.0003;
-
+	
+	if (isFalling && timeFly > 11) {
+		velY -= 0.0004;
+		timeFly = 0;
+	}
+	else {
+		timeFly = timeFly + 1;
+	}
+	
 	posX += velX;
 	posY += velY;
 

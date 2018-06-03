@@ -19,6 +19,8 @@ class EnemyPacman{
 		std::string state;			//stato del pg.
 		bool isFalling;		//se il pg sta cadendo, non posso saltare.
 		std::string direction;
+		int timeFly;
+		double accMaxX;
 		/*
 		direction = stopLeft == -1, stopRight==0, right==1, left==2, upRight==3, upLeft==4;
 		*/
@@ -54,7 +56,8 @@ class EnemyPacman{
 		std::string getState();
 		void setX(double posX);
 		void setY(double posY);
-
+		void setVelMaxX(double);
+		double getVelMaxX();
 		//gestisco le velocità
 		void addVelX(std::string dir);
 		void stopX();
