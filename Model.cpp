@@ -526,12 +526,14 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 		this->screenPlay = 4;
 		return;
 	}
+	/*
 	// same function per pacman
 	if (this->checkDead(mario, pacman) ||  mario.getDead()) {
 		dead->play();
 		this->screenPlay = 2;
 		return;
 	}
+	*/
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);

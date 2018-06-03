@@ -13,7 +13,7 @@ Level::Level()
 	// stessa cosa per gli altri due andando ad esclusion naturalmente
 	
 	startPoint = 00; // numeri fittizi per adesso
-	endPoint = 20;
+	endPoint = 30;
 	widthSingleLevel = 10; // larghezza di ogni singolo 
 	
 	startA = rand() % 3 * 10; // 0 o 10 o 20
@@ -33,7 +33,20 @@ Level::Level()
 		startC = 10;
 	}
 
+	
 	endC = startC + widthSingleLevel;
+	
+	if (startC == 20) {
+		endC = endC + 3;
+	}
+
+	if (startA == 20) {
+		endA = endA + 3;
+	}
+
+	if (startB == 20) {
+		endB = endB + 3;
+	}
 	
 	this->makeLevelA(); 
 	this->makeLevelB(); 
@@ -51,8 +64,8 @@ void Level::makeLevelA() {
 	floorListA.push_back(Ostacolo(startA , startA + 2, -1.0, -0.70, "Floor"));
 
 	// così basta cambiare lo start point per spostare il livello
-	obstacleListA.push_back(Ostacolo(startA + 2.0, startA + 2.1, -0.4, -0.2, "obs"));
-	obstacleListA.push_back(Ostacolo(startA + 2.1, startA + 2.2, -0.4, -0.2, "obs"));
+	obstacleListA.push_back(Ostacolo(startA + 2.05, startA + 2.15, -0.4, -0.2, "obs"));
+	obstacleListA.push_back(Ostacolo(startA + 2.15, startA + 2.25, -0.4, -0.2, "obs"));
 
 	obstacleListA.push_back(Ostacolo(startA + 2.25, startA + 2.35, 0.1, 0.3, "obs"));
 	obstacleListA.push_back(Ostacolo(startA + 2.35, startA + 2.45, 0.1, 0.3, "obs"));
@@ -65,7 +78,7 @@ void Level::makeLevelA() {
 	obstacleListA.push_back(Ostacolo(startA + 3.05, startA + 3.15, -0.5, -0.3, "obs"));
 	obstacleListA.push_back(Ostacolo(startA + 3.05, startA + 3.15, -0.70, -0.50, "obs"));
 	
-	floorListA.push_back(Ostacolo(startA + 3.05, startA +4.05, -1.0, -0.70, "Floor"));
+	floorListA.push_back(Ostacolo(startA + 3.05, startA +4.02, -1.0, -0.70, "Floor"));
 	
 	obstacleListA.push_back(Ostacolo(startA + 4.15, startA + 4.25, -0.4, -0.2, "obs"));
 	obstacleListA.push_back(Ostacolo(startA + 4.25, startA + 4.35, -0.4, -0.2, "obs"));
@@ -75,17 +88,17 @@ void Level::makeLevelA() {
 	obstacleListA.push_back(Ostacolo(startA + 4.75, startA + 4.85, -0.4, -0.2, "obs"));
 	obstacleListA.push_back(Ostacolo(startA + 4.85, startA + 4.95, -0.4, -0.2, "obs"));
 
-	floorListA.push_back(Ostacolo(startA + 5.05, startA + 6.55, -1.0, -0.70, "Floor"));
+	floorListA.push_back(Ostacolo(startA + 5.05, startA + 6.625, -1.0, -0.70, "Floor"));
 
 	obstacleListA.push_back(Ostacolo(startA + 6.75, startA + 6.85, -0.4, -0.2, "obs"));
 	obstacleListA.push_back(Ostacolo(startA + 7.05, startA + 7.15, -0.4, -0.2, "obs"));
 	obstacleListA.push_back(Ostacolo(startA + 7.15, startA + 7.25, -0.4, -0.2, "obs"));
-
+	
+	floorListA.push_back(Ostacolo(startA + 7.45, startA + 8.07, -1.0, -0.70, "Floor"));
 	obstacleListA.push_back(Ostacolo(startA + 7.75, startA + 7.85, -0.7, -0.5, "obs"));
 	obstacleListA.push_back(Ostacolo(startA + 7.85, startA + 7.95, -0.7, -0.5, "obs"));
 	obstacleListA.push_back(Ostacolo(startA + 7.85, startA + 7.95, -0.5, -0.3, "obs"));
 
-	floorListA.push_back(Ostacolo(startA + 7.45, startA + 8.05, -1.0, -0.70, "Floor"));
 
 	floorListA.push_back(Ostacolo(startA + 8.25, endA, -1.0, -0.70, "Floor"));
 
@@ -134,6 +147,70 @@ void Level::makeLevelB() {
 
 }
 
+
+void Level::makeLevelC() {
+
+	floorListC.push_back(Ostacolo(startC, startC + 1, -1.0, -0.70, "Floor"));
+
+	obstacleListC.push_back(Ostacolo(startC + 1.15, startC + 1.25, -0.5, -0.3, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 1.25, startC + 1.35, -0.5, -0.3, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 1.55, startC + 1.65, -0.5, -0.3, "obs"));
+	
+	floorListC.push_back(Ostacolo(startC + 1.75, startC + 2, -1.0, -0.70, "Floor"));
+
+	obstacleListC.push_back(Ostacolo(startC + 2.45, startC + 2.55, -0.7, -0.5, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 2.55, startC + 2.65, -0.7, -0.5, "obs"));
+	floorListC.push_back(Ostacolo(startC + 2.2, startC + 3, -1.0, -0.7, "Floor"));
+	
+	obstacleListC.push_back(Ostacolo(startC + 3.07, startC + 3.15, -0.5, -0.3, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 3.15, startC + 3.25, -0.5, -0.3, "obs"));
+
+	obstacleListC.push_back(Ostacolo(startC + 3.35, startC + 3.45, -0.5, -0.3, "obs"));
+
+	floorListC.push_back(Ostacolo(startC + 3.65, startC + 4, -1.0, -0.7, "Floor"));
+
+	floorListC.push_back(Ostacolo(startC + 4.2, startC + 4.5, -1.0, -0.7, "Floor"));
+	obstacleListC.push_back(Ostacolo(startC + 4.65, startC + 4.75, -0.5, -0.3, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 4.75, startC + 4.85, -0.5, -0.3, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 4.85, startC + 4.95, -0.5, -0.3, "obs"));
+
+	obstacleListC.push_back(Ostacolo(startC + 5.05, startC + 5.15, -0.7, -0.5, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 5.05, startC + 5.15, -0.5, -0.3, "obs"));
+	floorListC.push_back(Ostacolo(startC + 5.05, startC + 5.55, -1.0, -0.7, "Floor"));
+
+	obstacleListC.push_back(Ostacolo(startC + 5.65, startC + 5.75, -0.5, -0.3, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 5.75, startC + 5.85, -0.5, -0.3, "obs"));
+
+	obstacleListC.push_back(Ostacolo(startC + 5.95, startC + 6.05, -0.3, -0.1, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 6.05, startC + 6.15, -0.5, -0.3, "obs"));
+
+	obstacleListC.push_back(Ostacolo(startC + 6.25, startC + 6.35, -0.5, -0.3, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 6.35, startC + 6.45, -0.5, -0.3, "obs"));
+
+	obstacleListC.push_back(Ostacolo(startC + 6.55, startC + 6.65, -0.7, -0.5, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 6.65, startC + 6.75, -0.5, -0.3, "obs"));
+
+	floorListC.push_back(Ostacolo(startC + 6.55, startC + 7.00, -1.0, -0.7, "Floor"));
+
+	floorListC.push_back(Ostacolo(startC + 7.15, startC + 8.65, -1.0, -0.7, "Floor"));
+	obstacleListC.push_back(Ostacolo(startC + 7.35, startC + 7.45, -0.7, -0.5, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 7.35, startC + 7.45, -0.5, -0.3, "obs"));
+
+	obstacleListC.push_back(Ostacolo(startC + 7.75, startC + 7.85, -0.7, -0.5, "obs"));
+	
+	obstacleListC.push_back(Ostacolo(startC + 7.95, startC + 8.05, -0.7, -0.5, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 8.35, startC + 8.45, -0.5, -0.3, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 8.45, startC + 8.55, -0.5, -0.3, "obs"));
+	
+	obstacleListC.push_back(Ostacolo(startC + 8.75, startC + 8.85, -0.5, -0.3, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 8.85, startC + 8.95, -0.5, -0.3, "obs"));
+
+	floorListC.push_back(Ostacolo(startC + 9, startC + 9.55, -1.0, -0.7, "Floor"));
+
+	floorListC.push_back(Ostacolo(startC + 9.75, endC, -1.0, -0.7, "Floor"));
+
+}
+
 double Level::getStartA() {
 	return this->startA;
 }
@@ -156,11 +233,6 @@ double Level::getEndB() {
 
 double Level::getEndC() {
 	return this->endC;
-}
-
-
-void Level::makeLevelC() {
-	floorListC.push_back(Ostacolo(startC , endC, -1.0, -0.70, "Floor"));
 }
 
 void Level::fillCollisionSystemA(CollisionSystem *CS) {
