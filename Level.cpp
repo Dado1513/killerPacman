@@ -110,7 +110,7 @@ void Level::makeLevelA() {
 
 
 	floorListA.push_back(Ostacolo(startA + 8.25, endA, -1.0, -0.70, "Floor"));
-	// HERE INSERT ENEMY
+	// HERE INSERT ENEMY 
 
 }
 

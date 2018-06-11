@@ -138,6 +138,7 @@ void EnemyPacman::jump() {
 	}
 
 }
+// add stopY --> similar PC
 void EnemyPacman::stopY() {
 
 	if (std::strcmp(state.c_str(), "upRight") == 0)

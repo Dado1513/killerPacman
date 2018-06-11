@@ -219,8 +219,6 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 		//inizializzazione delle variabili per il mondo di gioco
 		this->screenPlay = 3;
 
-		
-
 		//cancello le tracce dei livelli precedenti
 		//nuovo livello
 		collisionSystem = new CollisionSystem(mario.getWidth()*2);		//gli passo la larghezza di mario*2
@@ -269,7 +267,6 @@ void MyModel::drawInitGame() {
 	}
 
 
-
 	//  TIMING - start
 	clock_t t = clock();
 	// elapsed time in seconds from the last draw
@@ -281,7 +278,6 @@ void MyModel::drawInitGame() {
 	this->frameTime += double(t - Tstamp) / (double)CLOCKS_PER_SEC;
 	this->Tstamp = t;
 	
-
 	// background
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
 	glMatrixMode(GL_MODELVIEW);
@@ -346,7 +342,6 @@ void MyModel::drawInitGame() {
 		glVertex3f(x_init, y_end, Background[0].z);
 	glEnd();
 
-
 	// EXIT BUTTON
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -366,7 +361,6 @@ void MyModel::drawInitGame() {
 	glPushMatrix();
 	glBegin(GL_QUADS);
 	
-
 		// b-s
 		glTexCoord2f(Background[0].u, Background[0].v);
 		glVertex3f(x_init, y_init-fattore_y, Background[0].z);
@@ -383,8 +377,6 @@ void MyModel::drawInitGame() {
 		glTexCoord2f(Background[3].u, Background[3].v);
 		glVertex3f(x_init, y_end - fattore_y, Background[0].z);
 
-
-
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 
@@ -392,8 +384,6 @@ void MyModel::drawInitGame() {
 	glLoadIdentity();
 
 	//this->glPrint("Killer Pacman: Only One Rule : RUN Press Enter to Start!");
-
-	
 
 	if (this->keys[WM_LBUTTONDOWN]) {
 
@@ -436,9 +426,11 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 
 	// update pacman
 	if (pacmanCanMove) {
-		//ToDo aggiungere nel caso mario sia fermo nella stessa x o mario stia saltando
+		// check pacman jump con end floor 
+		if (this->pacmanMustJump(pacman,levA)) {
+			pacman.jump();
+		}
 		if (mario.getVelX() == 0.0 && this->checkX(mario, pacman)) {
-			// ci sono sopra se anche la y è ok allora è morto 
 			pacman.stopX();
 			if (!this->checkY(mario, pacman)) {
 				pacman.jump(); // aggiungere che si raggiunge il salto al valore x
@@ -454,8 +446,6 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 		}
 		pacman.update();
 		if (pacman.getDown() < -0.7) {
-			// now check se mario non in falling e getY  > 0.7 allora 
-			// sostituisco la stopY con quella di mario 
 			pacman.stopY();
 		}
 	}
@@ -482,7 +472,6 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 		mario.jump(jump);
 	}
 
-	// add controllo mario getFalling
 	
 	if(!mario.getIsInHole()){
 		// update mario position
@@ -600,6 +589,7 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 }
 
 void MyModel::drawWinGame() {
+
 	pacmanCanMove = false;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
@@ -654,7 +644,6 @@ void MyModel::drawGameOver() {
 	glLoadIdentity();
 	glBindTexture(GL_TEXTURE_2D, this->gameovertexture);
 
-
 	double x_init = 0.5;
 	double x_end = 0.8;
 	double y_init = 0.1;
@@ -681,21 +670,21 @@ void MyModel::drawGameOver() {
 	this->Tstamp = t;
 
 	glBegin(GL_QUADS);
-	// b-s
-	glTexCoord2f(Background[0].u, Background[0].v);
-	glVertex3f(Background[0].x, Background[0].y, Background[0].z);
+		// b-s
+		glTexCoord2f(Background[0].u, Background[0].v);
+		glVertex3f(Background[0].x, Background[0].y, Background[0].z);
 
-	//b-d
-	glTexCoord2f(Background[1].u, Background[1].v);
-	glVertex3f(Background[1].x, Background[1].y, Background[0].z);
+		//b-d
+		glTexCoord2f(Background[1].u, Background[1].v);
+		glVertex3f(Background[1].x, Background[1].y, Background[0].z);
 
-	//a-d
-	glTexCoord2f(Background[2].u, Background[2].v);
-	glVertex3f(Background[2].x, Background[2].y, Background[0].z);
+		//a-d
+		glTexCoord2f(Background[2].u, Background[2].v);
+		glVertex3f(Background[2].x, Background[2].y, Background[0].z);
 
-	//a-s
-	glTexCoord2f(Background[3].u, Background[3].v);
-	glVertex3f(Background[3].x, Background[3].y, Background[0].z);
+		//a-s
+		glTexCoord2f(Background[3].u, Background[3].v);
+		glVertex3f(Background[3].x, Background[3].y, Background[0].z);
 
 	glEnd();
 
@@ -719,18 +708,18 @@ void MyModel::drawGameOver() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glPushMatrix();
 	glBegin(GL_QUADS);
-	// b-s
-	glTexCoord2f(Background[0].u, Background[0].v);
-	glVertex3f(x_init, y_init, Background[0].z);
-	//b-d
-	glTexCoord2f(Background[1].u, Background[1].v);
-	glVertex3f(x_end, y_init, Background[0].z);
-	//a-d
-	glTexCoord2f(Background[2].u, Background[2].v);
-	glVertex3f(x_end, y_end, Background[0].z);
-	//a-s
-	glTexCoord2f(Background[3].u, Background[3].v);
-	glVertex3f(x_init, y_end, Background[0].z);
+		// b-s
+		glTexCoord2f(Background[0].u, Background[0].v);
+		glVertex3f(x_init, y_init, Background[0].z);
+		//b-d
+		glTexCoord2f(Background[1].u, Background[1].v);
+		glVertex3f(x_end, y_init, Background[0].z);
+		//a-d
+		glTexCoord2f(Background[2].u, Background[2].v);
+		glVertex3f(x_end, y_end, Background[0].z);
+		//a-s
+		glTexCoord2f(Background[3].u, Background[3].v);
+		glVertex3f(x_init, y_end, Background[0].z);
 	glEnd();
 
 
@@ -753,24 +742,21 @@ void MyModel::drawGameOver() {
 	glPushMatrix();
 	glBegin(GL_QUADS);
 
+		// b-s
+		glTexCoord2f(Background[0].u, Background[0].v);
+		glVertex3f(x_init, y_init - fattore_y, Background[0].z);
 
-	// b-s
-	glTexCoord2f(Background[0].u, Background[0].v);
-	glVertex3f(x_init, y_init - fattore_y, Background[0].z);
+		//b-d
+		glTexCoord2f(Background[1].u, Background[1].v);
+		glVertex3f(x_end, y_init - fattore_y, Background[0].z);
 
-	//b-d
-	glTexCoord2f(Background[1].u, Background[1].v);
-	glVertex3f(x_end, y_init - fattore_y, Background[0].z);
+		//a-d
+		glTexCoord2f(Background[2].u, Background[2].v);
+		glVertex3f(x_end, y_end - fattore_y, Background[0].z);
 
-	//a-d
-	glTexCoord2f(Background[2].u, Background[2].v);
-	glVertex3f(x_end, y_end - fattore_y, Background[0].z);
-
-	//a-s
-	glTexCoord2f(Background[3].u, Background[3].v);
-	glVertex3f(x_init, y_end - fattore_y, Background[0].z);
-
-
+		//a-s
+		glTexCoord2f(Background[3].u, Background[3].v);
+		glVertex3f(x_init, y_end - fattore_y, Background[0].z);
 
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
@@ -782,8 +768,6 @@ void MyModel::drawGameOver() {
 
 	if (this->keys[WM_LBUTTONDOWN]) {
 
-
-
 		if (Data.mouseleft && !Data.mouseAlreadyPressed) {
 
 			Data.mouseAlreadyPressed = true;
@@ -792,12 +776,6 @@ void MyModel::drawGameOver() {
 
 			if (x > x_init && x < x_end && y > y_init && y < y_end) {
 				this->screenPlay = 1;
-
-				/*char out[100];
-				sprintf(out, "%lf", Data.cy);
-				OutputDebugString(out);
-				OutputDebugString("\n");*/
-
 			}
 
 			if (x > x_init && x < x_end && y > y_init - fattore_y && y < y_end - fattore_y)
@@ -813,8 +791,6 @@ void MyModel::drawGameOver() {
 		else {
 			this->keys[VK_ESCAPE] = true;
 		}
-	}
-	if (this->keys[VK_RETURN]) {
 	}
 
 	// reset color
@@ -917,6 +893,58 @@ bool MyModel::checkY(PC mario, EnemyPacman pacman) {
 bool MyModel::checkDead(PC mario, EnemyPacman pacman) {
 
 	return this->checkX(mario, pacman) && this->checkY(mario, pacman);
+}
+
+bool MyModel::pacmanMustJump(EnemyPacman pacman, Level* level) {
+	double startA = level->getStartA();
+	double endA = level->getEndA();
+	double startB = level->getStartB();
+	double endB = level->getEndB();
+	double startC = level->getStartC();
+	double endC = level->getEndC();
+	
+	if (startA <= pacman.getX() && pacman.getX() < endA) {
+		// check only obs A
+		vector<Ostacolo> floor = level->getFloorVectorA();
+		vector<Ostacolo> obs = level->getObstacleVectorA();
+		return searchEndOstacolo(pacman, floor, obs);
+
+	}
+	else if (startB <= pacman.getX() && pacman.getX() < endB) {
+		// check only obs B
+
+		vector<Ostacolo> floor = level->getFloorVectorB();
+		vector<Ostacolo> obs = level->getObstacleVectorB();		
+		return searchEndOstacolo(pacman, floor, obs);
+
+	}
+	else {
+		// check only obs C
+		vector<Ostacolo> floor = level->getFloorVectorC();
+		vector<Ostacolo> obs = level->getObstacleVectorC();
+		return searchEndOstacolo(pacman, floor, obs);
+
+	}
+
+}
+
+bool MyModel::searchEndOstacolo(EnemyPacman pacman, vector<Ostacolo> floor, vector<Ostacolo> obs) {
+	for (vector<Ostacolo>::iterator it = floor.begin(); it != floor.end(); ++it) {
+		if (this->checkEndOstacolo(pacman, *it)) {
+			return true;
+		}
+	}
+	for (vector<Ostacolo>::iterator it = obs.begin(); it != obs.end(); ++it) {
+		if (this->checkEndOstacolo(pacman, *it)) {
+			return true;
+		}
+	}
+	return false;
+}
+bool MyModel::checkEndOstacolo(EnemyPacman pacman, Ostacolo ostacolo) {
+	if (ostacolo.getXFin() - 0.05 <= pacman.getX() && pacman.getX() <= ostacolo.getXFin() + 0.05)
+		return true;
+	return false;
 }
 
 void MyModel::buildPacman() {

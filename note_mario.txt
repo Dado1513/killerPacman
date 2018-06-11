@@ -1,14 +1,4 @@
 
 
-3) Menu di gioco (Pensarci. together)
-3.1) dopo aver premuto invio far apparire un counter all'indietro che lampeggia
-
-
-4) OggettiGioco classe e relative derivate classi all'interno di una lista per il collision detection
-    4.1) Buchi nei blocchi (non a mezzo di essi) e dove iniziano i livelli 
-    metterli randomicamente e in una lista di ostacoli/nemici
-
-5) Livelli con inserimento degli elementi dentro la lista (1 a 3) scelti poi randomicamente 
-
-Opzionale
-    6) Eventualmente aggiunta di texture diverse (più belle)
+Aggiungere stopY(double lim) anche a pacman e fisic anche a pacman (solo salto) 
+cosi che non voli ma salti anche esso sugli ostacoli

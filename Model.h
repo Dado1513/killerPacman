@@ -11,6 +11,8 @@
 #include <vector>
 #include <time.h>
 #include <math.h>
+# include "Level.h"
+# include "Ostacolo.h"
 #include "audiere.h"
 #include "PC.h"
 #include "EnemyPacman.h"
@@ -153,7 +155,9 @@ class MyModel {
 		bool checkY(PC mario, EnemyPacman pacman);
 		bool checkDead(PC mario, EnemyPacman pacman);
 		bool pcCanMove(PC mario);
-
+		bool checkEndOstacolo(EnemyPacman pacman, Ostacolo ostacolo);
+		bool searchEndOstacolo(EnemyPacman pacman, vector<Ostacolo> floor, vector<Ostacolo> obs);
+		bool pacmanMustJump(EnemyPacman pacman, Level* level);
 		void drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump);
 		void drawLevel();
 
