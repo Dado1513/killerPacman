@@ -47,7 +47,16 @@ Level::Level()
 	if (startB == 20) {
 		endB = endB + 3;
 	}
-	
+
+	bool testing = true;
+	if (testing) {
+		startA = 0;
+		endA = 10;
+		startB = 10;
+		endB = 20;
+		startC = 20;
+		endC = 33;
+	}
 	this->makeLevelA(); 
 	this->makeLevelB(); 
 	this->makeLevelC(); 
@@ -101,6 +110,7 @@ void Level::makeLevelA() {
 
 
 	floorListA.push_back(Ostacolo(startA + 8.25, endA, -1.0, -0.70, "Floor"));
+	// HERE INSERT ENEMY
 
 }
 
@@ -112,7 +122,7 @@ void Level::makeLevelB() {
 	obstacleListB.push_back(Ostacolo(startB + 1.85, startB + 1.95, -0.4, -0.2, "obs"));
 	obstacleListB.push_back(Ostacolo(startB + 1.95, startB + 2.05, -0.4, -0.2, "obs"));
 
-	floorListB.push_back(Ostacolo(startB + 2.15, startB + 3.67, -1.0, -0.70, "Floor"));
+	floorListB.push_back(Ostacolo(startB + 2.15, startB + 3.75, -1.0, -0.70, "Floor"));
 
 	obstacleListB.push_back(Ostacolo(startB + 3.85, startB + 3.95, -0.4, -0.2, "obs"));
 	obstacleListB.push_back(Ostacolo(startB + 3.95, startB + 4.05, -0.4, -0.2, "obs"));

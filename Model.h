@@ -82,6 +82,7 @@ class MyModel {
 //		GLuint	pacmanTexture[19];
 		GLuint	pacmanTexture[2];
 		GLuint backgroundtexture;
+		GLuint gameovertexture;
 		GLuint	marioTexture[8];
 		GLuint newGame[2];
 		GLuint exitGame[2];

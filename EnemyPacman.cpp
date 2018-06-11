@@ -13,7 +13,7 @@ EnemyPacman::EnemyPacman(double posX, double posY, double width, double height) 
 	this->velY = 0;
 	this->state = "stopRight";
 	this->isFalling = false;
-	this->velMaxX = 0.0013;
+	this->velMaxX = 0.00145;
 	this->timeFly = 0;
 	this->accMaxX = 0.00002;
 
