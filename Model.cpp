@@ -26,7 +26,7 @@ using namespace std;
 // x iniziale, y iniziale, spessore e altezza personaggio e nemico
 //PC mario(-0.2, -0.6, 0.05, 0.1);
 PC mario(0.2, -0.6, 0.05, 0.1);
-EnemyPacman pacman(-0.9,-0.6, 0.055,0.1);
+EnemyPacman pacman(-0.9,-0.6, 0.055, 0.1);
 
 //Sky Cloud1(-0.4, 0.7, 0.18, 0.15);
 //Sky Cloud2(0.7, 0.6, 0.15, 0.12);
@@ -509,6 +509,9 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump) {
 
 	collisionSystem->physics(&mario);
+	
+	//collisionSystem->physics(&pacman);
+	
 	/*	//DEBUG COLLISION SYSTEM
 	char out[100];
 	sprintf(out, " CollisionSystem  %d   %d    %lf     %lf", mario.getFalling(), debug, mario.getX(), mario.getY() );
@@ -524,11 +527,13 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	}
 	// same function per pacman
 	// DECOMENNT
+	/*
 	if (this->checkDead(mario, pacman) ||  mario.getDead()) {
 		dead->play();
 		this->screenPlay = 2;
 		return;
 	}
+	*/
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
@@ -942,8 +947,14 @@ bool MyModel::searchEndOstacolo(EnemyPacman pacman, vector<Ostacolo> floor, vect
 	return false;
 }
 bool MyModel::checkEndOstacolo(EnemyPacman pacman, Ostacolo ostacolo) {
-	if (ostacolo.getXFin() - 0.05 <= pacman.getX() && pacman.getX() <= ostacolo.getXFin() + 0.05)
+
+	//if (ostacolo.getXFin() - 0.05 <= pacman.getX() && pacman.getX() <= ostacolo.getXFin() + 0.05)
+	if (ostacolo.getXFin() - 0.07 <= pacman.getX()) {
 		return true;
+	}
+	else if(pacman.getY() > ostacolo.getYInit() && pacman.getY() < ostacolo.getYFin() && pacman.getX() >= ostacolo.getXInit() - 0.05)  {
+		return true;
+	}
 	return false;
 }
 

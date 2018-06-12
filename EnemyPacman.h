@@ -18,6 +18,7 @@ class EnemyPacman{
 		double velY;		//salto
 		std::string state;			//stato del pg.
 		bool isFalling;		//se il pg sta cadendo, non posso saltare.
+		
 		std::string direction;
 		int timeFly;
 		double accMaxX;
@@ -63,9 +64,13 @@ class EnemyPacman{
 		void stopX();
 		void jump();
 		void stopY();
+		void obstacleY();
+
+		void stopY(double);
 		double getVelX();
 		//aggiorno la posizione di mario
 		void update();
 		bool getFalling();
+
 };
 
