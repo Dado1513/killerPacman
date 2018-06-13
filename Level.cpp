@@ -102,13 +102,13 @@ void Level::makeLevelA() {
 	obstacleListA.push_back(Ostacolo(startA + 7.05, startA + 7.15, -0.4, -0.2, "obs"));
 	obstacleListA.push_back(Ostacolo(startA + 7.15, startA + 7.25, -0.4, -0.2, "obs"));
 	
-	floorListA.push_back(Ostacolo(startA + 7.45, startA + 8.07, -1.0, -0.70, "Floor"));
+	floorListA.push_back(Ostacolo(startA + 7.45, startA + 8.12, -1.0, -0.70, "Floor"));
 	obstacleListA.push_back(Ostacolo(startA + 7.75, startA + 7.85, -0.7, -0.5, "obs"));
 	obstacleListA.push_back(Ostacolo(startA + 7.85, startA + 7.95, -0.7, -0.5, "obs"));
 	//obstacleListA.push_back(Ostacolo(startA + 7.85, startA + 7.95, -0.5, -0.3, "obs"));
 
 
-	floorListA.push_back(Ostacolo(startA + 8.25, endA, -1.0, -0.70, "Floor"));
+	floorListA.push_back(Ostacolo(startA + 8.35, endA, -1.0, -0.70, "Floor"));
 	// HERE INSERT ENEMY 
 
 }
@@ -145,14 +145,15 @@ void Level::makeLevelB() {
 	obstacleListB.push_back(Ostacolo(startB + 7.75, startB + 7.85, -0.2, 0.0, "obs"));
 	obstacleListB.push_back(Ostacolo(startB + 7.85, startB + 7.95, -0.2, 0.0, "obs"));
 
-	floorListB.push_back(Ostacolo(startB + 8.05, startB + 8.5, -1.0, -0.70, "Floor"));
+	floorListB.push_back(Ostacolo(startB + 8.05, startB + 8.55, -1.0, -0.70, "Floor"));
+
+	floorListB.push_back(Ostacolo(startB + 8.75, endB, -1.0, -0.70, "Floor"));
 
 	obstacleListB.push_back(Ostacolo(startB + 8.95, startB + 9.05, -0.7, -0.5, "obs"));
 	obstacleListB.push_back(Ostacolo(startB + 9.05, startB + 9.15, -0.7, -0.5, "obs"));
 	obstacleListB.push_back(Ostacolo(startB + 9.35, startB + 9.45, -0.3, -0.1, "obs"));
 	obstacleListB.push_back(Ostacolo(startB + 9.45, startB + 9.55, -0.3, -0.1, "obs"));
 
-	floorListB.push_back(Ostacolo(startB + 8.7, endB, -1.0, -0.70, "Floor"));
 
 }
 
@@ -176,9 +177,9 @@ void Level::makeLevelC() {
 
 	obstacleListC.push_back(Ostacolo(startC + 3.35, startC + 3.45, -0.5, -0.3, "obs"));
 
-	floorListC.push_back(Ostacolo(startC + 3.65, startC + 3.95, -1.0, -0.7, "Floor"));
+	floorListC.push_back(Ostacolo(startC + 3.65, startC + 3.85, -1.0, -0.7, "Floor"));
 
-	floorListC.push_back(Ostacolo(startC + 4.0, startC + 4.5, -1.0, -0.7, "Floor"));
+	floorListC.push_back(Ostacolo(startC + 4.05, startC + 4.5, -1.0, -0.7, "Floor"));
 	obstacleListC.push_back(Ostacolo(startC + 4.65, startC + 4.75, -0.5, -0.3, "obs"));
 	obstacleListC.push_back(Ostacolo(startC + 4.75, startC + 4.85, -0.5, -0.3, "obs"));
 	obstacleListC.push_back(Ostacolo(startC + 4.85, startC + 4.95, -0.5, -0.3, "obs"));
@@ -197,9 +198,9 @@ void Level::makeLevelC() {
 	obstacleListC.push_back(Ostacolo(startC + 6.35, startC + 6.45, -0.5, -0.3, "obs"));
 
 	obstacleListC.push_back(Ostacolo(startC + 6.55, startC + 6.65, -0.7, -0.5, "obs"));
-	obstacleListC.push_back(Ostacolo(startC + 6.65, startC + 6.75, -0.5, -0.3, "obs"));
+	obstacleListC.push_back(Ostacolo(startC + 6.85, startC + 6.95, -0.5, -0.3, "obs"));
 
-	floorListC.push_back(Ostacolo(startC + 6.55, startC + 7.00, -1.0, -0.7, "Floor"));
+	floorListC.push_back(Ostacolo(startC + 6.55, startC + 7.05, -1.0, -0.7, "Floor"));
 
 	floorListC.push_back(Ostacolo(startC + 7.15, startC + 8.65, -1.0, -0.7, "Floor"));
 	obstacleListC.push_back(Ostacolo(startC + 7.35, startC + 7.45, -0.7, -0.5, "obs"));
@@ -216,7 +217,7 @@ void Level::makeLevelC() {
 
 	floorListC.push_back(Ostacolo(startC + 9, startC + 9.55, -1.0, -0.7, "Floor"));
 
-	floorListC.push_back(Ostacolo(startC + 9.75, endC, -1.0, -0.7, "Floor"));
+	floorListC.push_back(Ostacolo(startC + 9.85, endC, -1.0, -0.7, "Floor"));
 
 }
 

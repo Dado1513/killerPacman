@@ -221,7 +221,7 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 
 		//cancello le tracce dei livelli precedenti
 		//nuovo livello
-		collisionSystem = new CollisionSystem(mario.getWidth()*2);		//gli passo la larghezza di mario*2
+		collisionSystem = new CollisionSystem(mario.getWidth()*3);		//gli passo la larghezza di mario*2
 
 		levA = new Level();
 		levA->fillCollisionSystemA(collisionSystem); // add level A
@@ -510,7 +510,7 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 
 	collisionSystem->physics(&mario);
 	
-	//collisionSystem->physics(&pacman);
+	collisionSystem->physics(&pacman);
 	
 	/*	//DEBUG COLLISION SYSTEM
 	char out[100];
@@ -948,13 +948,13 @@ bool MyModel::searchEndOstacolo(EnemyPacman pacman, vector<Ostacolo> floor, vect
 }
 bool MyModel::checkEndOstacolo(EnemyPacman pacman, Ostacolo ostacolo) {
 
-	//if (ostacolo.getXFin() - 0.05 <= pacman.getX() && pacman.getX() <= ostacolo.getXFin() + 0.05)
-	if (ostacolo.getXFin() - 0.07 <= pacman.getX()) {
+	if (ostacolo.getXFin() - 0.05 <= pacman.getX() && pacman.getX() <= ostacolo.getXFin() + 0.05){
+	//if (ostacolo.getXFin() - 0.04 <= pacman.getX()) {
 		return true;
 	}
-	else if(pacman.getY() > ostacolo.getYInit() && pacman.getY() < ostacolo.getYFin() && pacman.getX() >= ostacolo.getXInit() - 0.05)  {
+	/*else if(pacman.getY() > ostacolo.getYInit() && pacman.getY() < ostacolo.getYFin() && pacman.getX() >= ostacolo.getXInit() - 0.05)  {
 		return true;
-	}
+	}*/
 	return false;
 }
 
