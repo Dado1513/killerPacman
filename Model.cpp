@@ -755,6 +755,7 @@ void MyModel::drawWinGame(audiere::OutputStreamPtr soundBase) {
 
 			if (x > x_init && x < x_end && y > y_init && y < y_end) {
 				this->screenPlay = 1;
+				this->resetGame();
 				/*char out[100];
 				sprintf(out, "%lf", Data.cy);
 				OutputDebugString(out);
@@ -768,8 +769,10 @@ void MyModel::drawWinGame(audiere::OutputStreamPtr soundBase) {
 	}
 
 	if (this->keys[VK_RETURN]) {
-		if (this->select == 0)
+		if (this->select == 0){
 			this->screenPlay = 1;
+			this->resetGame();
+		}
 		else {
 			this->keys[VK_ESCAPE] = true;
 		}
@@ -929,6 +932,8 @@ void MyModel::drawGameOver(audiere::OutputStreamPtr soundBase) {
 
 			if (x > x_init && x < x_end && y > y_init && y < y_end) {
 				this->screenPlay = 1;
+				this->resetGame();
+
 			}
 
 			if (x > x_init && x < x_end && y > y_init - fattore_y && y < y_end - fattore_y)
@@ -1135,7 +1140,7 @@ void MyModel::buildPacman() {
 	glBegin(GL_QUADS);
 	if (std::strcmp(pacman.getState().c_str(), "left") == 0
 		|| std::strcmp(pacman.getState().c_str(), "stopLeft") == 0
-		|| std::strcmp(pacman.getState().c_str(), "upLeft") == 0) {
+		|| std::strcmp(pacman.getState().c_str(), "upLeft") == 0 ) {
 		//basso destra
 		glTexCoord2f(Background[1].u - resize_width, Background[1].v + resize_height);
 		glVertex3f(pacman.getLeft(), pacman.getDown(), Background[0].z);
@@ -1215,7 +1220,7 @@ void MyModel::buildMario() {
 
 	// mario stop image blocked
 	if (std::strcmp(mario.getState().c_str(), "stopLeft") == 0
-		|| std::strcmp(mario.getState().c_str(), "stopRight") == 0) {
+		|| std::strcmp(mario.getState().c_str(), "stopRight") == 0 && !mario.getFalling()) {
 		marioId = 0;
 	// mario move
 	}else if ((std::strcmp(mario.getState().c_str(), "left") == 0
