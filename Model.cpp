@@ -161,9 +161,15 @@ bool MyModel::LoadGLTextures(void)
 
 	// GAME OVER TEXTURE
 	char endgameoverfile[100];
-	sprintf(endgameoverfile, "Data/Game_over2.png");
+	sprintf(endgameoverfile, "Data/Game_over4.png");
 	this->gameovertexture = SOIL_load_OGL_texture(endgameoverfile, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (this->gameovertexture == 0)
+		return false;
+
+	char wingameoverfile[100];
+	sprintf(wingameoverfile, "Data/YouWIn.png");
+	this->wintexture = SOIL_load_OGL_texture(wingameoverfile, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	if (this->wintexture == 0)
 		return false;
 
 	
@@ -205,7 +211,7 @@ bool MyModel::LoadGLTextures(void)
 }
 
 // call every time in MainProc
-bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump) {
+bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump, audiere::OutputStreamPtr winSound, audiere::OutputStreamPtr soundBase) {
 
 	// usato per caricare schermate diverse
 	// 0 schermata iniziale
@@ -217,6 +223,11 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 		break;
 	case 1:
 		//inizializzazione delle variabili per il mondo di gioco
+		// se suono win stop
+		if (winSound->isPlaying())
+			winSound->stop();
+		if (dead->isPlaying())
+			dead->stop();
 		this->screenPlay = 3;
 
 		//cancello le tracce dei livelli precedenti
@@ -232,15 +243,21 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 		break;
 
 	case 2:
-		this->drawGameOver();
+		this->drawGameOver(soundBase);
 		break;
 	case 3:
 		//mondo di gioco con variabili inizializzate
+		if (winSound->isPlaying())
+			winSound->stop();
+		if (dead->isPlaying())
+			dead->stop();
+		
 		drawGamePrincipale(dead, jump);
 		break;
 	case 4:
 		// win
-		drawWinGame();
+		winSound->play();
+		drawWinGame(soundBase);
 		break;
 
 	default:
@@ -527,13 +544,13 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	}
 	// same function per pacman
 	// DECOMENNT
-	/*
+	
 	if (this->checkDead(mario, pacman) ||  mario.getDead()) {
 		dead->play();
 		this->screenPlay = 2;
 		return;
 	}
-	*/
+	
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
@@ -593,7 +610,33 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 
 }
 
-void MyModel::drawWinGame() {
+void MyModel::drawWinGame(audiere::OutputStreamPtr soundBase) {
+
+	double x_init = 0.5;
+	double x_end = 0.8;
+	double y_init = 0.1;
+	double y_end = 0.3;
+	double fattore_y = 0.4;
+
+	if (this->keys[VK_UP]) {
+		this->select = 0;
+	}
+
+	if (this->keys[VK_DOWN]) {
+		this->select = 1;
+	}
+
+
+	//  TIMING - start
+	clock_t t = clock();
+	// elapsed time in seconds from the last draw
+	double elapsed = double(t - Tstamp) / (double)CLOCKS_PER_SEC;
+	// elapsed time in milliseconds from the last draw
+	int ms_elapsed = (int)(t - Tstamp);
+	// elapsed time in seconds from the beginning of the program
+	this->fullElapsed = double(t - Tstart) / (double)CLOCKS_PER_SEC;
+	this->frameTime += double(t - Tstamp) / (double)CLOCKS_PER_SEC;
+	this->Tstamp = t;
 
 	pacmanCanMove = false;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -603,7 +646,7 @@ void MyModel::drawWinGame() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glAlphaFunc(GL_GREATER, 0);
 	glLoadIdentity();
-	glBindTexture(GL_TEXTURE_2D, this->backgroundtexture);
+	glBindTexture(GL_TEXTURE_2D, this->wintexture);
 	glBegin(GL_QUADS);
 		double resize = 0.0;
 		// b-s
@@ -622,21 +665,126 @@ void MyModel::drawWinGame() {
 		glVertex3f(Background[3].x, Background[3].y, Background[3].z);
 
 	glEnd();
-	glDisable(GL_TEXTURE_2D);
+	
+	// NEW GAME BUTTON
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glColor3f(0.0f, 100.0f, 0.0f);
-	glRasterPos3f(-0.2, 0.5, -1);
-	this->glPrint("Congratulation WIN Return restart, Esc to Exit");
+	int newgamebutton = (sizeof(newGame) / sizeof(*newGame));
+	// new game
+
+	int buttonId = (int(fullElapsed * 5) % newgamebutton);
+	if (buttonId > newgamebutton) {
+		buttonId = 0;
+	}
+
+	// se ho selezionato exit game lampeggia solo quello
+	if (this->select != 0) {
+		buttonId = 0;
+	}
+	glBindTexture(GL_TEXTURE_2D, newGame[buttonId]);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	// b-s
+	glTexCoord2f(Background[0].u, Background[0].v);
+	glVertex3f(x_init, y_init, Background[0].z);
+	//b-d
+	glTexCoord2f(Background[1].u, Background[1].v);
+	glVertex3f(x_end, y_init, Background[0].z);
+	//a-d
+	glTexCoord2f(Background[2].u, Background[2].v);
+	glVertex3f(x_end, y_end, Background[0].z);
+	//a-s
+	glTexCoord2f(Background[3].u, Background[3].v);
+	glVertex3f(x_init, y_end, Background[0].z);
+	glEnd();
+
+	// EXIT BUTTON
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	int buttonexitId = (int(fullElapsed * 5) % newgamebutton);
+	if (buttonexitId > newgamebutton) {
+		buttonexitId = 0;
+	}
+	// se ho selezionato new game lampeggia solo quello
+	if (this->select != 1) {
+		buttonexitId = 0;
+	}
+
+	glBindTexture(GL_TEXTURE_2D, exitGame[buttonexitId]);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glPushMatrix();
+	glBegin(GL_QUADS);
+
+	// b-s
+	glTexCoord2f(Background[0].u, Background[0].v);
+	glVertex3f(x_init, y_init - fattore_y, Background[0].z);
+
+	//b-d
+	glTexCoord2f(Background[1].u, Background[1].v);
+	glVertex3f(x_end, y_init - fattore_y, Background[0].z);
+
+	//a-d
+	glTexCoord2f(Background[2].u, Background[2].v);
+	glVertex3f(x_end, y_end - fattore_y, Background[0].z);
+
+	//a-s
+	glTexCoord2f(Background[3].u, Background[3].v);
+	glVertex3f(x_init, y_end - fattore_y, Background[0].z);
+
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	//this->glPrint("Killer Pacman: Only One Rule : RUN Press Enter to Start!");
+
+	if (this->keys[WM_LBUTTONDOWN]) {
+
+
+
+		if (Data.mouseleft && !Data.mouseAlreadyPressed) {
+
+			Data.mouseAlreadyPressed = true;
+			double x = Data.cx;
+			double y = Data.cy;
+
+			if (x > x_init && x < x_end && y > y_init && y < y_end) {
+				this->screenPlay = 1;
+				/*char out[100];
+				sprintf(out, "%lf", Data.cy);
+				OutputDebugString(out);
+				OutputDebugString("\n");*/
+
+			}
+
+			if (x > x_init && x < x_end && y > y_init - fattore_y && y < y_end - fattore_y)
+				this->keys[VK_ESCAPE] = true;
+		}
+	}
+
 	if (this->keys[VK_RETURN]) {
-		this->resetGame();
+		if (this->select == 0)
+			this->screenPlay = 1;
+		else {
+			this->keys[VK_ESCAPE] = true;
+		}
 	}
 	// reset color
+	if (this->screenPlay == 1) {
+		soundBase->reset();
+	}
+
 	glColor3f(1.0, 1.0, 1.0);
+
 
 }
 
-void MyModel::drawGameOver() {
+void MyModel::drawGameOver(audiere::OutputStreamPtr soundBase) {
 	pacmanCanMove = false;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -798,6 +946,9 @@ void MyModel::drawGameOver() {
 		}
 	}
 
+	if (this->screenPlay == 1) {
+		soundBase->reset();
+	}
 	// reset color
 	glColor3f(1.0, 1.0, 1.0);
 }

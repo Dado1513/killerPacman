@@ -198,7 +198,7 @@ bool CollisionSystem::checkCollision(EnemyPacman* player, Ostacolo* obstacle) {
 			}
 			else {
 				// se voglio che pacman passi attraverso i muri
-				player->obstacleY();
+				//player->obstacleY();
 
 			}
 		}
@@ -217,7 +217,7 @@ bool CollisionSystem::checkCollision(EnemyPacman* player, Ostacolo* obstacle) {
 					player->jump();
 				}
 				else {
-					player->obstacleY();
+					//player->obstacleY();
 				}
 			}
 
@@ -309,8 +309,6 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 
 	if (xDiff >= 0 && yDiff >= 0) {
 		//player e ostacolo in basso a sinistra
-
-
 		// check this per non far scivolare l'omino
 		//if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit() + 5, player->getRight(), player->getUp() + 5)) {
 		if (isCollidingV1(obstacle->getXInit(), obstacle->getYInit(), player->getRight(), player->getUp())) {
@@ -318,97 +316,67 @@ bool CollisionSystem::checkCollision(PC* player, Ostacolo *obstacle) {
 			//controllo gli angoli per vedere se la collisione è in verticale (uno stop del salto) od orizzontale(stop corsa)
 			if (abs(player->getRight() - correctionX - obstacle->getXInit()) <= abs(player->getUp() - obstacle->getYInit())) {
 				//if (abs(player->getRight() - obstacle->getXInit()+correctionX) <= abs(player->getUp() - obstacle->getYInit())) {
-
 				player->stopX();
 				player->setX(player->getX() - 0.001);
-
 			}
 			else {
 				player->obstacleY();
-
 			}
 		}
 
-	}
-	else {
+	}else {
 		if (xDiff <= 0 && yDiff >= 0) {
 			//player e ostacolo in basso a destra
-
 			if (isCollidingV2(obstacle->getXFin(), obstacle->getYInit(), player->getLeft(), player->getUp())) {
 				//controllo gli angoli per vedere se la collisione è in verticale (uno stop del salto) od orizzontale(stop corsa)
-				if (abs(player->getLeft() - obstacle->getXFin()) <= abs(player->getUp() - obstacle->getYInit())) {
+				if (abs(player->getLeft() - obstacle->getXFin() ) <= abs(player->getUp() - obstacle->getYInit())) {
 					//stop corsa
 					player->stopX();
 					player->setX(player->getX() + 0.001);
-
 				}
 				else {
 					player->obstacleY();
 				}
 			}
 
-		}
-		else {
+		}else {
 			if (xDiff >= 0 && yDiff <= 0) {
-
 				//player e ostacolo in alto a sinistra
-
 				//if (isCollidingV2(player->getRight() - correctionX, player->getDown(), obstacle->getXInit(), obstacle->getYFin())) {
 				if (isCollidingV2(player->getRight(), player->getDown(), obstacle->getXInit(), obstacle->getYFin() + 0.001)) {
-
-
 					if (abs(player->getRight() - obstacle->getXInit()) <= abs(player->getDown() - obstacle->getYFin())) {
 						player->stopX();
 						player->setX(player->getX() - 0.001);
-
-
-					}
-					else {
+					}else {
 						//if (player->getX() >= obstacle->getXInit()) {
 						if (player->getRight() - correctionX * 0.5 >= obstacle->getXInit()) {
-
-
 							player->stopY(obstacle->getYFin());
-
 							ground = true;
 						}
 					}
 				}
 
-			}
-			else {
+			}else {
 			
 				if (isCollidingV1(player->getLeft(), player->getDown(), obstacle->getXFin(), obstacle->getYFin() + 0.001)) {
 					//	if (isCollidingV1(player->getLeft(), obstacle->getYFin(), obstacle->getXFin() , player->getDown())) {
-
 					if (abs(player->getLeft() - obstacle->getXFin()) <= abs(player->getDown() - obstacle->getYFin())) {
 						//stop corsa
 						player->stopX();
 						player->setX(player->getX() + 0.001);
 
-
-
-
-					}
-					else {
+					}else {
 						//if (player->getX() <= obstacle->getXFin()) {
 						if (player->getLeft() + correctionX * 0.4 <= obstacle->getXFin()) {
-
-
 							player->stopY(obstacle->getYFin());
-
 							ground = true;
 
 						}
 					}
 				}
-				//}
 			}
-
 		}
 	}
-	//}
-
 	//ritorno true se il player ha una base stabile senza precipitare
 	return ground;
 }

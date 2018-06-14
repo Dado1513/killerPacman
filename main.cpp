@@ -396,6 +396,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	if (!jumpSound) {
 		return 0;         // failure
 	}
+	OutputStreamPtr winSound(OpenSound(device,"Data/WeAreTheChampions.mp3"));
 	//  AUDIO - end
 	
 	// loop main principale
@@ -412,7 +413,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		}else{
 			
 			// press esc key and drawGLScene() --> code che aaggiorna la pagina
-			if ((Data.active && !Data.DrawGLScene(dead,jumpSound)) || Data.keys[VK_ESCAPE]) {
+			if ((Data.active && !Data.DrawGLScene(dead,jumpSound,winSound,stream)) || Data.keys[VK_ESCAPE]) {
 				done=TRUE;							
 			}else{ 
 				SwapBuffers(Data.hDC);					// Swap Buffers (Double Buffering)

@@ -166,11 +166,11 @@ void Level::makeLevelC() {
 	obstacleListC.push_back(Ostacolo(startC + 1.25, startC + 1.35, -0.5, -0.3, "obs"));
 	obstacleListC.push_back(Ostacolo(startC + 1.55, startC + 1.65, -0.5, -0.3, "obs"));
 	
-	floorListC.push_back(Ostacolo(startC + 1.75, startC + 2, -1.0, -0.70, "Floor"));
+	floorListC.push_back(Ostacolo(startC + 1.75, startC + 2.05, -1.0, -0.70, "Floor"));
 
 	obstacleListC.push_back(Ostacolo(startC + 2.45, startC + 2.55, -0.7, -0.5, "obs"));
 	obstacleListC.push_back(Ostacolo(startC + 2.55, startC + 2.65, -0.7, -0.5, "obs"));
-	floorListC.push_back(Ostacolo(startC + 2.2, startC + 3, -1.0, -0.7, "Floor"));
+	floorListC.push_back(Ostacolo(startC + 2.25, startC + 3.05, -1.0, -0.7, "Floor"));
 	
 	obstacleListC.push_back(Ostacolo(startC + 3.07, startC + 3.15, -0.5, -0.3, "obs"));
 	obstacleListC.push_back(Ostacolo(startC + 3.15, startC + 3.25, -0.5, -0.3, "obs"));

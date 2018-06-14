@@ -84,6 +84,7 @@ class MyModel {
 //		GLuint	pacmanTexture[19];
 		GLuint	pacmanTexture[2];
 		GLuint backgroundtexture;
+		GLuint wintexture;
 		GLuint gameovertexture;
 		GLuint	marioTexture[8];
 		GLuint newGame[2];
@@ -136,7 +137,7 @@ class MyModel {
 			return false;
 		}
 
-		bool DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump);
+		bool DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump, audiere::OutputStreamPtr winSound, audiere::OutputStreamPtr soundBase);
 		bool InitGL(void);
 		void ReSizeGLScene(int width, int height);
 		void glPrint(const char *fmt, ...);			// Custom GL "Print" Routine
@@ -148,8 +149,8 @@ class MyModel {
 		void buildPacman();
 		void buildLandscape();
 		void drawInitGame();
-		void drawGameOver();
-		void drawWinGame();
+		void drawGameOver(audiere::OutputStreamPtr soundBase);
+		void drawWinGame(audiere::OutputStreamPtr soundBase);
 		void resetGame();
 		bool checkX(PC mario, EnemyPacman pacman);
 		bool checkY(PC mario, EnemyPacman pacman);
