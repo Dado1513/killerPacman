@@ -161,7 +161,7 @@ class MyModel {
 		bool pacmanMustJump(EnemyPacman pacman, Level* level);
 		void drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump);
 		void drawLevel();
-
+		void setPacmanCanMove(bool);
 	private:
 		bool LoadGLTextures(void);
 		void BuildFont(void);

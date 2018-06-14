@@ -1207,6 +1207,9 @@ void MyModel::buildPacman() {
 
 
 }
+void MyModel::setPacmanCanMove(bool move) {
+	pacmanCanMove = move;
+}
 
 void MyModel::buildMario() {
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping

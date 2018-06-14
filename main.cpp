@@ -234,7 +234,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT	uMsg, WPARAM	wParam,	LPARAM	lParam)
 {
 	switch (uMsg) {									// Check For Windows Messages
 
-		case WM_ACTIVATE: {							// Watch For Window Activate Message
+		case WM_ACTIVATE: {		
+			// TODO premere invio se giococ in pausa per riprenderlo
+			Data.setPacmanCanMove(true);
+			// Watch For Window Activate Message
 			if (!HIWORD(wParam)) { 					// Check Minimization State
 				Data.active = TRUE;
 			}					// Program Is Active
@@ -333,6 +336,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT	uMsg, WPARAM	wParam,	LPARAM	lParam)
 			Data.keys[VK_UP] = false;
 			Data.keys[VK_RIGHT] = false;
 			Data.keys[VK_DOWN] = false;
+			Data.setPacmanCanMove(false);
 
 			return 0;
 		}
