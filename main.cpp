@@ -396,9 +396,17 @@ int WINAPI WinMain(	HINSTANCE	hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	if (!jumpSound) {
 		return 0;         // failure
 	}
-	OutputStreamPtr winSound(OpenSound(device,"Data/WeAreTheChampions.mp3"));
-	//  AUDIO - end
 	
+	OutputStreamPtr winSound(OpenSound(device,"Data/WeAreTheChampions.mp3"));
+	if (!winSound) {
+		return 0;
+	}
+
+	OutputStreamPtr stageClear(OpenSound(device, "Data/smb_stage_clear.wav"));
+	if (!stageClear) {
+		return 0;
+	}
+
 	// loop main principale
 	while(!done) {
 
