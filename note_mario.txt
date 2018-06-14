@@ -1,4 +1,4 @@
 
-
-Aggiungere stopY(double lim) anche a pacman e fisic anche a pacman (solo salto) 
-cosi che non voli ma salti anche esso sugli ostacoli
+Per ora pacman passa attraverso gli ostacoli sulla x
+aggiungere pausa 
+aggiungere piccolo nemico , classe già pronta devo creare le texture
