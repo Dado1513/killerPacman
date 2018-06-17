@@ -11,11 +11,16 @@ class EnemySimple{
 		double accMaxX;
 		std::string state;
 		bool isDead;
+		bool isDeading; // sta muorendo quindi sprite dead
+		int deadingTexture;
+		bool notDraw;
 
 	public:
 	EnemySimple(double posX, double posY, double width, double height);
 	~EnemySimple();
 
+	void setNotDraw(bool);
+	bool getNotDraw();
 	double getLeft();
 	double getRight();
 	double getUp();
@@ -32,6 +37,10 @@ class EnemySimple{
 	void setVelMaxX(double);
 	double getVelMaxX();
 	void update();
+	void setIsDeding(bool);
+	bool getIsDeading();
+	void setDeadingTexture(int);
+	int getDeadingTexture();
 
 
 };

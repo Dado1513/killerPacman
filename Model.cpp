@@ -51,7 +51,7 @@ bool pacmanCanMove = false;
 double xStartEnemy = 0.0;
 
 int debug = 0;
-
+double lastUpdateEnemy = 0.0;
 
 
 // All Setup For OpenGL Goes Here
@@ -155,7 +155,7 @@ bool MyModel::LoadGLTextures(void)
 
 	// GAME INIT
 	char backgroundFile[100];
-	sprintf(backgroundFile,"Data/backgroundImageStart_3_rotate.png" );
+	sprintf(backgroundFile,"Data/backgroundImageStart_3_rotate_new.png" );
 
 	backgroundtexture = SOIL_load_OGL_texture(backgroundFile, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (this->backgroundtexture == 0)
@@ -213,6 +213,14 @@ bool MyModel::LoadGLTextures(void)
 			return false;
 	}
 	
+	char enemydeadtexturename[200];
+	int numero_texture_enemy_dead = 8;
+	for (int i = 0; i < numero_texture_enemy_dead; i++) {
+		sprintf(enemydeadtexturename, "Data/media/sheet_hero_dead_%01d.png", i + 1);
+		this->enemyTextureDeading[i] = SOIL_load_OGL_texture(enemydeadtexturename, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+		if (enemyTextureDeading[i] == 0)
+			return false;
+	}
 		// Typical Texture Generation Using Data From The Bitmap
 	//glBindTexture(GL_TEXTURE_2D, texture[0]);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
@@ -456,24 +464,26 @@ void MyModel::drawInitGame() {
 
 void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPtr dead) {
 
-	if (this->enemySimpleDead(mario, enemy) && !enemy.getDead()) {
+	if (this->enemySimpleDead(mario, enemy) && !enemy.getDead() ) {
 		enemy.setDead(true);
+		enemy.setIsDeding(true);
 		mario.setFalling(false);
 		mario.jump(jump);
 	}
-	
-	if (abs(enemy.getX() - xStartEnemy) >= 0.5) {
-		// change direction before update
-		if (enemy.getX() > xStartEnemy) {
-			// devo tornare a sinistra
-			enemy.addVelX("left");
-		}
-		else {
-			enemy.addVelX("right");
-		}
-	}
-	enemy.update();
 
+	if (!enemy.getDead()) {
+		if (abs(enemy.getX() - xStartEnemy) >= 0.5) {
+			// change direction before update
+			if (enemy.getX() > xStartEnemy) {
+				// devo tornare a sinistra
+				enemy.addVelX("left");
+			}
+			else {
+				enemy.addVelX("right");
+			}
+		}
+		enemy.update();
+	}
 	// update pacman
 	if (pacmanCanMove) {
 		// check pacman jump con end floor 
@@ -577,7 +587,6 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 		return;
 	}
 	*/
-	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -629,7 +638,8 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	this->buildFloor(-1, 0.7);
 	//ostacolo
 	this->drawLevel();
-	this->buildEnemy();
+	if(!enemy.getNotDraw())
+		this->buildEnemy();
 
 	// draw mario
 	this->buildMario();
@@ -999,6 +1009,7 @@ void MyModel::resetGame() {
 	Cloud2 = Sky(1.01, 0.51, 1.02, 0.5);
 	Mountain1 = Sky(-1.9, -0.35, 1.01, 0.4);
 	Mountain2 = Sky(0.105, -0.35, 1.01, 0.4);
+	enemy = EnemySimple(0.0, -0.6, 0.05, 0.1);
 	posSchermoX = 0;
 }
 
@@ -1399,93 +1410,104 @@ void MyModel::buildSky() {
 }
 
 void MyModel::buildEnemy() {
-	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0);
+	if ( !enemy.getNotDraw()) {
+		glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GREATER, 0);
+		if (!enemy.getDead()) {
+			int lengthEnemy = (sizeof(enemyTexture) / sizeof(*enemyTexture));
+			//Pacman texture
+			int enemyId = (int(fullElapsed * 7) % lengthEnemy);
+			if (enemyId > lengthEnemy) {
+				enemyId = 0;
+			}
 
-	int lengthEnemy = (sizeof(enemyTexture) / sizeof(*enemyTexture));
-	//Pacman texture
-	int enemyId = (int(fullElapsed * 7) % lengthEnemy);
-	if (enemyId > lengthEnemy) {
-		enemyId = 0;
+			glBindTexture(GL_TEXTURE_2D, enemyTexture[enemyId]);
+		}else {
+			// sta muorendo
+			if (enemy.getDeadingTexture() < 8) {
+				glBindTexture(GL_TEXTURE_2D, enemyTextureDeading[enemy.getDeadingTexture()]);
+				if (fullElapsed - lastUpdateEnemy > 0.07 || lastUpdateEnemy == 0.0) {
+					enemy.setDeadingTexture(enemy.getDeadingTexture() + 1);
+					lastUpdateEnemy = fullElapsed;
+				}
+			}
+			else {
+				enemy.setIsDeding(false);
+				enemy.setNotDraw(true);
+			}
+		}
+		if (!enemy.getNotDraw()) {
+			// original 0.38 e 0.34
+			double resize_width = 0.0;
+			double resize_height = 0.0;
+			glBegin(GL_QUADS);
+			//OutputDebugString(enemy.getState().c_str());
+			//char stringdebug[200];
+			//sprintf(stringdebug, "Enemy l: %f, r:%f, u:%f, d:%f \n", enemy.getLeft(), enemy.getRight(), enemy.getUp(), enemy.getDown());
+			//OutputDebugString(stringdebug);
+
+
+			if (std::strcmp(enemy.getState().c_str(), "left") == 0
+				|| std::strcmp(enemy.getState().c_str(), "stopLeft") == 0
+				|| std::strcmp(enemy.getState().c_str(), "upLeft") == 0) {
+				//basso destra
+				glTexCoord2f(Background[1].u - resize_width, Background[1].v + resize_height);
+				glVertex3f(enemy.getLeft(), enemy.getDown(), Background[0].z);
+
+				//basso sinistra
+				glTexCoord2f(Background[0].u + resize_width, Background[0].v + resize_height);
+				glVertex3f(enemy.getRight(), enemy.getDown(), Background[0].z);
+
+				//alto sinistra
+				glTexCoord2f(Background[3].u + resize_width, Background[3].v - resize_height);
+				glVertex3f(enemy.getRight(), enemy.getUp(), Background[0].z);
+
+
+				//alto destra
+				glTexCoord2f(Background[2].u - resize_width, Background[2].v - resize_height);
+				glVertex3f(enemy.getLeft(), enemy.getUp(), Background[0].z);
+
+			}
+			else {
+				//basso sinistra
+				glTexCoord2f(Background[0].u + resize_width, Background[0].v + resize_height);
+				//glTexCoord2f(Background[0].u, Background[0].v);
+				//glVertex3f(-1, -0.7, Background[0].z);
+				glVertex3f(enemy.getLeft(), enemy.getDown(), Background[0].z);
+
+				//basso destra
+				glTexCoord2f(Background[1].u - resize_width, Background[1].v + resize_height);
+				//glTexCoord2f(Background[1].u, Background[1].v);
+				//glVertex3f(-0.8, -0.7, Background[0].z);
+				glVertex3f(enemy.getRight(), enemy.getDown(), Background[0].z);
+
+
+				//alto destra
+				glTexCoord2f(Background[2].u - resize_width, Background[2].v - resize_height);
+				//glTexCoord2f(Background[2].u, Background[2].v);
+				//glVertex3f(-0.8, -0.45, Background[0].z);
+				glVertex3f(enemy.getRight(), enemy.getUp(), Background[0].z);
+
+				//alto sinistra
+				glTexCoord2f(Background[3].u + resize_width, Background[3].v - resize_height);
+				//glTexCoord2f(Background[3].u, Background[3].v);
+				//glVertex3f(-1, -0.45, Background[0].z);
+				glVertex3f(enemy.getLeft(), enemy.getUp(), Background[0].z);
+			}
+			glEnd();
+
+			//glTranslatef(ClientX2World(cx), ClientY2World(cy), 0);
+
+			// proportional scaling (fixed percentual of window dimension)
+			// if(1) proportional, if(0) fixed
+
+			glDisable(GL_BLEND);
+			glDisable(GL_ALPHA_TEST);
+		}
 	}
-
-	//pacmanId = 18;
-	// PACMAN PRINT
-
-	glBindTexture(GL_TEXTURE_2D, enemyTexture[enemyId]);
-
-
-	// original 0.38 e 0.34
-	double resize_width = 0.0;
-	double resize_height = 0.0;
-	glBegin(GL_QUADS);
-	OutputDebugString(enemy.getState().c_str());
-	char stringdebug[200];
-	sprintf(stringdebug, "Enemy l: %f, r:%f, u:%f, d:%f \n", enemy.getLeft(), enemy.getRight(), enemy.getUp(), enemy.getDown());
-	OutputDebugString(stringdebug);
-
-
-	if (std::strcmp(enemy.getState().c_str(), "left") == 0
-		|| std::strcmp(enemy.getState().c_str(), "stopLeft") == 0
-		|| std::strcmp(enemy.getState().c_str(), "upLeft") == 0) {
-		//basso destra
-		glTexCoord2f(Background[1].u - resize_width, Background[1].v + resize_height);
-		glVertex3f(enemy.getLeft(), enemy.getDown(), Background[0].z);
-
-		//basso sinistra
-		glTexCoord2f(Background[0].u + resize_width, Background[0].v + resize_height);
-		glVertex3f(enemy.getRight(), enemy.getDown(), Background[0].z);
-
-		//alto sinistra
-		glTexCoord2f(Background[3].u + resize_width, Background[3].v - resize_height);
-		glVertex3f(enemy.getRight(), enemy.getUp(), Background[0].z);
-
-
-		//alto destra
-		glTexCoord2f(Background[2].u - resize_width, Background[2].v - resize_height);
-		glVertex3f(enemy.getLeft(), enemy.getUp(), Background[0].z);
-
-	}
-	else {
-		//basso sinistra
-		glTexCoord2f(Background[0].u + resize_width, Background[0].v + resize_height);
-		//glTexCoord2f(Background[0].u, Background[0].v);
-		//glVertex3f(-1, -0.7, Background[0].z);
-		glVertex3f(enemy.getLeft(), enemy.getDown(), Background[0].z);
-
-		//basso destra
-		glTexCoord2f(Background[1].u - resize_width, Background[1].v + resize_height);
-		//glTexCoord2f(Background[1].u, Background[1].v);
-		//glVertex3f(-0.8, -0.7, Background[0].z);
-		glVertex3f(enemy.getRight(), enemy.getDown(), Background[0].z);
-
-
-		//alto destra
-		glTexCoord2f(Background[2].u - resize_width, Background[2].v - resize_height);
-		//glTexCoord2f(Background[2].u, Background[2].v);
-		//glVertex3f(-0.8, -0.45, Background[0].z);
-		glVertex3f(enemy.getRight(), enemy.getUp(), Background[0].z);
-
-		//alto sinistra
-		glTexCoord2f(Background[3].u + resize_width, Background[3].v - resize_height);
-		//glTexCoord2f(Background[3].u, Background[3].v);
-		//glVertex3f(-1, -0.45, Background[0].z);
-		glVertex3f(enemy.getLeft(), enemy.getUp(), Background[0].z);
-	}
-	glEnd();
-
-	//glTranslatef(ClientX2World(cx), ClientY2World(cy), 0);
-
-	// proportional scaling (fixed percentual of window dimension)
-	// if(1) proportional, if(0) fixed
-
-	glDisable(GL_BLEND);
-	glDisable(GL_ALPHA_TEST);
-
-
 }
 
 // build montain, cloud

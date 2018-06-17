@@ -86,6 +86,7 @@ class MyModel {
 		GLuint	pacmanTexture[2];
 		GLuint backgroundtexture;
 		GLuint enemyTexture[3];
+		GLuint enemyTextureDeading[8];
 		GLuint wintexture;
 		GLuint gameovertexture;
 		GLuint	marioTexture[8];

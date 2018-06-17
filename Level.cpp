@@ -126,7 +126,7 @@ void Level::makeLevelB() {
 	obstacleListB.push_back(Ostacolo(startB + 3.85, startB + 3.95, -0.4, -0.2, "obs"));
 	obstacleListB.push_back(Ostacolo(startB + 3.95, startB + 4.05, -0.4, -0.2, "obs"));
 	// other floor
-	floorListB.push_back(Ostacolo(startB + 4.2, startB + 5, -1.0, -0.70, "Floor"));
+	floorListB.push_back(Ostacolo(startB + 4.25, startB + 5, -1.0, -0.70, "Floor"));
 
 	obstacleListB.push_back(Ostacolo(startB + 5.15, startB + 5.25, -0.4, -0.2, "obs"));
 	obstacleListB.push_back(Ostacolo(startB + 5.25, startB + 5.35, -0.4, -0.2, "obs"));

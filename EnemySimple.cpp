@@ -13,6 +13,9 @@ EnemySimple::EnemySimple(double posX, double posY, double width, double height){
 	this->accMaxX = 0.0002;
 	this->state = "stopRight";
 	this->isDead = false;
+	this->isDeading = false;
+	this->deadingTexture = 0;
+	this->notDraw = false;
 
 }
 
@@ -107,6 +110,27 @@ bool EnemySimple::getDead() {
 	return this->isDead;
 }
 
+bool EnemySimple::getIsDeading() {
+	return isDeading;
+}
+void EnemySimple::setIsDeding(bool value) {
+	this->isDeading = value;
+}
+
+int EnemySimple::getDeadingTexture() {
+	return deadingTexture;
+}
+void EnemySimple::setDeadingTexture(int value) {
+	this->deadingTexture = value;
+}
+
+void EnemySimple::setNotDraw(bool value) {
+	this->notDraw = value;
+}
+
+bool EnemySimple::getNotDraw() {
+	return this->notDraw;
+}
 EnemySimple::~EnemySimple()
 {
 }
