@@ -456,6 +456,12 @@ void MyModel::drawInitGame() {
 
 void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPtr dead) {
 
+	if (this->enemySimpleDead(mario, enemy) && !enemy.getDead()) {
+		enemy.setDead(true);
+		mario.setFalling(false);
+		mario.jump(jump);
+	}
+	
 	if (abs(enemy.getX() - xStartEnemy) >= 0.5) {
 		// change direction before update
 		if (enemy.getX() > xStartEnemy) {
@@ -565,7 +571,7 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	// same function per pacman
 	// DECOMENNT
 	/*
-	if (this->checkDead(mario, pacman) ||  mario.getDead()) {
+	if (this->checkDead(mario, pacman) ||  mario.getDead() || this->checkDead(mario,enemy)) {
 		dead->play();
 		this->screenPlay = 2;
 		return;
@@ -1056,28 +1062,38 @@ void MyModel::glPrint(const char *fmt, ...)					// Custom GL "Print" Routine
 }
 
 bool MyModel::checkX(PC mario, EnemyPacman pacman) {
-	bool x = false;
-	if ((mario.getX() <= pacman.getRight()) && mario.getX() >= pacman.getLeft()) {
-		x = true;
-	}
-	return x;
+	return mario.getX() <= pacman.getRight() && mario.getX() >= pacman.getLeft();
 }
 
 bool MyModel::checkY(PC mario, EnemyPacman pacman) {
-	bool y = false;
-	// se la cordinata x del centro di mario è compresa fra gli estremi di pacman
-
-	// stessa cosa per la y
-	if ((mario.getY() <= pacman.getUp()) && mario.getY() >= pacman.getDown()) {
-		y = true;
-	}
-	return y;
+	return mario.getY() <= pacman.getUp() && mario.getY() >= pacman.getDown();
 }
 
 // controlla se mario è stato mangiato da pacman
 bool MyModel::checkDead(PC mario, EnemyPacman pacman) {
 
 	return this->checkX(mario, pacman) && this->checkY(mario, pacman);
+}
+
+bool MyModel::checkX(PC mario, EnemySimple enemy) {
+	return mario.getX() <= enemy.getRight() && mario.getX() >= enemy.getLeft();
+}
+
+bool MyModel::checkY(PC mario, EnemySimple pacmenemyan) {
+	return mario.getY() <= enemy.getUp() && mario.getY() >= enemy.getDown();
+}
+
+// controlla se mario è stato mangiato da pacman
+bool MyModel::checkDead(PC mario, EnemySimple enemy) {
+
+	return this->checkX(mario, enemy) && this->checkY(mario, enemy) && !enemy.getDead();
+}
+
+bool MyModel::enemySimpleDead(PC mario, EnemySimple enemy) {
+	bool x = this->checkX(mario, enemy);
+	bool y = (mario.getDown() - enemy.getUp() >= 0.004) && (mario.getDown() - enemy.getUp() <= 0.008);
+
+	return x && y;
 }
 
 // if pacman must jump

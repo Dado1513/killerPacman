@@ -10,6 +10,7 @@ class EnemySimple{
 		double velX;		
 		double accMaxX;
 		std::string state;
+		bool isDead;
 
 	public:
 	EnemySimple(double posX, double posY, double width, double height);
@@ -24,6 +25,8 @@ class EnemySimple{
 	std::string getState();
 	double getX();
 	double getY();
+	void setDead(bool);
+	bool getDead();
 	void setX(double posX);
 	void setY(double posY);
 	void setVelMaxX(double);

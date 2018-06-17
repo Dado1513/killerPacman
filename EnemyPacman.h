@@ -22,7 +22,7 @@ class EnemyPacman{
 		std::string direction;
 		int timeFly;
 		double accMaxX;
-		/*
+				/*
 		direction = stopLeft == -1, stopRight==0, right==1, left==2, upRight==3, upLeft==4;
 		*/
 

@@ -16,6 +16,7 @@
 #include "audiere.h"
 #include "PC.h"
 #include "EnemyPacman.h"
+#include "EnemySimple.h"
 #include "Ostacolo.h"
 #define PI 3.141592654
 
@@ -153,9 +154,17 @@ class MyModel {
 		void drawGameOver(audiere::OutputStreamPtr soundBase);
 		void drawWinGame(audiere::OutputStreamPtr soundBase);
 		void resetGame();
+		
 		bool checkX(PC mario, EnemyPacman pacman);
 		bool checkY(PC mario, EnemyPacman pacman);
 		bool checkDead(PC mario, EnemyPacman pacman);
+
+		bool checkX(PC mario, EnemySimple enemy);
+		bool checkY(PC mario, EnemySimple enemy);
+		bool checkDead(PC mario, EnemySimple enemy);
+
+		bool enemySimpleDead(PC mario, EnemySimple enemy);
+
 		bool pcCanMove(PC mario);
 		bool checkEndOstacolo(EnemyPacman pacman, Ostacolo ostacolo);
 		bool searchEndOstacolo(EnemyPacman pacman, vector<Ostacolo> floor, vector<Ostacolo> obs);

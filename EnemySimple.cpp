@@ -12,6 +12,7 @@ EnemySimple::EnemySimple(double posX, double posY, double width, double height){
 	this->velMaxX = 0.01;
 	this->accMaxX = 0.0002;
 	this->state = "stopRight";
+	this->isDead = false;
 
 }
 
@@ -97,6 +98,13 @@ void EnemySimple::addVelX(std::string dir)
 
 void EnemySimple::update() {
 	posX += velX;
+}
+void EnemySimple::setDead(bool dead) {
+	this->isDead = dead;
+}
+
+bool EnemySimple::getDead() {
+	return this->isDead;
 }
 
 EnemySimple::~EnemySimple()
