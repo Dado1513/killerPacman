@@ -15,6 +15,7 @@
 
 #include "PC.h"
 #include "EnemyPacman.h"
+#include "EnemySimple.h"
 #include "Sky.h"
 #include "audiere.h"
 #include "Ostacolo.h"
@@ -28,6 +29,7 @@ using namespace std;
 PC mario(0.2, -0.6, 0.05, 0.1);
 EnemyPacman pacman(-0.9,-0.6, 0.055, 0.1);
 
+EnemySimple enemy(0.0, -0.6, 0.05, 0.1);
 //Sky Cloud1(-0.4, 0.7, 0.18, 0.15);
 //Sky Cloud2(0.7, 0.6, 0.15, 0.12);
 //Sky Mountain(0.55, -0.58, 0.2, 0.12);
@@ -46,7 +48,7 @@ CollisionSystem *collisionSystem; // System to handle collision
 
 double posSchermoX = 0;
 bool pacmanCanMove = false;
-
+double xStartEnemy = 0.0;
 
 int debug = 0;
 
@@ -198,11 +200,20 @@ bool MyModel::LoadGLTextures(void)
 	for (int i = 0; i < numero_button; i++) {
 		sprintf(exitgamebutton, "Data/button_exit-game_%01d.png", i + 1);
 		this->exitGame[i] = SOIL_load_OGL_texture(exitgamebutton, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
-		if (exitGame == 0)
+		if (exitGame[i] == 0)
 			return false;
 	}
 	
-	// Typical Texture Generation Using Data From The Bitmap
+	char enemytexturename[200];
+	int numero_texture_enemy = 3;
+	for (int i = 0; i < numero_texture_enemy; i++) {
+		sprintf(enemytexturename, "Data/media/sheet_hero_walk_%01d.png", i + 1);
+		this->enemyTexture[i] = SOIL_load_OGL_texture(enemytexturename, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+		if (enemyTexture[i] == 0)
+			return false;
+	}
+	
+		// Typical Texture Generation Using Data From The Bitmap
 	//glBindTexture(GL_TEXTURE_2D, texture[0]);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
@@ -232,12 +243,16 @@ bool MyModel::DrawGLScene(audiere::OutputStreamPtr dead, audiere::OutputStreamPt
 
 		//cancello le tracce dei livelli precedenti
 		//nuovo livello
-		collisionSystem = new CollisionSystem(mario.getWidth()*3);		//gli passo la larghezza di mario*2
-
+		//gli passo la larghezza di mario*3
+		collisionSystem = new CollisionSystem(mario.getWidth()*3);		
 		levA = new Level();
 		levA->fillCollisionSystemA(collisionSystem); // add level A
 		levA->fillCollisionSystemB(collisionSystem); // add level B
 		levA->fillCollisionSystemC(collisionSystem);
+		xStartEnemy = levA->getStartA() + 9.0;
+		//enemy = new EnemySimple(xStartEnemy, -0.6, 0.1, 0.1);
+		enemy.setX(xStartEnemy);
+		enemy.addVelX("right");
 		//schermata di gioco
 		drawGamePrincipale(dead, jump);
 		break;
@@ -441,6 +456,18 @@ void MyModel::drawInitGame() {
 
 void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPtr dead) {
 
+	if (abs(enemy.getX() - xStartEnemy) >= 0.5) {
+		// change direction before update
+		if (enemy.getX() > xStartEnemy) {
+			// devo tornare a sinistra
+			enemy.addVelX("left");
+		}
+		else {
+			enemy.addVelX("right");
+		}
+	}
+	enemy.update();
+
 	// update pacman
 	if (pacmanCanMove) {
 		// check pacman jump con end floor 
@@ -529,14 +556,7 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	
 	collisionSystem->physics(&pacman);
 	
-	/*	//DEBUG COLLISION SYSTEM
-	char out[100];
-	sprintf(out, " CollisionSystem  %d   %d    %lf     %lf", mario.getFalling(), debug, mario.getX(), mario.getY() );
-	debug++;
-	OutputDebugString(out);
-	OutputDebugString("\n");
-	
-	*/
+
 	// DA DECOMENT
 	if (mario.getX() >= this->xEndGame) {
 		this->screenPlay = 4;
@@ -544,13 +564,13 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	}
 	// same function per pacman
 	// DECOMENNT
-	
+	/*
 	if (this->checkDead(mario, pacman) ||  mario.getDead()) {
 		dead->play();
 		this->screenPlay = 2;
 		return;
 	}
-	
+	*/
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
@@ -598,12 +618,16 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	glColor3f(1.0, 1.0, 1.0);
 	// Draw the landscape
 	this->buildLandscape();
+
 	// draw floor
 	this->buildFloor(-1, 0.7);
 	//ostacolo
 	this->drawLevel();
+	this->buildEnemy();
+
 	// draw mario
 	this->buildMario();
+
 	// draw pacman
 	this->buildPacman();
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
@@ -957,7 +981,7 @@ void MyModel::drawGameOver(audiere::OutputStreamPtr soundBase) {
 	// reset color
 	glColor3f(1.0, 1.0, 1.0);
 }
-	
+
 
 void MyModel::resetGame() {
 	this->screenPlay = 1;
@@ -1056,6 +1080,7 @@ bool MyModel::checkDead(PC mario, EnemyPacman pacman) {
 	return this->checkX(mario, pacman) && this->checkY(mario, pacman);
 }
 
+// if pacman must jump
 bool MyModel::pacmanMustJump(EnemyPacman pacman, Level* level) {
 	double startA = level->getStartA();
 	double endA = level->getEndA();
@@ -1088,7 +1113,6 @@ bool MyModel::pacmanMustJump(EnemyPacman pacman, Level* level) {
 	}
 
 }
-
 bool MyModel::searchEndOstacolo(EnemyPacman pacman, vector<Ostacolo> floor, vector<Ostacolo> obs) {
 	for (vector<Ostacolo>::iterator it = floor.begin(); it != floor.end(); ++it) {
 		if (this->checkEndOstacolo(pacman, *it)) {
@@ -1114,6 +1138,7 @@ bool MyModel::checkEndOstacolo(EnemyPacman pacman, Ostacolo ostacolo) {
 	return false;
 }
 
+// Build texture pacman
 void MyModel::buildPacman() {
 	// se carico l'immagine evil pacman
 	//int lengthPacman = (sizeof(pacmanTexture) / sizeof(*pacmanTexture))-1;
@@ -1192,25 +1217,28 @@ void MyModel::buildPacman() {
 
 	// proportional scaling (fixed percentual of window dimension)
 	// if(1) proportional, if(0) fixed
-	if (1) {
-		glScalef(0.10f, 0.10f, 1);
-	}
-	//  Fixed scaling, alwais 100 pixels width/height
-	else {
-		float dx = PixToCoord_X(100);
-		float dy = PixToCoord_Y(100);
-		glScalef(dx / 2, dy / 2, 1);
-	}
+	//if (1) {
+	//	glScalef(0.10f, 0.10f, 1);
+	//}
+	////  Fixed scaling, alwais 100 pixels width/height
+	//else {
+	//	float dx = PixToCoord_X(100);
+	//	float dy = PixToCoord_Y(100);
+	//	glScalef(dx / 2, dy / 2, 1);
+	//}
 
 	glDisable(GL_BLEND);
 	glDisable(GL_ALPHA_TEST);
 
 
 }
+
+// set pacman can move (pause game)
 void MyModel::setPacmanCanMove(bool move) {
 	pacmanCanMove = move;
 }
 
+// build mario texture
 void MyModel::buildMario() {
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
 
@@ -1287,6 +1315,7 @@ void MyModel::buildMario() {
 	glDisable(GL_ALPHA_TEST);
 }
 
+// build floor texture
 void MyModel::buildFloor(double start, double end) {
 	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
@@ -1331,6 +1360,7 @@ void MyModel::buildFloor(double start, double end) {
 	glDisable(GL_TEXTURE_2D);
 }
 
+// build sky texture
 void MyModel::buildSky() {
 		glDisable(GL_TEXTURE_2D);
 		glPushMatrix();
@@ -1352,6 +1382,97 @@ void MyModel::buildSky() {
 
 }
 
+void MyModel::buildEnemy() {
+	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0);
+
+	int lengthEnemy = (sizeof(enemyTexture) / sizeof(*enemyTexture));
+	//Pacman texture
+	int enemyId = (int(fullElapsed * 7) % lengthEnemy);
+	if (enemyId > lengthEnemy) {
+		enemyId = 0;
+	}
+
+	//pacmanId = 18;
+	// PACMAN PRINT
+
+	glBindTexture(GL_TEXTURE_2D, enemyTexture[enemyId]);
+
+
+	// original 0.38 e 0.34
+	double resize_width = 0.0;
+	double resize_height = 0.0;
+	glBegin(GL_QUADS);
+	OutputDebugString(enemy.getState().c_str());
+	char stringdebug[200];
+	sprintf(stringdebug, "Enemy l: %f, r:%f, u:%f, d:%f \n", enemy.getLeft(), enemy.getRight(), enemy.getUp(), enemy.getDown());
+	OutputDebugString(stringdebug);
+
+
+	if (std::strcmp(enemy.getState().c_str(), "left") == 0
+		|| std::strcmp(enemy.getState().c_str(), "stopLeft") == 0
+		|| std::strcmp(enemy.getState().c_str(), "upLeft") == 0) {
+		//basso destra
+		glTexCoord2f(Background[1].u - resize_width, Background[1].v + resize_height);
+		glVertex3f(enemy.getLeft(), enemy.getDown(), Background[0].z);
+
+		//basso sinistra
+		glTexCoord2f(Background[0].u + resize_width, Background[0].v + resize_height);
+		glVertex3f(enemy.getRight(), enemy.getDown(), Background[0].z);
+
+		//alto sinistra
+		glTexCoord2f(Background[3].u + resize_width, Background[3].v - resize_height);
+		glVertex3f(enemy.getRight(), enemy.getUp(), Background[0].z);
+
+
+		//alto destra
+		glTexCoord2f(Background[2].u - resize_width, Background[2].v - resize_height);
+		glVertex3f(enemy.getLeft(), enemy.getUp(), Background[0].z);
+
+	}
+	else {
+		//basso sinistra
+		glTexCoord2f(Background[0].u + resize_width, Background[0].v + resize_height);
+		//glTexCoord2f(Background[0].u, Background[0].v);
+		//glVertex3f(-1, -0.7, Background[0].z);
+		glVertex3f(enemy.getLeft(), enemy.getDown(), Background[0].z);
+
+		//basso destra
+		glTexCoord2f(Background[1].u - resize_width, Background[1].v + resize_height);
+		//glTexCoord2f(Background[1].u, Background[1].v);
+		//glVertex3f(-0.8, -0.7, Background[0].z);
+		glVertex3f(enemy.getRight(), enemy.getDown(), Background[0].z);
+
+
+		//alto destra
+		glTexCoord2f(Background[2].u - resize_width, Background[2].v - resize_height);
+		//glTexCoord2f(Background[2].u, Background[2].v);
+		//glVertex3f(-0.8, -0.45, Background[0].z);
+		glVertex3f(enemy.getRight(), enemy.getUp(), Background[0].z);
+
+		//alto sinistra
+		glTexCoord2f(Background[3].u + resize_width, Background[3].v - resize_height);
+		//glTexCoord2f(Background[3].u, Background[3].v);
+		//glVertex3f(-1, -0.45, Background[0].z);
+		glVertex3f(enemy.getLeft(), enemy.getUp(), Background[0].z);
+	}
+	glEnd();
+
+	//glTranslatef(ClientX2World(cx), ClientY2World(cy), 0);
+
+	// proportional scaling (fixed percentual of window dimension)
+	// if(1) proportional, if(0) fixed
+
+	glDisable(GL_BLEND);
+	glDisable(GL_ALPHA_TEST);
+
+
+}
+
+// build montain, cloud
 void MyModel::buildLandscape(){
 	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
@@ -1453,6 +1574,7 @@ void MyModel::buildLandscape(){
 
 }
 
+// draw obs
 void MyModel::drawLevel() {
 
 	glEnable(GL_BLEND);

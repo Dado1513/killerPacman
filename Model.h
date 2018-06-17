@@ -84,6 +84,7 @@ class MyModel {
 //		GLuint	pacmanTexture[19];
 		GLuint	pacmanTexture[2];
 		GLuint backgroundtexture;
+		GLuint enemyTexture[3];
 		GLuint wintexture;
 		GLuint gameovertexture;
 		GLuint	marioTexture[8];
@@ -145,7 +146,7 @@ class MyModel {
 		void buildFloor(double start, double end);
 		void buildSky();
 		void buildMario();
-		//void buildLevel0();
+		void buildEnemy();
 		void buildPacman();
 		void buildLandscape();
 		void drawInitGame();
@@ -162,6 +163,7 @@ class MyModel {
 		void drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputStreamPtr jump);
 		void drawLevel();
 		void setPacmanCanMove(bool);
+
 	private:
 		bool LoadGLTextures(void);
 		void BuildFont(void);

@@ -9,11 +9,15 @@ EnemySimple::EnemySimple(double posX, double posY, double width, double height){
 	this->width = width;
 	this->height = height;
 	this->velX = 0;
-	this->velMaxX = 0.00145;
-	this->accMaxX = 0.00002;
+	this->velMaxX = 0.01;
+	this->accMaxX = 0.0002;
+	this->state = "stopRight";
 
 }
 
+std::string EnemySimple::getState() {
+	return this->state;
+}
 
 double EnemySimple::getLeft() {
 	return posX - width;
@@ -65,6 +69,35 @@ double EnemySimple::getY()
 	return this->posY;
 }
 
+
+void EnemySimple::addVelX(std::string dir)
+{
+	if (std::strcmp(dir.c_str(), "right") == 0) {
+		//direzione destra
+		state = "right";
+		if (velX < 0) {
+			velX = 0;
+		}
+		// ridotto la velocità per provenire tremolio del personaggio
+		if (velX < this->velMaxX) {
+			velX = velX + accMaxX;
+		}
+	}
+	else {
+		//direzione sinistra
+		state = "left";
+		if (velX > 0) {
+			velX = 0;
+		}
+		if (velX > -this->velMaxX) {
+			velX = velX - accMaxX;
+		}
+	}
+}
+
+void EnemySimple::update() {
+	posX += velX;
+}
 
 EnemySimple::~EnemySimple()
 {
