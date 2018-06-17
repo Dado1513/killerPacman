@@ -538,6 +538,10 @@ void MyModel::updateWorld(audiere::OutputStreamPtr jump, audiere::OutputStreamPt
 		mario.update();
 		if (mario.getDown() < -1.1) {
 			this->screenPlay = 2;
+			if (jump->isPlaying()) {
+				jump->stop();
+			}
+			
 			dead->play();
 			mario.setDead(true);
 		}
@@ -582,6 +586,10 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 	// DECOMENNT
 	
 	if (this->checkDead(mario, pacman) ||  mario.getDead() || this->checkDead(mario,enemy)) {
+		if (jump->isPlaying()) {
+			jump->stop();
+		}
+
 		dead->play();
 		this->screenPlay = 2;
 		return;
