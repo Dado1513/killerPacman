@@ -623,6 +623,7 @@ void MyModel::drawGamePrincipale(audiere::OutputStreamPtr dead, audiere::OutputS
 
 	//aggiorno la posizione del gioco ogni 1ms per prevenire il tremolio --> riduco la valocità massima  
 	// se minore di 0.0008 --> potremmmo non disegno niente
+	// 0.0008
 	if (fullElapsed - LastUpdateTime > 0.0008) {
 		this->LastUpdateTime = fullElapsed;
 		updateWorld(jump,dead);

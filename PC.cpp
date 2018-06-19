@@ -15,7 +15,9 @@ PC::PC(double posX, double posY, double width, double height){
 	this->isFalling = false;
 	this->isInHole = false;
 	this->dead = false;
-	this->velMaxX = 0.0015;
+	//this->velMaxX = 0.0015;
+	this->velMaxX = 0.002;
+
 	this->timeFly = 0;
 	this->accMaxX = 0.00002;
 }
